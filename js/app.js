@@ -1,6 +1,6 @@
 // Select UI Elements
 const searchInputField = document.querySelector("#search-input");
-const searchResultsList = document.querySelector("#search-results-wrapper ul");
+const searchResultsList = document.querySelector("#search-results-list");
 
 // Search input event listener
 searchInputField.addEventListener("keyup", () => {
@@ -58,6 +58,13 @@ function displaySearchResults(data) {
     for (let i = 0; i < data.results.length; i++) {
         
         const newResultLi = document.createElement("li"); // New search result item
+        const newResult = data.results[i]; // Save the current new result (to pass to fetch function, if clicked)
+
+        // Add click event listener to each search result. On click, pass the corresponding item to fetch
+        newResultLi.addEventListener("click", (e) => {
+            fetchCurrentWeather(newResult)
+        })
+
         const name = data.results[i].name; // Location name
         const adminLevel1 = data.results[i].admin1; // Administrative area the location resides in
         const countryCode = data.results[i].country_code; // Country code
@@ -85,17 +92,20 @@ function clearSearchResults() {
     }
 }
 
-/* async function fetchWeatherData(data) {
-    // Weather data endpoint URL
-    const lat = data.results[0].latitude;
-    const lon = data.results[0].longitude;
-    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&&daily=weathercode&timezone=America%2FChicago`;
+async function fetchCurrentWeather(selectedResult) {
+    console.log(selectedResult, "selected result")
+
+    // Latitude and Longitude of the selected result
+    const lat = selectedResult.latitude;
+    const lon = selectedResult.longitude;
+    // Current weather data endpoint URL
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=temperature_2m,relativehumidity_2m,apparent_temperature,weathercode,windspeed_10m,winddirection_10m&daily=weathercode,temperature_2m_max,temperature_2m_min,apparent_temperature_max,apparent_temperature_min,uv_index_max,precipitation_sum,precipitation_probability_max&temperature_unit=fahrenheit&windspeed_unit=mph&precipitation_unit=inch&timeformat=unixtime&timezone=auto&forecast_days=1`;
     
     fetch (url)
         .then (response => {
             // check response status
             if (!response.ok) {
-                throw new Error ("Error fetching weather data")
+                throw new Error ("Error fetching CURRENT weather data")
             }
 
             // Return promise
@@ -103,10 +113,11 @@ function clearSearchResults() {
         })
 
         .then (data => {
-            console.log("Weather response data:", data)
+            console.log("CURRENT Weather response data:", data);
+            renderCurrentWeather(data)
         })
 
         .catch (error => {
-            console.error("Error fetching weather data:", error)
+            console.error("Error fetching CURRENT weather data:", error)
         })
-} */
+}
