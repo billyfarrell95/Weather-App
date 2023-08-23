@@ -38,7 +38,10 @@ async function fetchSearchResults(userInput) {
             if (data?.results?.length) {
                 console.log("Search results response data:", data);
                 displaySearchResults(data)
-            } 
+            } else {
+                // If there are no search results clear container (this prevents previous results from showing if characters that don't match are added to search string)
+                clearSearchResults();
+            }
         })
 
         .catch (error => {
