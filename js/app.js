@@ -1,6 +1,6 @@
 // Select UI Elements
 const searchInputField = document.querySelector("#search-input");
-const searchResultsWrapper = document.querySelector("#search-results-wrapper");
+const searchResultsList = document.querySelector("#search-results-wrapper ul");
 
 // Search input event listener
 searchInputField.addEventListener("keyup", () => {
@@ -10,6 +10,10 @@ searchInputField.addEventListener("keyup", () => {
         const userInput = searchInputField.value.trim();
         
         fetchSearchResults(userInput);
+    }
+
+    if (searchInputField.value.length < 2) {
+        clearSearchResults();
     }
 })
 
@@ -29,9 +33,12 @@ async function fetchSearchResults(userInput) {
             return response.json()
         })
         
-        .then (data => {
-            console.log("Search results response data:", data);
-            fetchWeatherData(data)
+        .then (data => {    
+            // Check if results were returned before trying to display them
+            if (data?.results?.length) {
+                console.log("Search results response data:", data);
+                displaySearchResults(data)
+            } 
         })
 
         .catch (error => {
@@ -39,7 +46,43 @@ async function fetchSearchResults(userInput) {
         })
 } 
 
-async function fetchWeatherData(data) {
+// Handle displaying/updating search results
+function displaySearchResults(data) {
+    // Clear search results and re-render everytime function is called (keyup)
+    clearSearchResults();
+
+    // Loop through results
+    for (let i = 0; i < data.results.length; i++) {
+        
+        const newResultLi = document.createElement("li"); // New search result item
+        const name = data.results[i].name; // Location name
+        const adminLevel1 = data.results[i].admin1; // Administrative area the location resides in
+        const countryCode = data.results[i].country_code; // Country code
+
+        // Check for values returned as "undefined", if so, exclude from search result text
+        if (name != undefined) {
+            newResultLi.innerText += name + ", ";
+        }
+
+        if (adminLevel1 != undefined) {
+            newResultLi.innerText += adminLevel1 + ", ";
+        }
+
+        if (countryCode != undefined) {
+            newResultLi.innerText += countryCode;
+        }
+
+        searchResultsList.append(newResultLi)
+    }
+}
+
+function clearSearchResults() {
+    while (searchResultsList.firstChild) {
+        searchResultsList.removeChild(searchResultsList.firstChild)
+    }
+}
+
+/* async function fetchWeatherData(data) {
     // Weather data endpoint URL
     const lat = data.results[0].latitude;
     const lon = data.results[0].longitude;
@@ -63,4 +106,4 @@ async function fetchWeatherData(data) {
         .catch (error => {
             console.error("Error fetching weather data:", error)
         })
-}
+} */
