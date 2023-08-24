@@ -2,6 +2,8 @@
 const searchInputField = document.querySelector("#search-input");
 const searchResultsList = document.querySelector("#search-results-list");
 const currentWeatherWrapper = document.querySelector("#current-weather-wrapper");
+const useCurrentLocationButton = document.querySelector("#current-location-button");
+useCurrentLocationButton.style.display = "none"; // Hide button by default
 
 // Search input event listener
 searchInputField.addEventListener("keyup", () => {
@@ -17,6 +19,65 @@ searchInputField.addEventListener("keyup", () => {
         removeAllElementChildren(searchResultsList);
     }
 })
+
+// Check if search input is active, if so show useCurrentLocationButton
+searchInputField.addEventListener("focus", () => {
+    useCurrentLocationButton.style.display = ""; // Reset button display property to default
+})
+
+// useCurrentLocationButton event listener
+useCurrentLocationButton.addEventListener("click", () => {
+    requestUserLocation();
+})
+
+// Request user location
+function requestUserLocation() {
+    const userLocation = navigator.geolocation.getCurrentPosition(userLocationSuccess, userLocationDenied);
+}
+
+// User location request success
+function userLocationSuccess(position) {
+    console.log(position)
+    console.log(position.coords.latitude, position.coords.longitude);
+    // Call fetchCurrentWeather with the first param (the result the user would click on in displaySearchResults function)
+    reverseGeocode(position.coords.latitude, position.coords.longitude);
+    /* fetchCurrentWeather(null, position.coords.latitude, position.coords.longitude) */
+}
+
+// Fetch location name based on coordinates retrieved from navigator API (useCurrentLocationButton)
+async function reverseGeocode(lat, lon) {
+    const OPEN_CAGE_API_KEY = "9ce86e2baa8049d69415d979fd71cb69";
+    const url = `https://api.opencagedata.com/geocode/v1/json?q=${lat}+${lon}&key=${OPEN_CAGE_API_KEY}`;
+    fetch (url)
+        .then(response => {
+            // check response status
+            if (!response.ok) {
+                throw new Error ("Error fetching Open Cage Data")
+            }
+
+            // Return promise
+            return response.json();
+        })
+
+        .then (data => {
+            // Check if results were returned
+            console.log("Reverse geocode data:", data);
+            const locationName = processGeocodingLocationName(data.results[0].components); // Will need to add logic for if/when this field doesn't exist
+            const adminLevel1 = processGeocodingAdminLevel1(data.results[0].components); // the first key value pair that is matched to the requirements is returned
+            console.log(locationName, adminLevel1)
+            fetchCurrentWeather(locationName, adminLevel1, lat, lon)
+        })
+
+        .catch (error => {
+            console.error(error);
+        })
+}
+
+// User location request failed
+function userLocationDenied(error) {
+    console.log(error);
+    console.log(error.message)
+}
 
 // Geocoding/fetch search results
 async function fetchSearchResults(userInput) {
@@ -59,20 +120,25 @@ function displaySearchResults(data) {
     for (let i = 0; i < data.results.length; i++) {
         
         const newResultLi = document.createElement("li"); // New search result item
-        const newResult = data.results[i]; // Save the current new result (to pass to fetch function, if clicked)
+        /* const newResult = data.results[i]; // Save the current new result (to pass to fetch function, if clicked) */
+        const locationName = data.results[i].name; // Select the location name and pass to fetchCurrentWeather
+        const adminLevel1 = data.results[i].admin1; // Select the 1st hierarchical admin area (state, etc)
+        const lat = data.results[i].latitude;
+        const lon = data.results[i].longitude;
 
         // Add click event listener to each search result. On click, pass the corresponding item to fetch
-        newResultLi.addEventListener("click", (e) => {
-            fetchCurrentWeather(newResult)
+        newResultLi.addEventListener("click", () => {
+            /* fetchCurrentWeather(newResult) */
+            fetchCurrentWeather(locationName, adminLevel1, lat, lon)
         })
 
-        const name = data.results[i].name; // Location name
-        const adminLevel1 = data.results[i].admin1; // Administrative area the location resides in
+        //const name = data.results[i].name; // Location name
+        //const adminLevel1 = data.results[i].admin1; // Administrative area the location resides in
         const countryCode = data.results[i].country_code; // Country code
 
         // Check for values returned as "undefined", if so, exclude from search result text
-        if (name != undefined) {
-            newResultLi.innerText += name + ", ";
+        if (locationName != undefined) {
+            newResultLi.innerText += locationName + ", ";
         }
 
         if (adminLevel1 != undefined) {
@@ -117,16 +183,101 @@ function getCurrent12HourTime() {
     return new12HourTime;
 }
 
+// Helper function - process the returned geocoding data from "use current location button" - return values first value that matches requirements for adminLevel1
+function processGeocodingAdminLevel1(geocodingResults) {
+    let validAdminLevel1 = null;
+    for (const key in geocodingResults) {
+        // check if there is a key and if it matches one of the defined values. If so, assign this value to validAdminLevel1
+        if (geocodingResults.hasOwnProperty(key) && key == "state") {
+            validAdminLevel1 = geocodingResults[key];
+            break;
+        }
+        if (geocodingResults.hasOwnProperty(key) && key == "country") {
+            validAdminLevel1 = geocodingResults[key];
+            break;
+        }
+        if (geocodingResults.hasOwnProperty(key) && key == "region") {
+            validAdminLevel1 = geocodingResults[key];
+            break;
+        }
+    }
+
+    if (validAdminLevel1 !== null) {
+        console.log("Valid data found", validAdminLevel1);
+        return validAdminLevel1;
+    } else {
+        console.log("no valid data found in object")
+    }
+}
+
+// Helper function - process the returned geocoding data from "use current location button" - return values first value that matches requirements for adminLevel1
+function processGeocodingLocationName(geocodingResults) {
+    let validLocationName = null;
+
+    for (const key in geocodingResults) {
+        // check if there is a key and if it matches one of the defined values. If so, assign this value to validAdminLevel1
+        if (geocodingResults.hasOwnProperty(key) && key == "city") {
+            validLocationName = geocodingResults[key];
+            break;
+        }
+        if (geocodingResults.hasOwnProperty(key) && key == "town") {
+            validLocationName = geocodingResults[key];
+            break;
+        }
+        if (geocodingResults.hasOwnProperty(key) && key == "county") {
+            validLocationName = geocodingResults[key];
+            break;
+        }
+        if (geocodingResults.hasOwnProperty(key) && key == "postcode") {
+            validLocationName = geocodingResults[key];
+            break;
+        }
+        if (geocodingResults.hasOwnProperty(key) && key == "neighbourhood") {
+            validLocationName = geocodingResults[key];
+            break;
+        }
+        if (geocodingResults.hasOwnProperty(key) && key == "suburb") {
+            validLocationName = geocodingResults[key];
+            break;
+        }
+        if (geocodingResults.hasOwnProperty(key) && key == "office") {
+            validLocationName = geocodingResults[key];
+            break;
+        }
+        if (geocodingResults.hasOwnProperty(key) && key == "municipality") {
+            validLocationName = geocodingResults[key];
+            break;
+        }
+        if (geocodingResults.hasOwnProperty(key) && key == "city_district") {
+            validLocationName = geocodingResults[key];
+            break;
+        }
+        if (geocodingResults.hasOwnProperty(key) && key == "state_district") {
+            validLocationName = geocodingResults[key];
+            break;
+        }
+    }
+
+    if (validLocationName !== null) {
+        console.log("Valid data found", validLocationName);
+        return validLocationName;
+    } else {
+        console.log("no valid data found in object")
+    }
+}
+
 // Get current weather data (current and today's weather)
-async function fetchCurrentWeather(selectedResult) {
-    console.log(selectedResult, "selected result")
+async function fetchCurrentWeather(locationName, adminLevel1, lat, lon) {
+    console.log(locationName, "selected result")
 
-    // Latitude and Longitude of the selected result
-    const lat = selectedResult.latitude;
-    const lon = selectedResult.longitude;
-
+    const selectedResultName = locationName + ", " + adminLevel1;
+    /* let selectedResultName; */
     // Location name (from geocoding API fetch)
-    const selectedResultName = selectedResult.name + ", " + selectedResult.admin1;
+    /* if (selectedResult === null) {
+        selectedResultName = "null";
+    } else {
+        selectedResultName = selectedResult.name + ", " + selectedResult.admin1;
+    } */
     // Current weather data endpoint URL
     const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true&temperature_unit=fahrenheit&windspeed_unit=mph&precipitation_unit=inch&timeformat=unixtime&forecast_days=1&timezone=auto`
     
@@ -153,8 +304,6 @@ async function fetchCurrentWeather(selectedResult) {
             console.error("Error fetching CURRENT weather data:", error)
         })
 }
-
-
 
 function renderCurrentWeather(data, selectedName) {
 
