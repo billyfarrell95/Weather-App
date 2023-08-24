@@ -5,6 +5,12 @@
     margin-bottom: 1rem;
 }
 
+.search-results-wrapper {
+    position: absolute;
+    background-color: rgba(255, 255, 255);
+    width: 100%;
+}
+
 .search-results-list {
     margin: 0;
     padding: 0;

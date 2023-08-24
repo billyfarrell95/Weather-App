@@ -14,7 +14,7 @@ searchInputField.addEventListener("keyup", () => {
     }
 
     if (searchInputField.value.length < 2) {
-        clearSearchResults();
+        removeAllElementChildren(searchResultsList);
     }
 })
 
@@ -41,7 +41,7 @@ async function fetchSearchResults(userInput) {
                 displaySearchResults(data)
             } else {
                 // If there are no search results clear container (this prevents previous results from showing if characters that don't match are added to search string)
-                clearSearchResults();
+                removeAllElementChildren(searchResultsList);
             }
         })
 
@@ -53,7 +53,7 @@ async function fetchSearchResults(userInput) {
 // Handle displaying/updating search results
 function displaySearchResults(data) {
     // Clear search results and re-render everytime function is called (keyup)
-    clearSearchResults();
+    removeAllElementChildren(searchResultsList);
 
     // Loop through results
     for (let i = 0; i < data.results.length; i++) {
@@ -87,10 +87,10 @@ function displaySearchResults(data) {
     }
 }
 
-// Helper function - clear the search result <li> elements from the search results list
-function clearSearchResults() {
-    while (searchResultsList.firstChild) {
-        searchResultsList.removeChild(searchResultsList.firstChild)
+// Helper function - clear all the children of a selected HTML element
+function removeAllElementChildren(item) {
+    while (item.firstChild) {
+        item.removeChild(item.firstChild)
     }
 }
 
@@ -143,7 +143,8 @@ async function fetchCurrentWeather(selectedResult) {
 
         .then (data => {
             console.log("CURRENT Weather response data:", data);
-            clearSearchResults();
+            removeAllElementChildren(searchResultsList);
+            removeAllElementChildren(currentWeatherWrapper)
             searchInputField.value = "";
             renderCurrentWeather(data, selectedResultName);
         })
