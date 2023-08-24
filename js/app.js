@@ -117,13 +117,6 @@ function getCurrent12HourTime() {
     return new12HourTime;
 }
 
-// Helper function - create an index based on the current hour (24-hour time)
-function createHourIndex() {
-    const newDate = new Date();
-    const currentHourIndex = newDate.getHours();
-    return currentHourIndex;
-}
-
 // Get current weather data (current and today's weather)
 async function fetchCurrentWeather(selectedResult) {
     console.log(selectedResult, "selected result")
@@ -135,7 +128,7 @@ async function fetchCurrentWeather(selectedResult) {
     // Location name (from geocoding API fetch)
     const selectedResultName = selectedResult.name + ", " + selectedResult.admin1;
     // Current weather data endpoint URL
-    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=temperature_2m,relativehumidity_2m,apparent_temperature,weathercode,windspeed_10m,winddirection_10m,precipitation_probability&daily=weathercode,temperature_2m_max,temperature_2m_min,apparent_temperature_max,apparent_temperature_min,uv_index_max,precipitation_sum,precipitation_probability_max&temperature_unit=fahrenheit&windspeed_unit=mph&precipitation_unit=inch&timeformat=unixtime&timezone=auto&forecast_days=1`;
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true&temperature_unit=fahrenheit&windspeed_unit=mph&precipitation_unit=inch&timeformat=unixtime&forecast_days=1&timezone=auto`
     
     fetch (url)
         .then (response => {
@@ -150,6 +143,8 @@ async function fetchCurrentWeather(selectedResult) {
 
         .then (data => {
             console.log("CURRENT Weather response data:", data);
+            clearSearchResults();
+            searchInputField.value = "";
             renderCurrentWeather(data, selectedResultName);
         })
 
@@ -161,10 +156,6 @@ async function fetchCurrentWeather(selectedResult) {
 
 
 function renderCurrentWeather(data, selectedName) {
-
-    // Create an index to be used when selecting hourly weather data
-    const newIndex = createHourIndex();
-    console.log("new index", newIndex)
 
     // Create UI layout elements
     const dataWrapper = document.createElement("div");
@@ -180,21 +171,16 @@ function renderCurrentWeather(data, selectedName) {
     const tempEl = document.createElement("p");
     const weathercodeEl = document.createElement("p");
     const apparentTempEl = document.createElement("p");
-    const humidityEl = document.createElement("p");
     const windEl = document.createElement("p");
-    const precipProbabilityEl = document.createElement("p");
 
     // Assign values to UI Data Elements
     locationNameEl.innerText = selectedName; // Pulls selected name from geocoding fetch selectedResult in fetchCurrentWeather()
     titleEl.innerText = "Current Weather";
     timeEl.innerText = getCurrent12HourTime(); // Returns new time in 12 hour format
     iconEl.setAttribute("src", "https://placehold.co/50x50"); // placeholder
-    tempEl.innerText = "Temperature:" + data.hourly.temperature_2m[newIndex];
-    weathercodeEl.innerText = "Weather Code:" + data.hourly.weathercode[newIndex];
-    apparentTempEl.innerText = "Feels Like:" + data.hourly.apparent_temperature[newIndex];
-    humidityEl.innerText = "Humidity %:" + data.hourly.relativehumidity_2m[newIndex];
-    windEl.innerText = "Wind Direction:" + data.hourly.winddirection_10m[newIndex] + " " + "Wind Speed:" + data.hourly.windspeed_10m[newIndex];
-    precipProbabilityEl.innerText = "Precipitation Probability:" + data.hourly.precipitation_probability[newIndex];
+    tempEl.innerText = "Temperature:" + data.current_weather.temperature;
+    weathercodeEl.innerText = "Weather Code:" + data.current_weather.weathercode;
+    windEl.innerText = "Wind Direction:" + data.current_weather.winddirection + " " + "Wind Speed:" + data.current_weather.windspeed;
 
     // Append items to UI Layout Elements and DOM
     currentWeatherWrapper.append(locationNameEl);
@@ -207,8 +193,6 @@ function renderCurrentWeather(data, selectedName) {
     leftCol.append(weathercodeEl);
     dataWrapper.append(rightCol);
     rightCol.append(apparentTempEl);
-    rightCol.append(humidityEl);
     rightCol.append(windEl);
-    rightCol.append(precipProbabilityEl);
     currentWeatherWrapper.append(dataWrapper);
 }
