@@ -20,9 +20,9 @@ searchInputField.addEventListener("keyup", () => {
     }
 })
 
-// Check if search input is active, if so show useCurrentLocationButton
+// Check if search input is active
 searchInputField.addEventListener("focus", () => {
-    useCurrentLocationButton.style.display = ""; // Reset button display property to default
+    useCurrentLocationButton.style.display = "";
 })
 
 // useCurrentLocationButton event listener
@@ -42,6 +42,12 @@ function userLocationSuccess(position) {
     // Call fetchCurrentWeather with the first param (the result the user would click on in displaySearchResults function)
     reverseGeocode(position.coords.latitude, position.coords.longitude);
     /* fetchCurrentWeather(null, position.coords.latitude, position.coords.longitude) */
+}
+
+// User location request failed
+function userLocationDenied(error) {
+    console.log(error);
+    console.log(error.message)
 }
 
 // Fetch location name based on coordinates retrieved from navigator API (useCurrentLocationButton)
@@ -73,12 +79,6 @@ async function reverseGeocode(lat, lon) {
         .catch (error => {
             console.error(error);
         })
-}
-
-// User location request failed
-function userLocationDenied(error) {
-    console.log(error);
-    console.log(error.message)
 }
 
 // Geocoding/fetch search results
@@ -241,7 +241,6 @@ async function fetchCurrentWeather(locationName, adminLevel1, lat, lon) {
 }
 
 function renderCurrentWeather(data, selectedName) {
-
     // Create UI layout elements
     const dataWrapper = document.createElement("div");
     const leftCol = document.createElement("div");
