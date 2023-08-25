@@ -62,6 +62,7 @@ async function reverseGeocode(lat, lon) {
         .then (data => {
             // Check if results were returned
             console.log("Reverse geocode data:", data);
+            console.log(data.results[0].components, "GEOCODE DATE FROM reverseGeocode")
             const locationName = processGeocodingLocationName(data.results[0].components); // Will need to add logic for if/when this field doesn't exist
             const adminLevel1 = processGeocodingAdminLevel1(data.results[0].components); // the first key value pair that is matched to the requirements is returned
             console.log(locationName, adminLevel1)
@@ -185,19 +186,23 @@ function getCurrent12HourTime() {
 
 // Helper function - process the returned geocoding data from "use current location button" - return values first value that matches requirements for adminLevel1
 function processGeocodingAdminLevel1(geocodingResults) {
+    console.log(geocodingResults, "GEOCODING RESULTS IN PROCESS BEFORE LOOPING");
     let validAdminLevel1 = null;
     for (const key in geocodingResults) {
         // check if there is a key and if it matches one of the defined values. If so, assign this value to validAdminLevel1
-        if (geocodingResults.hasOwnProperty(key) && key == "state") {
+        if (geocodingResults.hasOwnProperty(key) && key === "state") {
             validAdminLevel1 = geocodingResults[key];
+            console.log("State condition met:", validAdminLevel1);
             break;
         }
-        if (geocodingResults.hasOwnProperty(key) && key == "country") {
+        if (geocodingResults.hasOwnProperty(key) && key === "region") {
             validAdminLevel1 = geocodingResults[key];
+            console.log("Region condition met:", validAdminLevel1);
             break;
         }
-        if (geocodingResults.hasOwnProperty(key) && key == "region") {
+        if (geocodingResults.hasOwnProperty(key) && key === "country") {
             validAdminLevel1 = geocodingResults[key];
+            console.log("Country condition met:", validAdminLevel1);
             break;
         }
     }
