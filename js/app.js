@@ -62,9 +62,10 @@ async function reverseGeocode(lat, lon) {
         .then (data => {
             // Check if results were returned
             console.log("Reverse geocode data:", data);
-            console.log(data.results[0].components, "GEOCODE DATE FROM reverseGeocode")
-            const locationName = processGeocodingLocationName(data.results[0].components); // Will need to add logic for if/when this field doesn't exist
-            const adminLevel1 = processGeocodingAdminLevel1(data.results[0].components); // the first key value pair that is matched to the requirements is returned
+            console.log(data.results[0].components, "GEOCODE DATA FROM reverseGeocode")
+            const locationName = processGeocodingLocationName(data.results[0].components); // the pair of the first key that matches the requirements is returned   
+            const adminLevel1 = processGeocodingAdminLevel1(data.results[0].components); // the pair of the first key that matches the requirements is returned   
+
             console.log(locationName, adminLevel1)
             fetchCurrentWeather(locationName, adminLevel1, lat, lon)
         })
@@ -184,105 +185,34 @@ function getCurrent12HourTime() {
     return new12HourTime;
 }
 
-// Helper function - process the returned geocoding data from "use current location button" - return values first value that matches requirements for adminLevel1
-function processGeocodingAdminLevel1(geocodingResults) {
-    console.log(geocodingResults, "GEOCODING RESULTS IN PROCESS BEFORE LOOPING");
-    let validAdminLevel1 = null;
-    for (const key in geocodingResults) {
-        // check if there is a key and if it matches one of the defined values. If so, assign this value to validAdminLevel1
-        if (geocodingResults.hasOwnProperty(key) && key === "state") {
-            validAdminLevel1 = geocodingResults[key];
-            console.log("State condition met:", validAdminLevel1);
-            break;
-        }
-        if (geocodingResults.hasOwnProperty(key) && key === "region") {
-            validAdminLevel1 = geocodingResults[key];
-            console.log("Region condition met:", validAdminLevel1);
-            break;
-        }
-        if (geocodingResults.hasOwnProperty(key) && key === "country") {
-            validAdminLevel1 = geocodingResults[key];
-            console.log("Country condition met:", validAdminLevel1);
-            break;
-        }
-    }
-
-    if (validAdminLevel1 !== null) {
-        console.log("Valid data found", validAdminLevel1);
-        return validAdminLevel1;
-    } else {
-        console.log("no valid data found in object")
-    }
+// Helper function - process geocoding location results
+function processGeocodingLocationName(geocodingResults) {
+    // Check common expected results in specified order
+    const locationName = geocodingResults.city || geocodingResults.town || geocodingResults.country || geocodingResults.postcode || geocodingResults.neighbourhood || geocodingResults.suburb || geocodingResults.office || geocodingResults.municipality || geocodingResults.city_district || geocodingResults.state_district || null;
+    
+    return locationName
 }
 
-// Helper function - process the returned geocoding data from "use current location button" - return values first value that matches requirements for adminLevel1
-function processGeocodingLocationName(geocodingResults) {
-    let validLocationName = null;
-
-    for (const key in geocodingResults) {
-        // check if there is a key and if it matches one of the defined values. If so, assign this value to validAdminLevel1
-        if (geocodingResults.hasOwnProperty(key) && key == "city") {
-            validLocationName = geocodingResults[key];
-            break;
-        }
-        if (geocodingResults.hasOwnProperty(key) && key == "town") {
-            validLocationName = geocodingResults[key];
-            break;
-        }
-        if (geocodingResults.hasOwnProperty(key) && key == "county") {
-            validLocationName = geocodingResults[key];
-            break;
-        }
-        if (geocodingResults.hasOwnProperty(key) && key == "postcode") {
-            validLocationName = geocodingResults[key];
-            break;
-        }
-        if (geocodingResults.hasOwnProperty(key) && key == "neighbourhood") {
-            validLocationName = geocodingResults[key];
-            break;
-        }
-        if (geocodingResults.hasOwnProperty(key) && key == "suburb") {
-            validLocationName = geocodingResults[key];
-            break;
-        }
-        if (geocodingResults.hasOwnProperty(key) && key == "office") {
-            validLocationName = geocodingResults[key];
-            break;
-        }
-        if (geocodingResults.hasOwnProperty(key) && key == "municipality") {
-            validLocationName = geocodingResults[key];
-            break;
-        }
-        if (geocodingResults.hasOwnProperty(key) && key == "city_district") {
-            validLocationName = geocodingResults[key];
-            break;
-        }
-        if (geocodingResults.hasOwnProperty(key) && key == "state_district") {
-            validLocationName = geocodingResults[key];
-            break;
-        }
-    }
-
-    if (validLocationName !== null) {
-        console.log("Valid data found", validLocationName);
-        return validLocationName;
-    } else {
-        console.log("no valid data found in object")
-    }
+// Helper function - process geocoding administrative level results
+function processGeocodingAdminLevel1(geocodingResults) {
+    // Check common expected results in specified order
+    const adminLevel1 = geocodingResults.state || geocodingResults.country || geocodingResults.region || null;
+    return adminLevel1
 }
 
 // Get current weather data (current and today's weather)
 async function fetchCurrentWeather(locationName, adminLevel1, lat, lon) {
-    console.log(locationName, "selected result")
 
-    const selectedResultName = locationName + ", " + adminLevel1;
-    /* let selectedResultName; */
-    // Location name (from geocoding API fetch)
-    /* if (selectedResult === null) {
-        selectedResultName = "null";
-    } else {
-        selectedResultName = selectedResult.name + ", " + selectedResult.admin1;
-    } */
+    // Defined and check the result name for null values before 
+    let selectedResultName;
+    if (locationName !== null && adminLevel1 !== null) {
+        selectedResultName = locationName + ", " + adminLevel1
+    } else if (locationName !== null && adminLevel1 == null) {
+        selectedResultName = locationName;
+    } else if (locationName == null && adminLevel1 !== null) {
+        selectedResultName = adminLevel1;
+    }
+
     // Current weather data endpoint URL
     const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true&temperature_unit=fahrenheit&windspeed_unit=mph&precipitation_unit=inch&timeformat=unixtime&forecast_days=1&timezone=auto`
     
