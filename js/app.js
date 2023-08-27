@@ -1,9 +1,28 @@
 // Select UI Elements
 const searchInputField = document.querySelector("#search-input");
+const searchInputWrapper = document.querySelector("#search-input-wrapper");
+const searchResultsWrapper = document.querySelector("#search-results-wrapper")
 const searchResultsList = document.querySelector("#search-results-list");
 const currentWeatherWrapper = document.querySelector("#current-weather-wrapper");
 const useCurrentLocationButton = document.querySelector("#current-location-button");
-useCurrentLocationButton.style.display = "none"; // Hide button by default
+
+// Handle showing and hiding the search results when the field is/isn't active
+document.addEventListener("click", () => {
+    if (document.activeElement == searchInputField) {
+        console.log("input wrapper is active");
+        searchResultsWrapper.style.display = ""
+    } else {
+        console.log("input wrapper not active")
+        searchResultsWrapper.style.display = "none"
+    }
+});
+
+// Clear search results list when field is focused if it has an empty value
+searchInputField.addEventListener("focus", () => {
+    if (searchInputField.value.trim() === 0) {
+        removeAllElementChildren(searchResultsList)
+    }
+})
 
 // Search input event listener
 searchInputField.addEventListener("keyup", () => {
@@ -18,11 +37,6 @@ searchInputField.addEventListener("keyup", () => {
     if (searchInputField.value.length < 2) {
         removeAllElementChildren(searchResultsList);
     }
-})
-
-// Check if search input is active
-searchInputField.addEventListener("focus", () => {
-    useCurrentLocationButton.style.display = "";
 })
 
 // useCurrentLocationButton event listener
