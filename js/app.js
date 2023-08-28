@@ -8,35 +8,7 @@ const useCurrentLocationButton = document.querySelector("#current-location-butto
 const quickSearchWrapper = document.querySelector("#quick-search-wrapper"); // The element that holds the quick search buttons
 const forecastWeatherWrapper = document.querySelector("#forecast-weather-wrapper");
 
-// Quick search location latitudes and longitudes
-const quickSearchItems = [
-    {
-        "city": "Los Angeles",
-        "state": "California",
-        "lat": "34.0522",
-        "lon": "-118.2437"
-    },
-    {
-        "city": "Denver",
-        "state": "Colorado",
-        "lat": "39.7392",
-        "lon": "-104.9847"
-    },
-    {
-        "city": "Chicago",
-        "state": "Illinois",
-        "lat": "41.85",
-        "lon": "-87.65"
-    },
-    {
-        "city": "New York City",
-        "state": "New York",
-        "lat": "40.7143",
-        "lon": "-74.006"
-    },
-];
-
-document.addEventListener("DOMContentLoaded", fetchQuickSearchButtonData(quickSearchItems));
+document.addEventListener("DOMContentLoaded", fetchQuickSearchButtonData());
 
 // Handle showing and hiding the search results when the field is/isn't active
 document.addEventListener("click", () => {
@@ -103,7 +75,7 @@ async function reverseGeocode(lat, lon) {
     fetch (url)
         .then(response => {
             // check response status
-            if (!response.ok) {
+            if (!response.ok) { 
                 throw new Error ("Error fetching Open Cage Data")
             }
 
@@ -332,7 +304,34 @@ function renderCurrentWeather(data, selectedName) {
 }
 
 // Fetch the data for the quick search buttons
-async function fetchQuickSearchButtonData(quickSearchItems) {
+async function fetchQuickSearchButtonData() {
+    // Quick search location latitudes and longitudes
+    const quickSearchItems = [
+        {
+            "city": "Los Angeles",
+            "state": "California",
+            "lat": "34.0522",
+            "lon": "-118.2437"
+        },
+        {
+            "city": "Denver",
+            "state": "Colorado",
+            "lat": "39.7392",
+            "lon": "-104.9847"
+        },
+        {
+            "city": "Chicago",
+            "state": "Illinois",
+            "lat": "41.85",
+            "lon": "-87.65"
+        },
+        {
+            "city": "New York City",
+            "state": "New York",
+            "lat": "40.7143",
+            "lon": "-74.006"
+        },
+    ];
     for (let i = 0; i < quickSearchItems.length; i++) {
 
         const lat = quickSearchItems[i].lat;
