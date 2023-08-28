@@ -6,6 +6,7 @@ const searchResultsList = document.querySelector("#search-results-list");
 const currentWeatherWrapper = document.querySelector("#current-weather-wrapper");
 const useCurrentLocationButton = document.querySelector("#current-location-button");
 const quickSearchWrapper = document.querySelector("#quick-search-wrapper"); // The element that holds the quick search buttons
+const forecastWeatherWrapper = document.querySelector("#forecast-weather-wrapper");
 
 // Quick search location latitudes and longitudes
 const quickSearchItems = [
@@ -372,14 +373,17 @@ function createViewForecastButton(lat, lon) {
     currentWeatherWrapper.append(viewForecastButton);
 
     viewForecastButton.addEventListener("click", () => {
-        viewForecast(lat, lon);
+        fetchForecastData(lat, lon);
     })
 }
 
-async function viewForecast(lat, lon) {
+// Fetch the forecast data for the current location
+async function fetchForecastData(lat, lon) {
+    // How many days of forecast weather to fetch:
+    const daysNum = 7;
     // Forecast endpoint for current location based on lat/lon of the "Current Weather"
-    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=temperature_2m,apparent_temperature,precipitation_probability,weathercode,windspeed_10m,winddirection_10m&temperature_unit=fahrenheit&windspeed_unit=mph&precipitation_unit=inch&timeformat=unixtime&timezone=auto`
-    
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}2&longitude=${lon}&hourly=temperature_2m,apparent_temperature,precipitation_probability,weathercode,windspeed_10m,winddirection_10m&temperature_unit=fahrenheit&windspeed_unit=mph&precipitation_unit=inch&timezone=auto&forecast_days=${daysNum}`;
+
     fetch (url)
         .then (response => {
             // check response status
@@ -392,10 +396,105 @@ async function viewForecast(lat, lon) {
         })
 
         .then (data => {
-            console.log("FORECAST data for current location", data);
+            sortForecastWeatherData(data)
         })
 
         .catch (error => {
             console.error("Error fetching FORECAST weather data:", error)
         })
+}
+
+// Temp, weather code, feels like, wind direction, wind speed, precipitation percent
+
+// Render the forecast data for the current location
+function sortForecastWeatherData(data) {
+    // Variables to hold each forecast day's weather
+    const dayOne = [];
+    const dayTwo = [];
+    const dayThree = [];
+    const dayFour = [];
+    const dayFive = [];
+    const daySix = [];
+    const daySeven = [];
+
+    // Loop through and save one day's weather to the variables above
+    for (let i = 0; i < 169; i++) {
+        if (i < 24) {
+            dayOne.push({
+                "apparent_temp": data.hourly.apparent_temperature[i],
+                "precip_prob": data.hourly.precipitation_probability[i],
+                "temp": data.hourly.temperature_2m[i],
+                "weathercode": data.hourly.weathercode[i],
+                "wind_direction": data.hourly.winddirection_10m[i],
+                "windspeed": data.hourly.windspeed_10m[i],
+                "time": data.hourly.time[i]
+            });
+        }
+        if (i > 24 && i <= 48) {
+            dayTwo.push({
+                "apparent_temp": data.hourly.apparent_temperature[i],
+                "precip_prob": data.hourly.precipitation_probability[i],
+                "temp": data.hourly.temperature_2m[i],
+                "weathercode": data.hourly.weathercode[i],
+                "wind_direction": data.hourly.winddirection_10m[i],
+                "windspeed": data.hourly.windspeed_10m[i],
+                "time": data.hourly.time[i]
+            });
+        }
+        if (i > 48 && i <= 72) {
+            dayThree.push({
+                "apparent_temp": data.hourly.apparent_temperature[i],
+                "precip_prob": data.hourly.precipitation_probability[i],
+                "temp": data.hourly.temperature_2m[i],
+                "weathercode": data.hourly.weathercode[i],
+                "wind_direction": data.hourly.winddirection_10m[i],
+                "windspeed": data.hourly.windspeed_10m[i],
+                "time": data.hourly.time[i]
+            });
+        }
+        if (i > 72 && i <= 96) {
+            dayFour.push({
+                "apparent_temp": data.hourly.apparent_temperature[i],
+                "precip_prob": data.hourly.precipitation_probability[i],
+                "temp": data.hourly.temperature_2m[i],
+                "weathercode": data.hourly.weathercode[i],
+                "wind_direction": data.hourly.winddirection_10m[i],
+                "windspeed": data.hourly.windspeed_10m[i],
+                "time": data.hourly.time[i]
+            });
+        }
+        if (i > 96 && i <= 120) {
+            dayFive.push({
+                "apparent_temp": data.hourly.apparent_temperature[i],
+                "precip_prob": data.hourly.precipitation_probability[i],
+                "temp": data.hourly.temperature_2m[i],
+                "weathercode": data.hourly.weathercode[i],
+                "wind_direction": data.hourly.winddirection_10m[i],
+                "windspeed": data.hourly.windspeed_10m[i],
+                "time": data.hourly.time[i]
+            });
+        }
+        if (i > 120 && i <= 144) {
+            daySix.push({
+                "apparent_temp": data.hourly.apparent_temperature[i],
+                "precip_prob": data.hourly.precipitation_probability[i],
+                "temp": data.hourly.temperature_2m[i],
+                "weathercode": data.hourly.weathercode[i],
+                "wind_direction": data.hourly.winddirection_10m[i],
+                "windspeed": data.hourly.windspeed_10m[i],
+                "time": data.hourly.time[i]
+            });
+        }
+        if (i > 144 && i <= 168) {
+            daySeven.push({
+                "apparent_temp": data.hourly.apparent_temperature[i],
+                "precip_prob": data.hourly.precipitation_probability[i],
+                "temp": data.hourly.temperature_2m[i],
+                "weathercode": data.hourly.weathercode[i],
+                "wind_direction": data.hourly.winddirection_10m[i],
+                "windspeed": data.hourly.windspeed_10m[i],
+                "time": data.hourly.time[i]
+            });
+        }
+    }
 }
