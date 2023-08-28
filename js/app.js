@@ -40,10 +40,10 @@ document.addEventListener("DOMContentLoaded", fetchQuickSearchButtonData(quickSe
 // Handle showing and hiding the search results when the field is/isn't active
 document.addEventListener("click", () => {
     if (document.activeElement == searchInputField) {
-        console.log("input wrapper is active");
+        /* console.log("input wrapper is active"); */
         searchResultsWrapper.style.display = ""
     } else {
-        console.log("input wrapper not active")
+        /* console.log("input wrapper not active") */
         searchResultsWrapper.style.display = "none"
     }
 });
@@ -82,8 +82,8 @@ function requestUserLocation() {
 
 // User location request success
 function userLocationSuccess(position) {
-    console.log(position)
-    console.log(position.coords.latitude, position.coords.longitude);
+    /* console.log(position)
+    console.log(position.coords.latitude, position.coords.longitude); */
     // Call fetchCurrentWeather with the first param (the result the user would click on in displaySearchResults function)
     reverseGeocode(position.coords.latitude, position.coords.longitude);
     /* fetchCurrentWeather(null, position.coords.latitude, position.coords.longitude) */
@@ -112,12 +112,11 @@ async function reverseGeocode(lat, lon) {
 
         .then (data => {
             // Check if results were returned
-            console.log("Reverse geocode data:", data);
-            console.log(data.results[0].components, "GEOCODE DATA FROM reverseGeocode")
+            /* console.log(data.results[0].components, "GEOCODE DATA FROM reverseGeocode") */
             const locationName = processGeocodingLocationName(data.results[0].components); // the pair of the first key that matches the requirements is returned   
             const adminLevel1 = processGeocodingAdminLevel1(data.results[0].components); // the pair of the first key that matches the requirements is returned   
 
-            console.log(locationName, adminLevel1)
+            /* console.log(locationName, adminLevel1) */
             fetchCurrentWeather(locationName, adminLevel1, lat, lon)
         })
 
@@ -145,7 +144,7 @@ async function fetchSearchResults(userInput) {
         .then (data => {    
             // Check if results were returned before trying to display them
             if (data?.results?.length) {
-                console.log("Search results response data:", data);
+                /* console.log("Search results response data:", data); */
                 displaySearchResults(data)
             } else {
                 // If there are no search results clear container (this prevents previous results from showing if characters that don't match are added to search string)
@@ -273,7 +272,7 @@ async function fetchCurrentWeather(locationName, adminLevel1, lat, lon) {
         })
 
         .then (data => {
-            console.log("CURRENT Weather response data:", data);
+            /* console.log("CURRENT Weather response data:", data); */
             removeAllElementChildren(searchResultsList);
             removeAllElementChildren(currentWeatherWrapper)
             searchInputField.value = "";
@@ -324,6 +323,11 @@ function renderCurrentWeather(data, selectedName) {
     rightCol.append(apparentTempEl);
     rightCol.append(windEl);
     currentWeatherWrapper.append(dataWrapper);
+
+    // Add the button to view the forecast for current location
+    createViewForecastButton(data.latitude, data.longitude);
+
+    console.log("data after renderCurrentWeather", data)
 }
 
 // Fetch the data for the quick search buttons
@@ -333,7 +337,7 @@ async function fetchQuickSearchButtonData(quickSearchItems) {
         const lat = quickSearchItems[i].lat;
         const lon = quickSearchItems[i].lon;
 
-        console.log(lat, "lat in fetchQuickSearch")
+        /* console.log(lat, "lat in fetchQuickSearch") */
 
         // Current weather data endpoint URL
         const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true&temperature_unit=fahrenheit&timeformat=unixtime&forecast_days=1&timezone=auto`;
@@ -350,7 +354,7 @@ async function fetchQuickSearchButtonData(quickSearchItems) {
             })
 
             .then (data => {
-                console.log("Quick search Weather response data:", data);
+                /* console.log("Quick search Weather response data:", data); */
                 const currentButton = quickSearchWrapper.children[i];
                 const currentQuickTemp = currentButton.querySelector(".quick-temp");
                 currentQuickTemp.innerText = data.current_weather.temperature;
@@ -360,4 +364,38 @@ async function fetchQuickSearchButtonData(quickSearchItems) {
                 console.error("Error fetching quick search weather data:", error)
             })
     }
+}
+
+function createViewForecastButton(lat, lon) {
+    const viewForecastButton = document.createElement("button");
+    viewForecastButton.innerText = "View 7-Day Forecast";
+    currentWeatherWrapper.append(viewForecastButton);
+
+    viewForecastButton.addEventListener("click", () => {
+        viewForecast(lat, lon);
+    })
+}
+
+async function viewForecast(lat, lon) {
+    // Forecast endpoint for current location based on lat/lon of the "Current Weather"
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=temperature_2m,apparent_temperature,precipitation_probability,weathercode,windspeed_10m,winddirection_10m&temperature_unit=fahrenheit&windspeed_unit=mph&precipitation_unit=inch&timeformat=unixtime&timezone=auto`
+    
+    fetch (url)
+        .then (response => {
+            // check response status
+            if (!response.ok) {
+                throw new Error ("Error fetching CURRENT weather data")
+            }
+
+            // Return promise
+            return response.json()
+        })
+
+        .then (data => {
+            console.log("FORECAST data for current location", data);
+        })
+
+        .catch (error => {
+            console.error("Error fetching FORECAST weather data:", error)
+        })
 }
