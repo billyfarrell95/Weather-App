@@ -57,9 +57,7 @@ function requestUserLocation() {
 function userLocationSuccess(position) {
     /* console.log(position)
     console.log(position.coords.latitude, position.coords.longitude); */
-    // Call fetchCurrentWeather with the first param (the result the user would click on in displaySearchResults function)
     reverseGeocode(position.coords.latitude, position.coords.longitude);
-    /* fetchCurrentWeather(null, position.coords.latitude, position.coords.longitude) */
 }
 
 // User location request failed
@@ -257,6 +255,45 @@ async function fetchCurrentWeather(locationName, adminLevel1, lat, lon) {
         })
 }
 
+// Get current weather data (current and today's weather)
+async function fetchQuickSearchWeather(locationName, adminLevel1, lat, lon) {
+
+    // Defined and check the result name for null values before 
+    let selectedResultName;
+    if (locationName !== null && adminLevel1 !== null) {
+        selectedResultName = locationName + ", " + adminLevel1
+    } else if (locationName !== null && adminLevel1 == null) {
+        selectedResultName = locationName;
+    } else if (locationName == null && adminLevel1 !== null) {
+        selectedResultName = adminLevel1;
+    }
+
+    // Current weather data endpoint URL
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true&temperature_unit=fahrenheit&windspeed_unit=mph&precipitation_unit=inch&timeformat=unixtime&forecast_days=1&timezone=auto`
+    
+    fetch (url)
+        .then (response => {
+            // check response status
+            if (!response.ok) {
+                throw new Error ("Error fetching CURRENT weather data")
+            }
+
+            // Return promise
+            return response.json()
+        })
+
+        .then (data => {
+            /* console.log("CURRENT Weather response data:", data); */
+            removeAllElementChildren(currentWeatherWrapper)
+            searchInputField.value = "";
+            renderCurrentWeather(data, selectedResultName);
+        })
+
+        .catch (error => {
+            console.error("Error fetching CURRENT weather data:", error)
+        })
+}
+
 function renderCurrentWeather(data, selectedName) {
     // Create UI layout elements
     const dataWrapper = document.createElement("div");
@@ -342,6 +379,16 @@ async function fetchQuickSearchButtonData() {
         // Current weather data endpoint URL
         const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true&temperature_unit=fahrenheit&timeformat=unixtime&forecast_days=1&timezone=auto`;
         
+        // Select each quick search button/temp when looping through parent element
+        const currentButton = quickSearchWrapper.children[i];
+        const currentQuickTemp = currentButton.querySelector(".quick-temp");
+
+        // Add event listener to each quick search button / pass data to fetchQuickSearchWeather 
+        currentButton.addEventListener("click", () => {
+            // Params expected: locationName, adminLevel1, lat, lon
+            fetchQuickSearchWeather(quickSearchItems[i].city, quickSearchItems[i].state, lat, lon)
+        })
+
         fetch (url)
             .then (response => {
                 // check response status
@@ -355,8 +402,6 @@ async function fetchQuickSearchButtonData() {
 
             .then (data => {
                 /* console.log("Quick search Weather response data:", data); */
-                const currentButton = quickSearchWrapper.children[i];
-                const currentQuickTemp = currentButton.querySelector(".quick-temp");
                 currentQuickTemp.innerText = data.current_weather.temperature;
             })
 
