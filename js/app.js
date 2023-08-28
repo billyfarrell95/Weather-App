@@ -448,8 +448,6 @@ async function fetchForecastData(lat, lon) {
         })
 }
 
-// Temp, weather code, feels like, wind direction, wind speed, precipitation percent
-
 // Render the forecast data for the current location
 function sortForecastWeatherData(data) {
     // Variables to hold each forecast day's weather
