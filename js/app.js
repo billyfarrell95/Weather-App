@@ -5,6 +5,37 @@ const searchResultsWrapper = document.querySelector("#search-results-wrapper")
 const searchResultsList = document.querySelector("#search-results-list");
 const currentWeatherWrapper = document.querySelector("#current-weather-wrapper");
 const useCurrentLocationButton = document.querySelector("#current-location-button");
+const quickSearchWrapper = document.querySelector("#quick-search-wrapper"); // The element that holds the quick search buttons
+
+// Quick search location latitudes and longitudes
+const quickSearchItems = [
+    {
+        "city": "Los Angeles",
+        "state": "California",
+        "lat": "34.0522",
+        "lon": "-118.2437"
+    },
+    {
+        "city": "Denver",
+        "state": "Colorado",
+        "lat": "39.7392",
+        "lon": "-104.9847"
+    },
+    {
+        "city": "Chicago",
+        "state": "Illinois",
+        "lat": "41.85",
+        "lon": "-87.65"
+    },
+    {
+        "city": "New York City",
+        "state": "New York",
+        "lat": "40.7143",
+        "lon": "-74.006"
+    },
+];
+
+document.addEventListener("DOMContentLoaded", fetchQuickSearchButtonData(quickSearchItems));
 
 // Handle showing and hiding the search results when the field is/isn't active
 document.addEventListener("click", () => {
@@ -293,4 +324,40 @@ function renderCurrentWeather(data, selectedName) {
     rightCol.append(apparentTempEl);
     rightCol.append(windEl);
     currentWeatherWrapper.append(dataWrapper);
+}
+
+// Fetch the data for the quick search buttons
+async function fetchQuickSearchButtonData(quickSearchItems) {
+    for (let i = 0; i < quickSearchItems.length; i++) {
+
+        const lat = quickSearchItems[i].lat;
+        const lon = quickSearchItems[i].lon;
+
+        console.log(lat, "lat in fetchQuickSearch")
+
+        // Current weather data endpoint URL
+        const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true&temperature_unit=fahrenheit&timeformat=unixtime&forecast_days=1&timezone=auto`;
+        
+        fetch (url)
+            .then (response => {
+                // check response status
+                if (!response.ok) {
+                    throw new Error ("Error fetching quick search weather data for", quickSearchItems[i].city)
+                }
+
+                // Return promise
+                return response.json()
+            })
+
+            .then (data => {
+                console.log("Quick search Weather response data:", data);
+                const currentButton = quickSearchWrapper.children[i];
+                const currentQuickTemp = currentButton.querySelector(".quick-temp");
+                currentQuickTemp.innerText = data.current_weather.temperature;
+            })
+
+            .catch (error => {
+                console.error("Error fetching quick search weather data:", error)
+            })
+    }
 }
