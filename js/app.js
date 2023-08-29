@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", fetchQuickSearchButtonData());
 document.addEventListener("click", () => {
     if (document.activeElement == searchInputField) {
         /* console.log("input wrapper is active"); */
-        searchResultsWrapper.style.display = ""
+        searchResultsWrapper.style.display = "";
     } else {
         /* console.log("input wrapper not active") */
         searchResultsWrapper.style.display = "none"
@@ -137,6 +137,7 @@ function displaySearchResults(data) {
     for (let i = 0; i < data.results.length; i++) {
         
         const newResultLi = document.createElement("li"); // New search result item
+        newResultLi.setAttribute("tabindex", i)
         /* const newResult = data.results[i]; // Save the current new result (to pass to fetch function, if clicked) */
         const locationName = data.results[i].name; // Select the location name and pass to fetchCurrentWeather
         const adminLevel1 = data.results[i].admin1; // Select the 1st hierarchical admin area (state, etc)
