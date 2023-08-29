@@ -25,3 +25,12 @@
 .search-results-list li:hover {
     background-color: #f4f4f4;
 }
+
+.forecast-list {
+    display: flex;
+    gap: 1.5rem;
+}
+
+.forecast-list-wrapper {
+    border: 1px solid black;
+}

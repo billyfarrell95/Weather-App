@@ -26,7 +26,7 @@ searchInputField.addEventListener("focus", () => {
     if (searchInputField.value.trim() === 0) {
         removeAllElementChildren(searchResultsList)
     }
-})
+});
 
 // Search input event listener
 searchInputField.addEventListener("keyup", () => {
@@ -200,6 +200,27 @@ function getCurrent12HourTime() {
     
     return new12HourTime;
 }
+
+// Helper function - Convert Unix timestamp to 12 hour time
+/* function convertUnixTimestampTo12HourFormat(unixTimestamp) {
+    // Create a new Date object from the Unix timestamp (in milliseconds)
+    const date = new Date(unixTimestamp * 1000);
+
+    // Get hours, minutes, and seconds from the Date object
+    const hours = date.getHours();
+    const minutes = date.getMinutes();
+
+    // Check whether AM or PM
+    let ampm = hours >= 12 ? "PM": "AM";
+
+    // Convert hours to 12-hour format
+    const twelveHourFormatHours = hours % 12 || 12; // Handle midnight (0) as 12 AM
+
+    // Format the time in 12-hour format
+    const formattedTime = `${twelveHourFormatHours}:${minutes.toString().padStart(2, '0')} ${ampm}`;
+
+    return formattedTime;
+} */
 
 // Helper function - process geocoding location results
 function processGeocodingLocationName(geocodingResults) {
@@ -429,6 +450,9 @@ async function fetchForecastData(lat, lon) {
     // Forecast endpoint for current location based on lat/lon of the "Current Weather"
     const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}2&longitude=${lon}&hourly=temperature_2m,apparent_temperature,precipitation_probability,weathercode,windspeed_10m,winddirection_10m&temperature_unit=fahrenheit&windspeed_unit=mph&precipitation_unit=inch&timezone=auto&forecast_days=${daysNum}`;
 
+    // Unix time:
+    /* const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}2&longitude=${lon}&hourly=temperature_2m,apparent_temperature,precipitation_probability,weathercode,windspeed_10m,winddirection_10m&temperature_unit=fahrenheit&windspeed_unit=mph&precipitation_unit=inch&timezone=auto&timeformat=unixtime&forecast_days=${daysNum}`; */
+
     fetch (url)
         .then (response => {
             // check response status
@@ -442,6 +466,7 @@ async function fetchForecastData(lat, lon) {
 
         .then (data => {
             sortForecastWeatherData(data)
+            console.log(data)
         })
 
         .catch (error => {
@@ -540,4 +565,57 @@ function sortForecastWeatherData(data) {
             });
         }
     }
+
+    const allForecastData = [dayOne, dayTwo, dayThree, dayFour, dayFive, daySix, daySeven];
+
+    // Render the forecast data
+    /* renderForecastData(dayOne, dayTwo, dayThree, dayFour, dayFive, daySix, daySeven) */
+    allForecastData.forEach((dayData) => {
+        renderForecastData(dayData)
+    })
+}
+
+// Render the data to the DOM
+function renderForecastData(dayData) {
+    /* const today = new Date();
+    const currentHourIndex = today.getHours(); */
+    const listWrapper = document.createElement("div");
+    listWrapper.classList.add("forecast-list-wrapper");
+    /* console.log("dayData in renderForecastData", dayData) */
+
+    const properties = Object.keys(dayData);
+
+    /* console.log("properties", properties) */
+
+    properties.forEach((property) => {
+        const newList = document.createElement("ul");
+        newList.classList.add("forecast-list");
+        const timeLi = document.createElement("li");
+        timeLi.style.fontWeight = "bold";
+        const apparentTempLi = document.createElement("li");
+        const precipProbLi = document.createElement("li");
+        const tempLi = document.createElement("li");
+        const weatherCodeLi = document.createElement("li");
+        const windDirectionLi = document.createElement("li");
+        const windSpeedLi = document.createElement("li");
+        timeLi.innerText = dayData[property].time;
+        // Unix time:
+        /* timeLi.innerText = convertUnixTimestampTo12HourFormat(dayData[property].time); */
+        apparentTempLi.innerText = dayData[property].apparent_temp;
+        precipProbLi.innerText = dayData[property].precip_prob;
+        tempLi.innerText = dayData[property].temp;
+        weatherCodeLi.innerText = dayData[property].weathercode;
+        windDirectionLi.innerText = dayData[property].wind_direction;
+        windSpeedLi.innerText = dayData[property].windspeed;
+        newList.append(timeLi);
+        newList.append(apparentTempLi);
+        newList.append(precipProbLi);
+        newList.append(tempLi);
+        newList.append(weatherCodeLi);
+        newList.append(windDirectionLi);
+        newList.append(windSpeedLi);
+        listWrapper.append(newList)
+    });
+
+    forecastWeatherWrapper.append(listWrapper);
 }
