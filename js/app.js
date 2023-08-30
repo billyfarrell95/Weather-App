@@ -202,25 +202,21 @@ function getCurrent12HourTime() {
 }
 
 // Helper function - Convert Unix timestamp to 12 hour time
-/* function convertUnixTimestampTo12HourFormat(unixTimestamp) {
+function convertUnixTimestampTo12HourFormat(unixTimestamp, timezone) {
     // Create a new Date object from the Unix timestamp (in milliseconds)
     const date = new Date(unixTimestamp * 1000);
+    console.log(timezone)
+    // Format time
+    const formattedTime = date.toLocaleString("en-US", {
+        hour: "numeric",
+        minute: "numeric",
+        hour12: true,
+        timeZone: timezone, // the timezone of the location the user is viewing
 
-    // Get hours, minutes, and seconds from the Date object
-    const hours = date.getHours();
-    const minutes = date.getMinutes();
-
-    // Check whether AM or PM
-    let ampm = hours >= 12 ? "PM": "AM";
-
-    // Convert hours to 12-hour format
-    const twelveHourFormatHours = hours % 12 || 12; // Handle midnight (0) as 12 AM
-
-    // Format the time in 12-hour format
-    const formattedTime = `${twelveHourFormatHours}:${minutes.toString().padStart(2, '0')} ${ampm}`;
+    });
 
     return formattedTime;
-} */
+}
 
 // Helper function - process geocoding location results
 function processGeocodingLocationName(geocodingResults) {
@@ -448,10 +444,8 @@ async function fetchForecastData(lat, lon) {
     // How many days of forecast weather to fetch:
     const daysNum = 7;
     // Forecast endpoint for current location based on lat/lon of the "Current Weather"
-    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}2&longitude=${lon}&hourly=temperature_2m,apparent_temperature,precipitation_probability,weathercode,windspeed_10m,winddirection_10m&temperature_unit=fahrenheit&windspeed_unit=mph&precipitation_unit=inch&timezone=auto&forecast_days=${daysNum}`;
-
     // Unix time:
-    /* const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}2&longitude=${lon}&hourly=temperature_2m,apparent_temperature,precipitation_probability,weathercode,windspeed_10m,winddirection_10m&temperature_unit=fahrenheit&windspeed_unit=mph&precipitation_unit=inch&timezone=auto&timeformat=unixtime&forecast_days=${daysNum}`; */
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}2&longitude=${lon}&hourly=temperature_2m,apparent_temperature,precipitation_probability,weathercode,windspeed_10m,winddirection_10m&temperature_unit=fahrenheit&windspeed_unit=mph&precipitation_unit=inch&timezone=auto&timeformat=unixtime&forecast_days=${daysNum}`;
 
     fetch (url)
         .then (response => {
@@ -476,18 +470,19 @@ async function fetchForecastData(lat, lon) {
 
 // Render the forecast data for the current location
 function sortForecastWeatherData(data) {
+    console.log(data)
     // Variables to hold each forecast day's weather
-    const dayOne = [];
-    const dayTwo = [];
-    const dayThree = [];
-    const dayFour = [];
-    const dayFive = [];
-    const daySix = [];
-    const daySeven = [];
+    let dayOne = [];
+    let dayTwo = [];
+    let dayThree = [];
+    let dayFour = [];
+    let dayFive = [];
+    let daySix = [];
+    let daySeven = [];
 
     // Loop through and save one day's weather to the variables above
-    for (let i = 0; i < 169; i++) {
-        if (i < 24) {
+    for (let i = 0; i < 168; i++) {
+        if (i <= 23) {
             dayOne.push({
                 "apparent_temp": data.hourly.apparent_temperature[i],
                 "precip_prob": data.hourly.precipitation_probability[i],
@@ -498,7 +493,7 @@ function sortForecastWeatherData(data) {
                 "time": data.hourly.time[i]
             });
         }
-        if (i > 24 && i <= 48) {
+        if (i > 23 && i <= 47) {
             dayTwo.push({
                 "apparent_temp": data.hourly.apparent_temperature[i],
                 "precip_prob": data.hourly.precipitation_probability[i],
@@ -509,7 +504,7 @@ function sortForecastWeatherData(data) {
                 "time": data.hourly.time[i]
             });
         }
-        if (i > 48 && i <= 72) {
+        if (i > 47 && i <= 71) {
             dayThree.push({
                 "apparent_temp": data.hourly.apparent_temperature[i],
                 "precip_prob": data.hourly.precipitation_probability[i],
@@ -520,7 +515,7 @@ function sortForecastWeatherData(data) {
                 "time": data.hourly.time[i]
             });
         }
-        if (i > 72 && i <= 96) {
+        if (i > 71 && i <= 95) {
             dayFour.push({
                 "apparent_temp": data.hourly.apparent_temperature[i],
                 "precip_prob": data.hourly.precipitation_probability[i],
@@ -531,7 +526,7 @@ function sortForecastWeatherData(data) {
                 "time": data.hourly.time[i]
             });
         }
-        if (i > 96 && i <= 120) {
+        if (i > 95 && i <= 119) {
             dayFive.push({
                 "apparent_temp": data.hourly.apparent_temperature[i],
                 "precip_prob": data.hourly.precipitation_probability[i],
@@ -542,7 +537,7 @@ function sortForecastWeatherData(data) {
                 "time": data.hourly.time[i]
             });
         }
-        if (i > 120 && i <= 144) {
+        if (i > 119 && i <= 143) {
             daySix.push({
                 "apparent_temp": data.hourly.apparent_temperature[i],
                 "precip_prob": data.hourly.precipitation_probability[i],
@@ -553,7 +548,7 @@ function sortForecastWeatherData(data) {
                 "time": data.hourly.time[i]
             });
         }
-        if (i > 144 && i <= 168) {
+        if (i > 143) {
             daySeven.push({
                 "apparent_temp": data.hourly.apparent_temperature[i],
                 "precip_prob": data.hourly.precipitation_probability[i],
@@ -566,26 +561,33 @@ function sortForecastWeatherData(data) {
         }
     }
 
+    // Create an index based on user's timezone to use when filtering passed hours on current day hourlry weather
+    /* const currentHourIndex = new Date().getHours(); */
+
+    // Calculate the current day based on user's timezone offset
+    const now = new Date();
+    console.log("NOW", now)
+    now.setSeconds(now.getSeconds() + data.utc_offset_seconds);
+
+    // Calculate the current hour index based on the user's timezone offset
+    const currentHourIndex = now.getUTCHours();
+
+    dayOne = dayOne.filter((_, index) => index > currentHourIndex);
     const allForecastData = [dayOne, dayTwo, dayThree, dayFour, dayFive, daySix, daySeven];
 
     // Render the forecast data
-    /* renderForecastData(dayOne, dayTwo, dayThree, dayFour, dayFive, daySix, daySeven) */
     allForecastData.forEach((dayData) => {
-        renderForecastData(dayData)
+        renderForecastData(dayData, data.timezone) 
     })
 }
 
 // Render the data to the DOM
-function renderForecastData(dayData) {
-    /* const today = new Date();
-    const currentHourIndex = today.getHours(); */
+function renderForecastData(dayData, timezone) {
     const listWrapper = document.createElement("div");
     listWrapper.classList.add("forecast-list-wrapper");
-    /* console.log("dayData in renderForecastData", dayData) */
+    console.log("dayData in renderForecastData", dayData)
 
     const properties = Object.keys(dayData);
-
-    /* console.log("properties", properties) */
 
     properties.forEach((property) => {
         const newList = document.createElement("ul");
@@ -598,9 +600,8 @@ function renderForecastData(dayData) {
         const weatherCodeLi = document.createElement("li");
         const windDirectionLi = document.createElement("li");
         const windSpeedLi = document.createElement("li");
-        timeLi.innerText = dayData[property].time;
         // Unix time:
-        /* timeLi.innerText = convertUnixTimestampTo12HourFormat(dayData[property].time); */
+        timeLi.innerText = convertUnixTimestampTo12HourFormat(dayData[property].time, timezone);
         apparentTempLi.innerText = dayData[property].apparent_temp;
         precipProbLi.innerText = dayData[property].precip_prob;
         tempLi.innerText = dayData[property].temp;
