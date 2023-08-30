@@ -211,7 +211,7 @@ function convertUnixTimestampTo12HourFormat(unixTimestamp, timezone) {
         hour: "numeric",
         minute: "numeric",
         hour12: true,
-        timeZone: timezone, // the timezone of the location the user is viewing
+        timeZone: timezone, // the timezone of the location the user is viewing (pulled from the API response)
 
     });
 
