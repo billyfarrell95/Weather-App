@@ -135,19 +135,20 @@ function displaySearchResults(data) {
 
     // Loop through results
     for (let i = 0; i < data.results.length; i++) {
-        
+        console.log(data, "data in display search results")
         const newResultLi = document.createElement("li"); // New search result item
         newResultLi.setAttribute("tabindex", i)
-        /* const newResult = data.results[i]; // Save the current new result (to pass to fetch function, if clicked) */
+        /* console.log(data.results[i]) */
         const locationName = data.results[i].name; // Select the location name and pass to fetchCurrentWeather
         const adminLevel1 = data.results[i].admin1; // Select the 1st hierarchical admin area (state, etc)
+        /* console.log("ADMIN LEVEL 1", adminLevel1) */
         const lat = data.results[i].latitude;
         const lon = data.results[i].longitude;
 
         // Add click event listener to each search result. On click, pass the corresponding item to fetch
         newResultLi.addEventListener("click", () => {
             /* fetchCurrentWeather(newResult) */
-            fetchCurrentWeather(locationName, adminLevel1, lat, lon);
+            fetchCurrentWeather(locationName, adminLevel1, countryCode, lat, lon);
         })
 
         //const name = data.results[i].name; // Location name
@@ -155,15 +156,15 @@ function displaySearchResults(data) {
         const countryCode = data.results[i].country_code; // Country code
 
         // Check for values returned as "undefined", if so, exclude from search result text
-        if (locationName != undefined) {
+        if (locationName !== undefined) {
             newResultLi.innerText += locationName + ", ";
         }
 
-        if (adminLevel1 != undefined) {
+        if (adminLevel1 !== undefined) {
             newResultLi.innerText += adminLevel1 + ", ";
         }
 
-        if (countryCode != undefined) {
+        if (countryCode !== undefined) {
             newResultLi.innerText += countryCode;
         }
 
@@ -179,7 +180,7 @@ function removeAllElementChildren(item) {
 }
 
 // Helper function - get the current time
-function getCurrent12HourTime() {
+/* function getCurrent12HourTime() {
     let date = new Date();
 
     let hours = date.getHours();
@@ -199,6 +200,19 @@ function getCurrent12HourTime() {
     const new12HourTime = hours + ":" + minutes + " " + ampm;
     
     return new12HourTime;
+} */
+
+function get12HourTimeInTimezone(timezone) {
+    const date = new Date();
+
+    const time = date.toLocaleTimeString("en-US", {
+        hour: "numeric",
+        minute: "2-digit",
+        hour12: true,
+        timeZone: timezone
+    })
+
+    return time;
 }
 
 // Helper function - Convert Unix timestamp to 12 hour time
@@ -234,12 +248,13 @@ function processGeocodingAdminLevel1(geocodingResults) {
 }
 
 // Get current weather data
-async function fetchCurrentWeather(locationName, adminLevel1, lat, lon) {
+async function fetchCurrentWeather(locationName, adminLevel1, countryCode, lat, lon) {
 
     // Defined and check the result name for null values before 
     let selectedResultName;
     if (locationName !== null && adminLevel1 !== null) {
-        selectedResultName = locationName + ", " + adminLevel1
+        selectedResultName = locationName + ", " + adminLevel1;
+        console.log(locationName, adminLevel1);
     } else if (locationName !== null && adminLevel1 == null) {
         selectedResultName = locationName;
     } else if (locationName == null && adminLevel1 !== null) {
@@ -345,7 +360,8 @@ function renderCurrentWeather(data, selectedName, latitude, longitude) {
     const locationNameEl = createDOMElement("h2", undefined, selectedName);
     // Current Weather
     const currentTitle = createDOMElement("h3", undefined, "Current Weather");
-    const currentTime = createDOMElement("p", undefined, getCurrent12HourTime());
+    console.log("data in renderCurrentWeather", data)
+    const currentTime = createDOMElement("p", undefined, get12HourTimeInTimezone(data.timezone));
     const currentIcon = document.createElement("img");
     const currentTemp = createDOMElement("p", undefined, `Temperature: ${data.current_weather.temperature}`);
     const currentWeathercode = createDOMElement("p", undefined, `Weather Code ${data.current_weather.weathercode}`);
