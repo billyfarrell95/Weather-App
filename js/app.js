@@ -147,7 +147,7 @@ function displaySearchResults(data) {
         // Add click event listener to each search result. On click, pass the corresponding item to fetch
         newResultLi.addEventListener("click", () => {
             /* fetchCurrentWeather(newResult) */
-            fetchCurrentWeather(locationName, adminLevel1, lat, lon)
+            fetchCurrentWeather(locationName, adminLevel1, lat, lon);
         })
 
         //const name = data.results[i].name; // Location name
@@ -233,7 +233,7 @@ function processGeocodingAdminLevel1(geocodingResults) {
     return adminLevel1
 }
 
-// Get current weather data (current and today's weather)
+// Get current weather data
 async function fetchCurrentWeather(locationName, adminLevel1, lat, lon) {
 
     // Defined and check the result name for null values before 
@@ -247,7 +247,7 @@ async function fetchCurrentWeather(locationName, adminLevel1, lat, lon) {
     }
 
     // Current weather data endpoint URL
-    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true&temperature_unit=fahrenheit&windspeed_unit=mph&precipitation_unit=inch&timeformat=unixtime&forecast_days=1&timezone=auto`
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=weathercode,temperature_2m_max,temperature_2m_min,apparent_temperature_max,apparent_temperature_min,uv_index_max,precipitation_sum,precipitation_probability_max&&current_weather=true&temperature_unit=fahrenheit&windspeed_unit=mph&precipitation_unit=inch&timeformat=unixtime&forecast_days=1&timezone=auto`
     
     fetch (url)
         .then (response => {
@@ -261,11 +261,13 @@ async function fetchCurrentWeather(locationName, adminLevel1, lat, lon) {
         })
 
         .then (data => {
-            /* console.log("CURRENT Weather response data:", data); */
+            console.log("CURRENT Weather response data:", data);
             removeAllElementChildren(searchResultsList);
-            removeAllElementChildren(currentWeatherWrapper)
+            removeAllElementChildren(currentWeatherWrapper);
+            removeAllElementChildren(forecastWeatherWrapper);
             searchInputField.value = "";
-            renderCurrentWeather(data, selectedResultName);
+            renderCurrentWeather(data, selectedResultName, data.latitude, data.longitude);
+            /* renderDailyWeather(data.daily) */
         })
 
         .catch (error => {
@@ -275,7 +277,6 @@ async function fetchCurrentWeather(locationName, adminLevel1, lat, lon) {
 
 // Get current weather data (current and today's weather)
 async function fetchQuickSearchWeather(locationName, adminLevel1, lat, lon) {
-
     // Defined and check the result name for null values before 
     let selectedResultName;
     if (locationName !== null && adminLevel1 !== null) {
@@ -287,8 +288,8 @@ async function fetchQuickSearchWeather(locationName, adminLevel1, lat, lon) {
     }
 
     // Current weather data endpoint URL
-    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true&temperature_unit=fahrenheit&windspeed_unit=mph&precipitation_unit=inch&timeformat=unixtime&forecast_days=1&timezone=auto`
-    
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=weathercode,temperature_2m_max,temperature_2m_min,apparent_temperature_max,apparent_temperature_min,uv_index_max,precipitation_sum,precipitation_probability_max&&current_weather=true&temperature_unit=fahrenheit&windspeed_unit=mph&precipitation_unit=inch&timeformat=unixtime&forecast_days=1&timezone=auto`
+
     fetch (url)
         .then (response => {
             // check response status
@@ -302,9 +303,10 @@ async function fetchQuickSearchWeather(locationName, adminLevel1, lat, lon) {
 
         .then (data => {
             /* console.log("CURRENT Weather response data:", data); */
-            removeAllElementChildren(currentWeatherWrapper)
+            removeAllElementChildren(currentWeatherWrapper);
+            removeAllElementChildren(forecastWeatherWrapper);
             searchInputField.value = "";
-            renderCurrentWeather(data, selectedResultName);
+            renderCurrentWeather(data, selectedResultName, data.latitude, data.longitude);
         })
 
         .catch (error => {
@@ -312,50 +314,91 @@ async function fetchQuickSearchWeather(locationName, adminLevel1, lat, lon) {
         })
 }
 
-function renderCurrentWeather(data, selectedName) {
+// Helper function to create DOM elements, textContent and className are optional
+function createDOMElement(tagName, className, textContent) {
+    const element = document.createElement(tagName);
+    if (textContent !== undefined) {
+        element.textContent = textContent;
+    }
+    if (className !== undefined) {
+        element.classList.add(className);
+    }
+    return element;
+}
+
+function renderCurrentWeather(data, selectedName, latitude, longitude) {
+    // createDOMElement(tagName, className, textContent)
     // Create UI layout elements
-    const dataWrapper = document.createElement("div");
-    const leftCol = document.createElement("div");
-    const rightCol = document.createElement("div");
-    const temperatureWrapper = document.createElement("div");
+    // Current Weather
+    const currentWrapper = createDOMElement("div");
+    const currentLeftCol = createDOMElement("div");
+    const currentRightCol = createDOMElement("div");
+    const currentTempWrapper = createDOMElement("div");
+    // Daily Weather
+    const dailyWrapper = createDOMElement("div");
+    const dailyRow = createDOMElement("div");
+    const dailyLeftCol = createDOMElement("div");
+    const dailyRightCol = createDOMElement("div");
+    const dailyTempWrapper = createDOMElement("div");
 
     // Create UI Data elements
-    const locationNameEl = document.createElement("h2");
-    const titleEl = document.createElement("p");
-    const timeEl = document.createElement("p");
-    const iconEl = document.createElement("img");
-    const tempEl = document.createElement("p");
-    const weathercodeEl = document.createElement("p");
-    const apparentTempEl = document.createElement("p");
-    const windEl = document.createElement("p");
+    const locationNameEl = createDOMElement("h2", undefined, selectedName);
+    // Current Weather
+    const currentTitle = createDOMElement("h3", undefined, "Current Weather");
+    const currentTime = createDOMElement("p", undefined, getCurrent12HourTime());
+    const currentIcon = document.createElement("img");
+    const currentTemp = createDOMElement("p", undefined, `Temperature: ${data.current_weather.temperature}`);
+    const currentWeathercode = createDOMElement("p", undefined, `Weather Code ${data.current_weather.weathercode}`);
+    const currentWind = createDOMElement("p", undefined, `Wind Direction: ${data.current_weather.winddirection} ${data.current_weather.windspeed}`);
+    currentIcon.setAttribute("src", "https://placehold.co/50x50"); // placeholder
+    // Daily weather
+    const dailyTitle = createDOMElement("h3", undefined, "Today");
+    const dailyIcon = document.createElement("img");
+    const dailyHigh = createDOMElement("p", undefined, `High: ${data.daily.temperature_2m_max}`);
+    const dailyLow = createDOMElement("p", undefined, `Low: ${data.daily.temperature_2m_min}`);
+    const dailyWeathercode = createDOMElement("p", undefined, `Weathercode: ${data.daily.weathercode}`)
+    const dailyFeelsLike = createDOMElement("p", undefined, `Feels like max/min: ${data.daily.apparent_temperature_max} ${data.daily.apparent_temperature_min}`);
+    const dailyUV = createDOMElement("p", undefined, `UV Index max: ${data.daily.uv_index_max}`);
+    const dailyPrecipSum = createDOMElement("p", undefined, `Precipitation Sum: ${data.daily.precipitation_sum}`);
+    const dailyPrecipProb = createDOMElement("p", undefined, `Precipitation Probability ${data.daily.precipitation_probability_max}`);
+    dailyIcon.setAttribute("src", "https://placehold.co/50x50"); // placeholder
 
-    // Assign values to UI Data Elements
-    locationNameEl.innerText = selectedName; // Pulls selected name from geocoding fetch selectedResult in fetchCurrentWeather()
-    titleEl.innerText = "Current Weather";
-    timeEl.innerText = getCurrent12HourTime(); // Returns new time in 12 hour format
-    iconEl.setAttribute("src", "https://placehold.co/50x50"); // placeholder
-    tempEl.innerText = "Temperature:" + data.current_weather.temperature;
-    weathercodeEl.innerText = "Weather Code:" + data.current_weather.weathercode;
-    windEl.innerText = "Wind Direction:" + data.current_weather.winddirection + " " + "Wind Speed:" + data.current_weather.windspeed;
+    const currentFragment = document.createDocumentFragment();
+    const dailyFragment = document.createDocumentFragment();
 
-    // Append items to UI Layout Elements and DOM
-    currentWeatherWrapper.append(locationNameEl);
-    dataWrapper.append(leftCol);
-    leftCol.append(titleEl);
-    leftCol.append(timeEl);
-    leftCol.append(temperatureWrapper);
-    temperatureWrapper.append(iconEl);
-    temperatureWrapper.append(tempEl);
-    leftCol.append(weathercodeEl);
-    dataWrapper.append(rightCol);
-    rightCol.append(apparentTempEl);
-    rightCol.append(windEl);
-    currentWeatherWrapper.append(dataWrapper);
+    currentFragment.append(locationNameEl);
+    currentFragment.append(currentWrapper);
+    // Current Weather
+    currentWrapper.append(currentLeftCol);
+    currentLeftCol.append(currentTitle);
+    currentLeftCol.append(currentTime);
+    currentLeftCol.append(currentTempWrapper);
+    currentTempWrapper.append(currentIcon);
+    currentTempWrapper.append(currentTemp);
+    currentLeftCol.append(currentWeathercode);
+    currentWrapper.append(currentRightCol);
+    currentRightCol.append(currentWind);
+    // Daily Weather
+    dailyFragment.append(dailyWrapper)
+    dailyWrapper.append(dailyTitle);
+    dailyWrapper.append(dailyRow);
+    dailyRow.append(dailyLeftCol);
+    dailyRow.append(dailyRightCol);
+    dailyLeftCol.append(dailyTempWrapper);
+    dailyTempWrapper.append(dailyIcon);
+    dailyTempWrapper.append(dailyHigh);
+    dailyTempWrapper.append(dailyLow);
+    dailyLeftCol.append(dailyWeathercode);
+    dailyRightCol.append(dailyFeelsLike);
+    dailyRightCol.append(dailyUV);
+    dailyRightCol.append(dailyPrecipSum);
+    dailyRightCol.append(dailyPrecipProb);
+
+    currentWeatherWrapper.append(currentFragment);
+    currentWeatherWrapper.append(dailyFragment);
 
     // Add the button to view the forecast for current location
-    createViewForecastButton(data.latitude, data.longitude);
-
-    console.log("data after renderCurrentWeather", data)
+    createViewForecastButton(latitude, longitude);
 }
 
 // Fetch the data for the quick search buttons
@@ -404,7 +447,7 @@ async function fetchQuickSearchButtonData() {
         // Add event listener to each quick search button / pass data to fetchQuickSearchWeather 
         currentButton.addEventListener("click", () => {
             // Params expected: locationName, adminLevel1, lat, lon
-            fetchQuickSearchWeather(quickSearchItems[i].city, quickSearchItems[i].state, lat, lon)
+            fetchQuickSearchWeather(quickSearchItems[i].city, quickSearchItems[i].state, lat, lon);
         })
 
         fetch (url)
