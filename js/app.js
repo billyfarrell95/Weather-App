@@ -373,7 +373,7 @@ function renderCurrentWeather(data, selectedName, latitude, longitude) {
     const currentTime = createDOMElement("p", undefined, get12HourTimeInTimezone(data.timezone));
     const currentIcon = document.createElement("img");
     const currentTemp = createDOMElement("p", undefined, `Temperature: ${data.current_weather.temperature}`);
-    const currentWeathercode = createDOMElement("p", undefined, `Weather Code ${data.current_weather.weathercode}`);
+    const currentWeathercode = createDOMElement("p", undefined, `Weathercode: ${processWeatherCodes(data.daily.weathercode)}`);
     const currentWind = createDOMElement("p", undefined, `Wind Direction: ${data.current_weather.winddirection} ${data.current_weather.windspeed}`);
     currentIcon.setAttribute("src", "https://placehold.co/50x50"); // placeholder
     // Daily weather
@@ -381,7 +381,8 @@ function renderCurrentWeather(data, selectedName, latitude, longitude) {
     const dailyIcon = document.createElement("img");
     const dailyHigh = createDOMElement("p", undefined, `High: ${data.daily.temperature_2m_max}`);
     const dailyLow = createDOMElement("p", undefined, `Low: ${data.daily.temperature_2m_min}`);
-    const dailyWeathercode = createDOMElement("p", undefined, `Weathercode: ${data.daily.weathercode}`)
+    /* const dailyWeathercode = createDOMElement("p", undefined, `Weathercode: ${data.daily.weathercode}`) */
+    const dailyWeathercode = createDOMElement("p", undefined, `Weathercode: ${processWeatherCodes(data.daily.weathercode)}`)
     const dailyFeelsLike = createDOMElement("p", undefined, `Feels like max/min: ${data.daily.apparent_temperature_max} ${data.daily.apparent_temperature_min}`);
     const dailyUV = createDOMElement("p", undefined, `UV Index max: ${data.daily.uv_index_max}`);
     const dailyPrecipSum = createDOMElement("p", undefined, `Precipitation Sum: ${data.daily.precipitation_sum}`);
@@ -494,7 +495,7 @@ async function fetchQuickSearchButtonData() {
             })
 
             .then (data => {
-                console.log("Quick search Weather response data:", data);
+                /* console.log("Quick search Weather response data:", data); */
                 currentQuickTemp.textContent = `${quickSearchItems[i].formattedName} (${data.current_weather.temperature})`
             })
 
@@ -680,7 +681,7 @@ function renderForecastData(dayData, timezone) {
         apparentTempLi.textContent = dayData[property].apparent_temp;
         precipProbLi.textContent = dayData[property].precip_prob;
         tempLi.textContent = dayData[property].temp;
-        weatherCodeLi.textContent = dayData[property].weathercode;
+        weatherCodeLi.textContent = processWeatherCodes(dayData[property].weathercode);
         windDirectionLi.textContent = dayData[property].wind_direction;
         windSpeedLi.textContent = dayData[property].windspeed;
         newList.append(timeLi);
@@ -694,4 +695,40 @@ function renderForecastData(dayData, timezone) {
     });
 
     forecastWeatherWrapper.append(listWrapper);
+}
+
+function processWeatherCodes(code) {
+    const weatherCodeValues = [
+        { number: 0, value: "Clear sky" },
+        { number: 1, value: "Mainly clear" },
+        { number: 2, value: "Partly cloudy" },
+        { number: 3, value: "Overcast" },
+        { number: 45, value: "Fog and depositing rime fog" },
+        { number: 48, value: "Fog and depositing rime fog" },
+        { number: 51, value: "Drizzle: Light intensity" },
+        { number: 53, value: "Drizzle: Moderate intensity" },
+        { number: 55, value: "Drizzle: Dense intensity" },
+        { number: 56, value: "Freezing Drizzle: Light intensity" },
+        { number: 57, value: "Freezing Drizzle: Dense intensity" },
+        { number: 61, value: "Rain: Slight intensity" },
+        { number: 63, value: "Rain: Moderate intensity" },
+        { number: 65, value: "Rain: Heavy intensity" },
+        { number: 66, value: "Freezing Rain: Light intensity" },
+        { number: 67, value: "Freezing Rain: Heavy intensity" },
+        { number: 71, value: "Snow fall: Slight intensity" },
+        { number: 73, value: "Snow fall: Moderate intensity" },
+        { number: 75, value: "Snow fall: Heavy intensity" },
+        { number: 77, value: "Snow grains" },
+        { number: 80, value: "Rain showers: Slight intensity" },
+        { number: 81, value: "Rain showers: Moderate intensity" },
+        { number: 82, value: "Rain showers: Violent intensity" },
+        { number: 85, value: "Snow showers: Slight intensity" },
+        { number: 86, value: "Snow showers: Heavy intensity" },
+        { number: 95, value: "Thunderstorm: Slight or moderate" },
+        { number: 96, value: "Thunderstorm with slight hail" },
+        { number: 99, value: "Thunderstorm with heavy hail" }
+      ];
+
+      const weathercode = weatherCodeValues.find(item => item.number == code)
+      return weathercode.value;
 }
