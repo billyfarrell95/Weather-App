@@ -287,7 +287,6 @@ async function fetchCurrentWeather(locationName, adminLevel1, countryCode, lat, 
             searchInputField.value = "";
             renderCurrentWeather(data, selectedResultName, data.latitude, data.longitude);
             fetchQuickSearchButtonData();
-            /* renderDailyWeather(data.daily) */
         })
 
         .catch (error => {
@@ -351,6 +350,7 @@ function createDOMElement(tagName, className, textContent) {
 }
 
 function renderCurrentWeather(data, selectedName, latitude, longitude) {
+    getWeatherUnits();
     // createDOMElement(tagName, className, textContent)
     // Create UI layout elements
     // Current Weather
@@ -374,7 +374,7 @@ function renderCurrentWeather(data, selectedName, latitude, longitude) {
     const currentIcon = document.createElement("img");
     const currentTemp = createDOMElement("p", undefined, `Temperature: ${data.current_weather.temperature}`);
     const currentWeathercode = createDOMElement("p", undefined, `Weathercode: ${processWeatherCodes(data.daily.weathercode)}`);
-    const currentWind = createDOMElement("p", undefined, `Wind Direction: ${data.current_weather.winddirection} ${data.current_weather.windspeed}`);
+    const currentWind = createDOMElement("p", undefined, `Wind Direction: ${convertWindDirection(data.current_weather.winddirection)} ${data.current_weather.windspeed}`);
     currentIcon.setAttribute("src", "https://placehold.co/50x50"); // placeholder
     // Daily weather
     const dailyTitle = createDOMElement("h3", undefined, "Today");
@@ -674,29 +674,28 @@ function renderForecastData(dayData, timezone) {
         const precipProbLi = document.createElement("li");
         const tempLi = document.createElement("li");
         const weatherCodeLi = document.createElement("li");
-        const windDirectionLi = document.createElement("li");
-        const windSpeedLi = document.createElement("li");
+        const windLi = document.createElement("li");
         // Unix time:
         timeLi.textContent = convertUnixTimestampTo12HourFormat(dayData[property].time, timezone);
         apparentTempLi.textContent = dayData[property].apparent_temp;
         precipProbLi.textContent = dayData[property].precip_prob;
         tempLi.textContent = dayData[property].temp;
         weatherCodeLi.textContent = processWeatherCodes(dayData[property].weathercode);
-        windDirectionLi.textContent = dayData[property].wind_direction;
-        windSpeedLi.textContent = dayData[property].windspeed;
+        /* windDirectionLi.textContent = dayData[property].wind_direction; */
+        windLi.textContent = `${convertWindDirection(dayData[property].wind_direction)} ${dayData[property].windspeed}`;
         newList.append(timeLi);
         newList.append(apparentTempLi);
         newList.append(precipProbLi);
         newList.append(tempLi);
         newList.append(weatherCodeLi);
-        newList.append(windDirectionLi);
-        newList.append(windSpeedLi);
+        newList.append(windLi);
         listWrapper.append(newList)
     });
 
     forecastWeatherWrapper.append(listWrapper);
 }
 
+// Helper function - convert weathercodes to readable value (based on code meanings from API docs)
 function processWeatherCodes(code) {
     const weatherCodeValues = [
         { number: 0, value: "Clear sky" },
@@ -732,3 +731,55 @@ function processWeatherCodes(code) {
       const weathercode = weatherCodeValues.find(item => item.number == code)
       return weathercode.value;
 }
+
+// Helper function - convert the degrees to a compass direction
+function convertWindDirection(degrees) {
+    const directions = {
+        north: "N",
+        northNortheast: "NNE",
+        northeast: "NE",
+        eastNortheast: "ENE",
+        east: "E",
+        eastSoutheast: "ESE",
+        southeast: "SE",
+        southSoutheast: "SSE",
+        south: "S",
+        southSouthwest: "SSW",
+        southwest: "SW",
+        westSouthwest: "WSW",
+        west: "W",
+        westNorthwest: "WNW",
+        northwest: "NW",
+        northNorthwest: "NNW",
+    }
+
+    const compass = [
+        { dir: directions.north, min: 0, max: 11.25 },
+        { dir: directions.northNortheast, min: 11.25, max: 33.75 },
+        { dir: directions.northeast, min: 33.75, max: 56.25 },
+        { dir: directions.eastNortheast, min: 56.25, max: 78.75 },
+        { dir: directions.east, min: 78.75, max: 101.25 },
+        { dir: directions.eastSoutheast, min: 101.25, max: 123.75 },
+        { dir: directions.southeast, min: 123.75, max: 146.25 },
+        { dir: directions.southSoutheast, min: 146.25, max: 168.75 },
+        { dir: directions.south, min: 168.75, max: 191.25 },
+        { dir: directions.southSouthwest, min: 191.25, max: 213.75 },
+        { dir: directions.southwest, min: 213.75, max: 236.25 },
+        { dir: directions.westSouthwest, min: 236.25, max: 258.75 },
+        { dir: directions.west, min: 258.75, max: 281.25 },
+        { dir: directions.westNorthwest, min: 281.25, max: 303.75 },
+        { dir: directions.northwest, min: 303.75, max: 326.25 },
+        { dir: directions.northNorthwest, min: 326.25, max: 348.75 },
+        { dir: directions.north, min: 348.75, max: 360 }
+    ];
+    let direction;
+    for (const item of compass) {
+        if (degrees >= item.min && degrees < item.max) {
+            direction = item.dir;
+            break;
+        }
+    }
+
+    return direction;
+}
+
