@@ -141,6 +141,8 @@ function displaySearchResults(data) {
         /* console.log(data.results[i]) */
         const locationName = data.results[i].name; // Select the location name and pass to fetchCurrentWeather
         const adminLevel1 = data.results[i].admin1; // Select the 1st hierarchical admin area (state, etc)
+        const countryCode = data.results[i].country_code; // Country code
+        console.log(countryCode, "COUNTRY CODE")
         /* console.log("ADMIN LEVEL 1", adminLevel1) */
         const lat = data.results[i].latitude;
         const lon = data.results[i].longitude;
@@ -153,7 +155,6 @@ function displaySearchResults(data) {
 
         //const name = data.results[i].name; // Location name
         //const adminLevel1 = data.results[i].admin1; // Administrative area the location resides in
-        const countryCode = data.results[i].country_code; // Country code
 
         // Check for values returned as "undefined", if so, exclude from search result text
         if (locationName !== undefined) {
@@ -249,16 +250,19 @@ function processGeocodingAdminLevel1(geocodingResults) {
 
 // Get current weather data
 async function fetchCurrentWeather(locationName, adminLevel1, countryCode, lat, lon) {
-
+    console.log(countryCode, "country code in fetchCurrentWeather")
     // Defined and check the result name for null values before 
     let selectedResultName;
-    if (locationName !== null && adminLevel1 !== null) {
+    if (locationName !== null && adminLevel1 !== undefined) {
         selectedResultName = locationName + ", " + adminLevel1;
-        console.log(locationName, adminLevel1);
-    } else if (locationName !== null && adminLevel1 == null) {
-        selectedResultName = locationName;
-    } else if (locationName == null && adminLevel1 !== null) {
+        console.log("adminLevel1 in BLOCK ONE" , adminLevel1)
+        console.log("BLOCK ONE RAN")
+    } else if (locationName !== null && adminLevel1 == undefined) {
+        selectedResultName = locationName + ", " + countryCode;
+        console.log("BLOCK TWO RAN")
+    } else if (locationName == null && adminLevel1 !== undefined) {
         selectedResultName = adminLevel1;
+        console.log("BLOCK THREE RAN")
     }
 
     // Current weather data endpoint URL
@@ -282,6 +286,7 @@ async function fetchCurrentWeather(locationName, adminLevel1, countryCode, lat, 
             removeAllElementChildren(forecastWeatherWrapper);
             searchInputField.value = "";
             renderCurrentWeather(data, selectedResultName, data.latitude, data.longitude);
+            fetchQuickSearchButtonData();
             /* renderDailyWeather(data.daily) */
         })
 
