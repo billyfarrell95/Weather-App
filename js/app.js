@@ -350,7 +350,7 @@ function createDOMElement(tagName, className, textContent) {
 }
 
 function renderCurrentWeather(data, selectedName, latitude, longitude) {
-    getWeatherUnits();
+    // getWeatherUnits() expects: temp, precip, or speed
     // createDOMElement(tagName, className, textContent)
     // Create UI layout elements
     // Current Weather
@@ -373,6 +373,7 @@ function renderCurrentWeather(data, selectedName, latitude, longitude) {
     const currentTime = createDOMElement("p", undefined, get12HourTimeInTimezone(data.timezone));
     const currentIcon = document.createElement("img");
     const currentTemp = createDOMElement("p", undefined, `Temperature: ${data.current_weather.temperature}`);
+    /* const currentTemp = createDOMElement("p", undefined, `Temperature: ${getWeatherUnits("temp")}`); */
     const currentWeathercode = createDOMElement("p", undefined, `Weathercode: ${processWeatherCodes(data.daily.weathercode)}`);
     const currentWind = createDOMElement("p", undefined, `Wind Direction: ${convertWindDirection(data.current_weather.winddirection)} ${data.current_weather.windspeed}`);
     currentIcon.setAttribute("src", "https://placehold.co/50x50"); // placeholder
@@ -783,3 +784,24 @@ function convertWindDirection(degrees) {
     return direction;
 }
 
+/* function getWeatherUnits(unitType) {
+    const units = {
+        temperature: "°F",
+        precipitation: "in",
+        speed: "mph",
+      };
+
+      let unit;
+      // Assign a value to "unit" based on the unit passed from render function
+      if (unitType == "temp") {
+        unit == units.temperature;
+      } else if (unitType == "precip") {
+        unit == units.precipitation;
+      } else if (unitType == "speed") {
+        unit == units.speed;
+      } else {
+        console.log("Invalid unit passed to getWeatherUnits()")
+      }
+
+      return unit;
+} */
