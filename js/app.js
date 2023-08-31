@@ -86,9 +86,10 @@ async function reverseGeocode(lat, lon) {
             /* console.log(data.results[0].components, "GEOCODE DATA FROM reverseGeocode") */
             const locationName = processGeocodingLocationName(data.results[0].components); // the pair of the first key that matches the requirements is returned   
             const adminLevel1 = processGeocodingAdminLevel1(data.results[0].components); // the pair of the first key that matches the requirements is returned   
+            const countryCode = data.results[0].components.country_code.toUpperCase(); // country code
 
-            /* console.log(locationName, adminLevel1) */
-            fetchCurrentWeather(locationName, adminLevel1, lat, lon)
+            console.log("DATA IN REVERSE GEOCODE", data)
+            fetchCurrentWeather(locationName, adminLevel1, countryCode, lat, lon)
         })
 
         .catch (error => {
@@ -135,14 +136,13 @@ function displaySearchResults(data) {
 
     // Loop through results
     for (let i = 0; i < data.results.length; i++) {
-        console.log(data, "data in display search results")
+        /* console.log(data, "data in display search results") */
         const newResultLi = document.createElement("li"); // New search result item
         newResultLi.setAttribute("tabindex", i)
         /* console.log(data.results[i]) */
         const locationName = data.results[i].name; // Select the location name and pass to fetchCurrentWeather
         const adminLevel1 = data.results[i].admin1; // Select the 1st hierarchical admin area (state, etc)
         const countryCode = data.results[i].country_code; // Country code
-        console.log(countryCode, "COUNTRY CODE")
         /* console.log("ADMIN LEVEL 1", adminLevel1) */
         const lat = data.results[i].latitude;
         const lon = data.results[i].longitude;
@@ -158,15 +158,15 @@ function displaySearchResults(data) {
 
         // Check for values returned as "undefined", if so, exclude from search result text
         if (locationName !== undefined) {
-            newResultLi.innerText += locationName + ", ";
+            newResultLi.textContent += locationName + ", ";
         }
 
         if (adminLevel1 !== undefined) {
-            newResultLi.innerText += adminLevel1 + ", ";
+            newResultLi.textContent += adminLevel1 + ", ";
         }
 
         if (countryCode !== undefined) {
-            newResultLi.innerText += countryCode;
+            newResultLi.textContent += countryCode;
         }
 
         searchResultsList.append(newResultLi)
@@ -251,16 +251,16 @@ function processGeocodingAdminLevel1(geocodingResults) {
 // Get current weather data
 async function fetchCurrentWeather(locationName, adminLevel1, countryCode, lat, lon) {
     console.log(countryCode, "country code in fetchCurrentWeather")
-    // Defined and check the result name for null values before 
+    // Defined and check the result name for undefined values 
     let selectedResultName;
-    if (locationName !== null && adminLevel1 !== undefined) {
-        selectedResultName = locationName + ", " + adminLevel1;
+    if (locationName !== undefined && adminLevel1 !== undefined) {
+        selectedResultName = locationName + ", " + adminLevel1 + ", " + countryCode;
         console.log("adminLevel1 in BLOCK ONE" , adminLevel1)
         console.log("BLOCK ONE RAN")
-    } else if (locationName !== null && adminLevel1 == undefined) {
+    } else if (locationName !== undefined && adminLevel1 == undefined) {
         selectedResultName = locationName + ", " + countryCode;
         console.log("BLOCK TWO RAN")
-    } else if (locationName == null && adminLevel1 !== undefined) {
+    } else if (locationName == undefined && adminLevel1 !== undefined) {
         selectedResultName = adminLevel1;
         console.log("BLOCK THREE RAN")
     }
@@ -296,15 +296,19 @@ async function fetchCurrentWeather(locationName, adminLevel1, countryCode, lat, 
 }
 
 // Get current weather data (current and today's weather)
-async function fetchQuickSearchWeather(locationName, adminLevel1, lat, lon) {
-    // Defined and check the result name for null values before 
+async function fetchQuickSearchWeather(locationName, adminLevel1, countryCode, lat, lon) {
+    // Defined and check the result name for undefined values 
     let selectedResultName;
-    if (locationName !== null && adminLevel1 !== null) {
-        selectedResultName = locationName + ", " + adminLevel1
-    } else if (locationName !== null && adminLevel1 == null) {
-        selectedResultName = locationName;
-    } else if (locationName == null && adminLevel1 !== null) {
+    if (locationName !== undefined && adminLevel1 !== undefined) {
+        selectedResultName = locationName + ", " + adminLevel1 + ", " + countryCode;
+        console.log("adminLevel1 in BLOCK ONE" , adminLevel1)
+        console.log("BLOCK ONE RAN")
+    } else if (locationName !== undefined && adminLevel1 == undefined) {
+        selectedResultName = locationName + ", " + countryCode;
+        console.log("BLOCK TWO RAN")
+    } else if (locationName == undefined && adminLevel1 !== undefined) {
         selectedResultName = adminLevel1;
+        console.log("BLOCK THREE RAN")
     }
 
     // Current weather data endpoint URL
@@ -429,26 +433,34 @@ async function fetchQuickSearchButtonData() {
         {
             "city": "Los Angeles",
             "state": "California",
+            "countryCode": "US",
             "lat": "34.0522",
-            "lon": "-118.2437"
+            "lon": "-118.2437",
+            "formattedName": "Los Angeles, CA"
         },
         {
             "city": "Denver",
             "state": "Colorado",
+            "countryCode": "US",
             "lat": "39.7392",
-            "lon": "-104.9847"
+            "lon": "-104.9847",
+            "formattedName": "Denver, CO"
         },
         {
             "city": "Chicago",
             "state": "Illinois",
+            "countryCode": "US",
             "lat": "41.85",
-            "lon": "-87.65"
+            "lon": "-87.65",
+            "formattedName": "Chicago, IL"
         },
         {
-            "city": "New York City",
+            "city": "New York",
             "state": "New York",
+            "countryCode": "US",
             "lat": "40.7143",
-            "lon": "-74.006"
+            "lon": "-74.006",
+            "formattedName": "New York City, NY"
         },
     ];
     for (let i = 0; i < quickSearchItems.length; i++) {
@@ -456,19 +468,18 @@ async function fetchQuickSearchButtonData() {
         const lat = quickSearchItems[i].lat;
         const lon = quickSearchItems[i].lon;
 
-        /* console.log(lat, "lat in fetchQuickSearch") */
-
         // Current weather data endpoint URL
         const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true&temperature_unit=fahrenheit&timeformat=unixtime&forecast_days=1&timezone=auto`;
         
         // Select each quick search button/temp when looping through parent element
         const currentButton = quickSearchWrapper.children[i];
-        const currentQuickTemp = currentButton.querySelector(".quick-temp");
+        const currentQuickTemp = quickSearchWrapper.children[i];
 
         // Add event listener to each quick search button / pass data to fetchQuickSearchWeather 
         currentButton.addEventListener("click", () => {
-            // Params expected: locationName, adminLevel1, lat, lon
-            fetchQuickSearchWeather(quickSearchItems[i].city, quickSearchItems[i].state, lat, lon);
+            // Params expected: locationName, adminLevel1, countryCode, lat, lon
+            fetchQuickSearchWeather(quickSearchItems[i].city, quickSearchItems[i].state, quickSearchItems[i].countryCode, lat, lon);
+            fetchQuickSearchButtonData(); // Refresh the temperatures displayed in the buttons
         })
 
         fetch (url)
@@ -483,8 +494,8 @@ async function fetchQuickSearchButtonData() {
             })
 
             .then (data => {
-                /* console.log("Quick search Weather response data:", data); */
-                currentQuickTemp.innerText = data.current_weather.temperature;
+                console.log("Quick search Weather response data:", data);
+                currentQuickTemp.textContent = `${quickSearchItems[i].formattedName} (${data.current_weather.temperature})`
             })
 
             .catch (error => {
@@ -495,7 +506,7 @@ async function fetchQuickSearchButtonData() {
 
 function createViewForecastButton(lat, lon) {
     const viewForecastButton = document.createElement("button");
-    viewForecastButton.innerText = "View 7-Day Forecast";
+    viewForecastButton.textContent = "View 7-Day Forecast";
     currentWeatherWrapper.append(viewForecastButton);
 
     viewForecastButton.addEventListener("click", () => {
@@ -509,7 +520,7 @@ async function fetchForecastData(lat, lon) {
     const daysNum = 7;
     // Forecast endpoint for current location based on lat/lon of the "Current Weather"
     // Unix time:
-    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}2&longitude=${lon}&hourly=temperature_2m,apparent_temperature,precipitation_probability,weathercode,windspeed_10m,winddirection_10m&temperature_unit=fahrenheit&windspeed_unit=mph&precipitation_unit=inch&timezone=auto&timeformat=unixtime&forecast_days=${daysNum}`;
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=temperature_2m,apparent_temperature,precipitation_probability,weathercode,windspeed_10m,winddirection_10m&temperature_unit=fahrenheit&windspeed_unit=mph&precipitation_unit=inch&timezone=auto&timeformat=unixtime&forecast_days=${daysNum}`;
 
     fetch (url)
         .then (response => {
@@ -665,13 +676,13 @@ function renderForecastData(dayData, timezone) {
         const windDirectionLi = document.createElement("li");
         const windSpeedLi = document.createElement("li");
         // Unix time:
-        timeLi.innerText = convertUnixTimestampTo12HourFormat(dayData[property].time, timezone);
-        apparentTempLi.innerText = dayData[property].apparent_temp;
-        precipProbLi.innerText = dayData[property].precip_prob;
-        tempLi.innerText = dayData[property].temp;
-        weatherCodeLi.innerText = dayData[property].weathercode;
-        windDirectionLi.innerText = dayData[property].wind_direction;
-        windSpeedLi.innerText = dayData[property].windspeed;
+        timeLi.textContent = convertUnixTimestampTo12HourFormat(dayData[property].time, timezone);
+        apparentTempLi.textContent = dayData[property].apparent_temp;
+        precipProbLi.textContent = dayData[property].precip_prob;
+        tempLi.textContent = dayData[property].temp;
+        weatherCodeLi.textContent = dayData[property].weathercode;
+        windDirectionLi.textContent = dayData[property].wind_direction;
+        windSpeedLi.textContent = dayData[property].windspeed;
         newList.append(timeLi);
         newList.append(apparentTempLi);
         newList.append(precipProbLi);
