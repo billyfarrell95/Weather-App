@@ -45,8 +45,9 @@ searchInputField.addEventListener("keyup", () => {
 
 // useCurrentLocationButton event listener
 useCurrentLocationButton.addEventListener("click", () => {
-    const loading = createLoadingElement();
-    currentWeatherWrapper.append(loading);
+    removeAllElementChildren(currentWeatherWrapper);
+    const loadingIcon = createLoadingElement();
+    useCurrentLocationButton.append(loadingIcon)
     requestUserLocation();
 })
 
@@ -505,8 +506,6 @@ async function fetchQuickSearchButtonData() {
 
         // Add event listener to each quick search button / pass data to fetchQuickSearchWeather 
         currentQuickSearchButton.addEventListener("click", () => {
-            const loading = createLoadingElement();
-            currentWeatherWrapper.append(loading);
             // Params expected: locationName, adminLevel1, countryCode, lat, lon
             fetchQuickSearchWeather(quickSearchItems[i].city, quickSearchItems[i].state, quickSearchItems[i].countryCode, lat, lon);
             fetchQuickSearchButtonData(); // Refresh the temperatures displayed in the buttons
@@ -866,8 +865,6 @@ function createForecastDisplayDates() {
 
 // Create loading element
 function createLoadingElement() {
-    const loadingElement = createDOMElement("div", "loading", "Loading...")
-    currentWeatherWrapper.append(loadingElement);
-
-    return loadingElement;
+    const loadingIcon = createDOMElement("span", "loading", "Loading...");
+    return loadingIcon;
 }
