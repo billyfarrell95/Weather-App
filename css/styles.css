@@ -48,3 +48,12 @@ button {
 #quick-search-wrapper button {
     text-align: left;
 }
+
+.qs-location-name, .qs-state-name, .qs-temp {
+    height: 1em;
+}
+
+.qs-icon {
+    height: 20px;
+    width: auto;
+}
