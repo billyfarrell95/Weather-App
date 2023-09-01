@@ -45,6 +45,8 @@ searchInputField.addEventListener("keyup", () => {
 
 // useCurrentLocationButton event listener
 useCurrentLocationButton.addEventListener("click", () => {
+    const loading = createLoadingElement();
+    currentWeatherWrapper.append(loading);
     requestUserLocation();
 })
 
@@ -491,18 +493,20 @@ async function fetchQuickSearchButtonData() {
         const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true&temperature_unit=fahrenheit&timeformat=unixtime&forecast_days=1&timezone=auto`;
         
         // Select each quick search button/temp when looping through parent element
-        const currentButton = quickSearchWrapper.children[i];
-        const currentName = currentButton.querySelector(".qs-location-name");
-        const currentState = currentButton.querySelector(".qs-state-name");
-        const currentIcon = currentButton.querySelector(".qs-icon");
-        const currentQuickTemp = currentButton.querySelector(".qs-temp");
+        const currentQuickSearchButton = quickSearchWrapper.children[i];
+        const currentName = currentQuickSearchButton.querySelector(".qs-location-name");
+        const currentState = currentQuickSearchButton.querySelector(".qs-state-name");
+        const currentIcon = currentQuickSearchButton.querySelector(".qs-icon");
+        const currentQuickTemp = currentQuickSearchButton.querySelector(".qs-temp");
 
         currentName.textContent = quickSearchItems[i].city;
         currentState.textContent = quickSearchItems[i].state;
         currentIcon.setAttribute("src", "https://placehold.co/20x20");
 
         // Add event listener to each quick search button / pass data to fetchQuickSearchWeather 
-        currentButton.addEventListener("click", () => {
+        currentQuickSearchButton.addEventListener("click", () => {
+            const loading = createLoadingElement();
+            currentWeatherWrapper.append(loading);
             // Params expected: locationName, adminLevel1, countryCode, lat, lon
             fetchQuickSearchWeather(quickSearchItems[i].city, quickSearchItems[i].state, quickSearchItems[i].countryCode, lat, lon);
             fetchQuickSearchButtonData(); // Refresh the temperatures displayed in the buttons
@@ -858,4 +862,12 @@ function createForecastDisplayDates() {
     }
   
     return dates;
+}
+
+// Create loading element
+function createLoadingElement() {
+    const loadingElement = createDOMElement("div", "loading", "Loading...")
+    currentWeatherWrapper.append(loadingElement);
+
+    return loadingElement;
 }
