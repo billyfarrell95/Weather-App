@@ -591,7 +591,8 @@ function sortForecastWeatherData(data) {
                 "weathercode": data.hourly.weathercode[i],
                 "wind_direction": data.hourly.winddirection_10m[i],
                 "windspeed": data.hourly.windspeed_10m[i],
-                "time": data.hourly.time[i]
+                "time": data.hourly.time[i],
+                "date": createForecastDisplayDates()[0]
             });
         }
         if (i > 23 && i <= 47) {
@@ -602,7 +603,8 @@ function sortForecastWeatherData(data) {
                 "weathercode": data.hourly.weathercode[i],
                 "wind_direction": data.hourly.winddirection_10m[i],
                 "windspeed": data.hourly.windspeed_10m[i],
-                "time": data.hourly.time[i]
+                "time": data.hourly.time[i],
+                "date": createForecastDisplayDates()[1]
             });
         }
         if (i > 47 && i <= 71) {
@@ -613,7 +615,8 @@ function sortForecastWeatherData(data) {
                 "weathercode": data.hourly.weathercode[i],
                 "wind_direction": data.hourly.winddirection_10m[i],
                 "windspeed": data.hourly.windspeed_10m[i],
-                "time": data.hourly.time[i]
+                "time": data.hourly.time[i],
+                "date": createForecastDisplayDates()[2]
             });
         }
         if (i > 71 && i <= 95) {
@@ -624,7 +627,8 @@ function sortForecastWeatherData(data) {
                 "weathercode": data.hourly.weathercode[i],
                 "wind_direction": data.hourly.winddirection_10m[i],
                 "windspeed": data.hourly.windspeed_10m[i],
-                "time": data.hourly.time[i]
+                "time": data.hourly.time[i],
+                "date": createForecastDisplayDates()[3]
             });
         }
         if (i > 95 && i <= 119) {
@@ -635,7 +639,8 @@ function sortForecastWeatherData(data) {
                 "weathercode": data.hourly.weathercode[i],
                 "wind_direction": data.hourly.winddirection_10m[i],
                 "windspeed": data.hourly.windspeed_10m[i],
-                "time": data.hourly.time[i]
+                "time": data.hourly.time[i],
+                "date": createForecastDisplayDates()[4]
             });
         }
         if (i > 119 && i <= 143) {
@@ -646,7 +651,8 @@ function sortForecastWeatherData(data) {
                 "weathercode": data.hourly.weathercode[i],
                 "wind_direction": data.hourly.winddirection_10m[i],
                 "windspeed": data.hourly.windspeed_10m[i],
-                "time": data.hourly.time[i]
+                "time": data.hourly.time[i],
+                "date": createForecastDisplayDates()[5]
             });
         }
         if (i > 143) {
@@ -657,13 +663,11 @@ function sortForecastWeatherData(data) {
                 "weathercode": data.hourly.weathercode[i],
                 "wind_direction": data.hourly.winddirection_10m[i],
                 "windspeed": data.hourly.windspeed_10m[i],
-                "time": data.hourly.time[i]
+                "time": data.hourly.time[i],
+                "date": createForecastDisplayDates()[6]
             });
         }
     }
-
-    // Create an index based on user's timezone to use when filtering passed hours on current day hourlry weather
-    /* const currentHourIndex = new Date().getHours(); */
 
     // Calculate the current day based on user's timezone offset
     const now = new Date();
@@ -677,7 +681,12 @@ function sortForecastWeatherData(data) {
     const allForecastData = [dayOne, dayTwo, dayThree, dayFour, dayFive, daySix, daySeven];
 
     // Clear the forecast wrapper before rendering (prevents the re-rendered data to be appended after the already present data)
-    removeAllElementChildren(forecastWeatherWrapper)
+    removeAllElementChildren(forecastWeatherWrapper);
+
+    // Create the heading element
+    const forecastHeading = createDOMElement("h2", undefined, "7 Day Forecast");
+    forecastWeatherWrapper.append(forecastHeading);
+
     // Render the forecast data
     allForecastData.forEach((dayData) => {
         renderForecastData(dayData, data.timezone) 
@@ -686,8 +695,8 @@ function sortForecastWeatherData(data) {
 
 // Render the data to the DOM
 function renderForecastData(dayData, timezone) {
+    const forecastDayHeading = createDOMElement("h3", undefined, dayData[0].date); // Select the date from each "dayData" sent from sortForecastWeatherData
     const dayListsWrapper = createDOMElement("div", "forecast-day-wrapper");
-    console.log("dayData in renderForecastData", dayData)
 
     const properties = Object.keys(dayData);
 
@@ -708,7 +717,7 @@ function renderForecastData(dayData, timezone) {
         newList.append(windLi);
         dayListsWrapper.append(newList)
     });
-
+    forecastWeatherWrapper.append(forecastDayHeading);
     forecastWeatherWrapper.append(dayListsWrapper);
 }
 
@@ -791,7 +800,7 @@ function convertWindDirection(degrees) {
     ];
     let direction;
     for (const item of compass) {
-        if (degrees >= item.min && degrees < item.max) {
+        if (degrees >= item.min && degrees <= item.max) {
             direction = item.dir;
             break;
         }
@@ -800,6 +809,7 @@ function convertWindDirection(degrees) {
     return direction;
 }
 
+// Helper function - process weather when rendering
 function processWeatherUnits(unitType, data) {
     // Round the value
     const roundedvalue = Math.round(data);
@@ -827,4 +837,25 @@ function processWeatherUnits(unitType, data) {
       }
 
       return roundedvalue + unit;
+}
+
+// Helper function - get date in Monday, August, 21 format
+function createForecastDisplayDates() {
+    const weekdays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+  
+    const newDate = new Date();
+    const dates = [];
+  
+    for (let i = 0; i < 7; i++) {
+      const dayOfWeek = weekdays[newDate.getDay()];
+      const month = newDate.toLocaleString('default', { month: 'long' });
+      const date = newDate.getDate();
+      const formattedDate = `${dayOfWeek}, ${month} ${date}`;
+      dates.push(formattedDate);
+      
+      // Increment the date for the next day
+      newDate.setDate(newDate.getDate() + 1);
+    }
+  
+    return dates;
 }
