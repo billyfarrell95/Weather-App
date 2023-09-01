@@ -372,22 +372,20 @@ function renderCurrentWeather(data, selectedName, latitude, longitude) {
     console.log("data in renderCurrentWeather", data)
     const currentTime = createDOMElement("p", undefined, get12HourTimeInTimezone(data.timezone));
     const currentIcon = document.createElement("img");
-    const currentTemp = createDOMElement("p", undefined, `Temperature: ${data.current_weather.temperature}`);
-    /* const currentTemp = createDOMElement("p", undefined, `Temperature: ${getWeatherUnits("temp")}`); */
+    const currentTemp = createDOMElement("p", undefined, `Temperature: ${processWeatherUnits("temp", data.current_weather.temperature)}`);
     const currentWeathercode = createDOMElement("p", undefined, `Weathercode: ${processWeatherCodes(data.daily.weathercode)}`);
-    const currentWind = createDOMElement("p", undefined, `Wind Direction: ${convertWindDirection(data.current_weather.winddirection)} ${data.current_weather.windspeed}`);
+    const currentWind = createDOMElement("p", undefined, `Wind Direction: ${convertWindDirection(data.current_weather.winddirection)} ${processWeatherUnits("speed", data.current_weather.windspeed)}`);
     currentIcon.setAttribute("src", "https://placehold.co/50x50"); // placeholder
     // Daily weather
     const dailyTitle = createDOMElement("h3", undefined, "Today");
     const dailyIcon = document.createElement("img");
-    const dailyHigh = createDOMElement("p", undefined, `High: ${data.daily.temperature_2m_max}`);
-    const dailyLow = createDOMElement("p", undefined, `Low: ${data.daily.temperature_2m_min}`);
-    /* const dailyWeathercode = createDOMElement("p", undefined, `Weathercode: ${data.daily.weathercode}`) */
+    const dailyHigh = createDOMElement("p", undefined, `High: ${processWeatherUnits("temp", data.daily.temperature_2m_max)}`);
+    const dailyLow = createDOMElement("p", undefined, `Low: ${processWeatherUnits("temp", data.daily.temperature_2m_min)}`);
     const dailyWeathercode = createDOMElement("p", undefined, `Weathercode: ${processWeatherCodes(data.daily.weathercode)}`)
-    const dailyFeelsLike = createDOMElement("p", undefined, `Feels like max/min: ${data.daily.apparent_temperature_max} ${data.daily.apparent_temperature_min}`);
+    const dailyFeelsLike = createDOMElement("p", undefined, `Feels like max/min: ${processWeatherUnits("temp", data.daily.apparent_temperature_max)} / ${processWeatherUnits("temp", data.daily.apparent_temperature_min)}`);
     const dailyUV = createDOMElement("p", undefined, `UV Index max: ${data.daily.uv_index_max}`);
-    const dailyPrecipSum = createDOMElement("p", undefined, `Precipitation Sum: ${data.daily.precipitation_sum}`);
-    const dailyPrecipProb = createDOMElement("p", undefined, `Precipitation Probability ${data.daily.precipitation_probability_max}`);
+    const dailyPrecipSum = createDOMElement("p", undefined, `Precipitation Sum: ${processWeatherUnits("precipSum", data.daily.precipitation_sum)}`);
+    const dailyPrecipProb = createDOMElement("p", undefined, `Precipitation Probability: ${processWeatherUnits("precipProb", data.daily.precipitation_probability_max)}`);
     dailyIcon.setAttribute("src", "https://placehold.co/50x50"); // placeholder
 
     const currentFragment = document.createDocumentFragment();
@@ -784,24 +782,31 @@ function convertWindDirection(degrees) {
     return direction;
 }
 
-/* function getWeatherUnits(unitType) {
+function processWeatherUnits(unitType, data) {
+    // Round the value
+    const roundedvalue = Math.round(data);
+
     const units = {
         temperature: "°F",
-        precipitation: "in",
+        precipSum: "in",
+        precipProb: "%",
         speed: "mph",
       };
 
       let unit;
       // Assign a value to "unit" based on the unit passed from render function
-      if (unitType == "temp") {
-        unit == units.temperature;
-      } else if (unitType == "precip") {
-        unit == units.precipitation;
-      } else if (unitType == "speed") {
-        unit == units.speed;
-      } else {
+      if (unitType === "temp") {
+        unit = units.temperature;
+      } else if (unitType === "precipSum") {
+        unit = units.precipSum;
+      } else if (unitType === "precipProb") {
+        unit = units.precipProb;
+      } else if (unitType === "speed") {
+        unit = units.speed;
+      }
+      else {
         console.log("Invalid unit passed to getWeatherUnits()")
       }
 
-      return unit;
-} */
+      return roundedvalue + unit;
+}
