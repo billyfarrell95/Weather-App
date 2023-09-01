@@ -285,7 +285,7 @@ async function fetchCurrentWeather(locationName, adminLevel1, countryCode, lat, 
             removeAllElementChildren(currentWeatherWrapper);
             removeAllElementChildren(forecastWeatherWrapper);
             searchInputField.value = "";
-            renderCurrentWeather(data, selectedResultName, data.latitude, data.longitude);
+            renderCurrentAndDailyWeather(data, selectedResultName, data.latitude, data.longitude);
             fetchQuickSearchButtonData();
         })
 
@@ -329,7 +329,7 @@ async function fetchQuickSearchWeather(locationName, adminLevel1, countryCode, l
             removeAllElementChildren(currentWeatherWrapper);
             removeAllElementChildren(forecastWeatherWrapper);
             searchInputField.value = "";
-            renderCurrentWeather(data, selectedResultName, data.latitude, data.longitude);
+            renderCurrentAndDailyWeather(data, selectedResultName, data.latitude, data.longitude);
         })
 
         .catch (error => {
@@ -349,7 +349,7 @@ function createDOMElement(tagName, className, textContent) {
     return element;
 }
 
-function renderCurrentWeather(data, selectedName, latitude, longitude) {
+function renderCurrentAndDailyWeather(data, selectedName, latitude, longitude) {
     // getWeatherUnits() expects: temp, precip, or speed
     // createDOMElement(tagName, className, textContent)
     // Create UI layout elements
@@ -369,7 +369,7 @@ function renderCurrentWeather(data, selectedName, latitude, longitude) {
     const locationNameEl = createDOMElement("h2", undefined, selectedName);
     // Current Weather
     const currentTitle = createDOMElement("h3", undefined, "Current Weather");
-    console.log("data in renderCurrentWeather", data)
+    console.log("data in renderCurrentAndDailyWeather", data)
     const currentTime = createDOMElement("p", undefined, get12HourTimeInTimezone(data.timezone));
     const currentIcon = document.createElement("img");
     const currentTemp = createDOMElement("p", undefined, `Temperature: ${processWeatherUnits("temp", data.current_weather.temperature)}`);
