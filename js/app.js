@@ -495,7 +495,7 @@ async function fetchQuickSearchButtonData() {
 
             .then (data => {
                 /* console.log("Quick search Weather response data:", data); */
-                currentQuickTemp.textContent = `${quickSearchItems[i].formattedName} (${data.current_weather.temperature})`
+                currentQuickTemp.textContent = `${quickSearchItems[i].formattedName} ${processWeatherUnits("temp", data.current_weather.temperature)}`
             })
 
             .catch (error => {
@@ -650,6 +650,8 @@ function sortForecastWeatherData(data) {
     dayOne = dayOne.filter((_, index) => index > currentHourIndex);
     const allForecastData = [dayOne, dayTwo, dayThree, dayFour, dayFive, daySix, daySeven];
 
+    // Clear the forecast wrapper before rendering (prevents the re-rendered data to be appended after the already present data)
+    removeAllElementChildren(forecastWeatherWrapper)
     // Render the forecast data
     allForecastData.forEach((dayData) => {
         renderForecastData(dayData, data.timezone) 
@@ -676,12 +678,12 @@ function renderForecastData(dayData, timezone) {
         const windLi = document.createElement("li");
         // Unix time:
         timeLi.textContent = convertUnixTimestampTo12HourFormat(dayData[property].time, timezone);
-        apparentTempLi.textContent = dayData[property].apparent_temp;
-        precipProbLi.textContent = dayData[property].precip_prob;
-        tempLi.textContent = dayData[property].temp;
+        apparentTempLi.textContent = processWeatherUnits("temp", dayData[property].apparent_temp);
+        precipProbLi.textContent = processWeatherUnits("precipProb", dayData[property].precip_prob);
+        tempLi.textContent = processWeatherUnits("temp", dayData[property].temp);
         weatherCodeLi.textContent = processWeatherCodes(dayData[property].weathercode);
         /* windDirectionLi.textContent = dayData[property].wind_direction; */
-        windLi.textContent = `${convertWindDirection(dayData[property].wind_direction)} ${dayData[property].windspeed}`;
+        windLi.textContent = `${convertWindDirection(dayData[property].wind_direction)} ${processWeatherUnits("speed", dayData[property].windspeed)}`;
         newList.append(timeLi);
         newList.append(apparentTempLi);
         newList.append(precipProbLi);
