@@ -1,3 +1,7 @@
+button {
+    cursor: pointer;
+}
+
 .search-input {
     padding-block: .75rem;
     width: 100%;
@@ -33,4 +37,14 @@
 
 .forecast-list-wrapper {
     border: 1px solid black;
+}
+
+.quick-search-wrapper {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+}
+
+#quick-search-wrapper button {
+    text-align: left;
 }

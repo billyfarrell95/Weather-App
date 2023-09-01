@@ -473,7 +473,14 @@ async function fetchQuickSearchButtonData() {
         
         // Select each quick search button/temp when looping through parent element
         const currentButton = quickSearchWrapper.children[i];
-        const currentQuickTemp = quickSearchWrapper.children[i];
+        const currentName = currentButton.querySelector(".qs-location-name");
+        const currentState = currentButton.querySelector(".qs-state-name");
+        const currentIcon = currentButton.querySelector(".qs-icon");
+        const currentQuickTemp = currentButton.querySelector(".qs-temp");
+
+        currentName.textContent = quickSearchItems[i].city;
+        currentState.textContent = quickSearchItems[i].state;
+        currentIcon.setAttribute("src", "https://placehold.co/20x20");
 
         // Add event listener to each quick search button / pass data to fetchQuickSearchWeather 
         currentButton.addEventListener("click", () => {
@@ -495,7 +502,7 @@ async function fetchQuickSearchButtonData() {
 
             .then (data => {
                 /* console.log("Quick search Weather response data:", data); */
-                currentQuickTemp.textContent = `${quickSearchItems[i].formattedName} ${processWeatherUnits("temp", data.current_weather.temperature)}`
+                currentQuickTemp.textContent = `${processWeatherUnits("temp", data.current_weather.temperature)}`
             })
 
             .catch (error => {
