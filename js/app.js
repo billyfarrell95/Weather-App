@@ -338,13 +338,13 @@ async function fetchQuickSearchWeather(locationName, adminLevel1, countryCode, l
 }
 
 // Helper function to create DOM elements, textContent and className are optional
-function createDOMElement(tagName, className, textContent) {
+function createDOMElement(tagName, classes, textContent) {
     const element = document.createElement(tagName);
     if (textContent !== undefined) {
         element.textContent = textContent;
     }
-    if (className !== undefined) {
-        element.classList.add(className);
+    if (classes !== undefined) {
+        element.className = classes;
     }
     return element;
 }
@@ -354,38 +354,45 @@ function renderCurrentAndDailyWeather(data, selectedName, latitude, longitude) {
     // createDOMElement(tagName, className, textContent)
     // Create UI layout elements
     // Current Weather
-    const currentWrapper = createDOMElement("div");
-    const currentLeftCol = createDOMElement("div");
-    const currentRightCol = createDOMElement("div");
-    const currentTempWrapper = createDOMElement("div");
+    const currentWrapper = createDOMElement("div", "current-wrapper");
+    const currentDataWrapper = createDOMElement("div", "current-data");
+    const currentTempWrapper = createDOMElement("div", "temp-wrapper");
+    const currentInfoWrapper = createDOMElement("div", "info-wrapper");
     // Daily Weather
-    const dailyWrapper = createDOMElement("div");
-    const dailyRow = createDOMElement("div");
-    const dailyLeftCol = createDOMElement("div");
-    const dailyRightCol = createDOMElement("div");
-    const dailyTempWrapper = createDOMElement("div");
+    const dailyWrapper = createDOMElement("div", "daily-wrapper");
+    const dailyDataWrapper = createDOMElement("div", "daily-data");
+    const dailyLeftCol = createDOMElement("div", "col");
+    const dailyRightCol = createDOMElement("div", "col");
+    const dailySummaryWrapper = createDOMElement("div", "summary-wrapper");
+    const dailyTempWrapper = createDOMElement("div", "temp-wrapper");
 
     // Create UI Data elements
-    const locationNameEl = createDOMElement("h2", undefined, selectedName);
+    const locationNameEl = createDOMElement("h2", "location-name", selectedName);
     // Current Weather
-    const currentTitle = createDOMElement("h3", undefined, "Current Weather");
+    const currentTitle = createDOMElement("h3", "current-title", "Current Weather");
     console.log("data in renderCurrentAndDailyWeather", data)
-    const currentTime = createDOMElement("p", undefined, get12HourTimeInTimezone(data.timezone));
-    const currentIcon = document.createElement("img");
-    const currentTemp = createDOMElement("p", undefined, `Temperature: ${processWeatherUnits("temp", data.current_weather.temperature)}`);
-    const currentWeathercode = createDOMElement("p", undefined, `Weathercode: ${processWeatherCodes(data.daily.weathercode)}`);
+    const currentTime = createDOMElement("p", "time", get12HourTimeInTimezone(data.timezone));
+    const currentIcon = createDOMElement("img", "icon-lg");
+    const currentTemp = createDOMElement("p", "temp", `Temperature: ${processWeatherUnits("temp", data.current_weather.temperature)}`);
+    const currentWeathercode = createDOMElement("p", "code", `Weathercode: ${processWeatherCodes(data.daily.weathercode)}`);
+    const currentWindWrapper = createDOMElement("div", "info-row");
+    const currentWindIcon = createDOMElement("img", "icon-sm")
     const currentWind = createDOMElement("p", undefined, `Wind Direction: ${convertWindDirection(data.current_weather.winddirection)} ${processWeatherUnits("speed", data.current_weather.windspeed)}`);
-    currentIcon.setAttribute("src", "https://placehold.co/50x50"); // placeholder
+    currentWindIcon.setAttribute("src", "https://placehold.co/50x50"); // placeholder
     // Daily weather
-    const dailyTitle = createDOMElement("h3", undefined, "Today");
-    const dailyIcon = document.createElement("img");
-    const dailyHigh = createDOMElement("p", undefined, `High: ${processWeatherUnits("temp", data.daily.temperature_2m_max)}`);
-    const dailyLow = createDOMElement("p", undefined, `Low: ${processWeatherUnits("temp", data.daily.temperature_2m_min)}`);
-    const dailyWeathercode = createDOMElement("p", undefined, `Weathercode: ${processWeatherCodes(data.daily.weathercode)}`)
-    const dailyFeelsLike = createDOMElement("p", undefined, `Feels like max/min: ${processWeatherUnits("temp", data.daily.apparent_temperature_max)} / ${processWeatherUnits("temp", data.daily.apparent_temperature_min)}`);
-    const dailyUV = createDOMElement("p", undefined, `UV Index max: ${data.daily.uv_index_max}`);
-    const dailyPrecipSum = createDOMElement("p", undefined, `Precipitation Sum: ${processWeatherUnits("precipSum", data.daily.precipitation_sum)}`);
-    const dailyPrecipProb = createDOMElement("p", undefined, `Precipitation Probability: ${processWeatherUnits("precipProb", data.daily.precipitation_probability_max)}`);
+    const dailyTitle = createDOMElement("h3", "daily-title", "Today");
+    const dailyIcon = createDOMElement("img", "icon-lg");
+    const dailyHigh = createDOMElement("p", "daily-temp high", `High: ${processWeatherUnits("temp", data.daily.temperature_2m_max)}`);
+    const dailyLow = createDOMElement("p", "daily-temp low", `Low: ${processWeatherUnits("temp", data.daily.temperature_2m_min)}`);
+    const dailyWeathercode = createDOMElement("p", "code", `Weathercode: ${processWeatherCodes(data.daily.weathercode)}`);
+    const dailyFeelsLikeWrapper = createDOMElement("p", "data-row", "Feels Like Min/Max");
+    const dailyFeelsLikeData = createDOMElement("p", undefined, `${processWeatherUnits("temp", data.daily.apparent_temperature_max)} / ${processWeatherUnits("temp", data.daily.apparent_temperature_min)}`);
+    const dailyUVWrapper = createDOMElement("p", "data-row", "UV Index Max");
+    const dailyUVData = createDOMElement("p", undefined, data.daily.uv_index_max);
+    const dailyPrecipSumWrapper = createDOMElement("p", "data-row", "Precipitation Sum");
+    const dailyPrecipSumData = createDOMElement("p", undefined, processWeatherUnits("precipSum", data.daily.precipitation_sum));
+    const dailyPrecipProbWrapper = createDOMElement("p", "data-row", "Precipitation Probability");
+    const dailyPrecipProbData = createDOMElement("p", undefined, processWeatherUnits("precipProb", data.daily.precipitation_probability_max));
     dailyIcon.setAttribute("src", "https://placehold.co/50x50"); // placeholder
 
     const currentFragment = document.createDocumentFragment();
@@ -394,31 +401,43 @@ function renderCurrentAndDailyWeather(data, selectedName, latitude, longitude) {
     currentFragment.append(locationNameEl);
     currentFragment.append(currentWrapper);
     // Current Weather
-    currentWrapper.append(currentLeftCol);
-    currentLeftCol.append(currentTitle);
-    currentLeftCol.append(currentTime);
-    currentLeftCol.append(currentTempWrapper);
+    currentWrapper.append(currentTitle);
+    currentWrapper.append(currentTime);
+    currentWrapper.append(currentDataWrapper);
+    currentDataWrapper.append(currentTempWrapper);
+    currentDataWrapper.append(currentInfoWrapper);
     currentTempWrapper.append(currentIcon);
     currentTempWrapper.append(currentTemp);
-    currentLeftCol.append(currentWeathercode);
-    currentWrapper.append(currentRightCol);
-    currentRightCol.append(currentWind);
+    currentInfoWrapper.append(currentWeathercode);
+    currentInfoWrapper.append(currentWindWrapper);
+    currentWindWrapper.append(currentWindIcon);
+    currentWindWrapper.append(currentWind);
     // Daily Weather
     dailyFragment.append(dailyWrapper)
     dailyWrapper.append(dailyTitle);
-    dailyWrapper.append(dailyRow);
-    dailyRow.append(dailyLeftCol);
-    dailyRow.append(dailyRightCol);
-    dailyLeftCol.append(dailyTempWrapper);
-    dailyTempWrapper.append(dailyIcon);
+    dailyWrapper.append(dailyDataWrapper);
+    dailyDataWrapper.append(dailyLeftCol);
+    dailyLeftCol.append(dailySummaryWrapper);
+    dailySummaryWrapper.append(dailyIcon);
+    dailySummaryWrapper.append(dailyTempWrapper);
     dailyTempWrapper.append(dailyHigh);
     dailyTempWrapper.append(dailyLow);
     dailyLeftCol.append(dailyWeathercode);
-    dailyRightCol.append(dailyFeelsLike);
-    dailyRightCol.append(dailyUV);
-    dailyRightCol.append(dailyPrecipSum);
-    dailyRightCol.append(dailyPrecipProb);
+    dailyDataWrapper.append(dailyRightCol);
+    // Feels like data row
+    dailyRightCol.append(dailyFeelsLikeWrapper);
+    dailyFeelsLikeWrapper.append(dailyFeelsLikeData);
+    // UV Row
+    dailyRightCol.append(dailyUVWrapper);
+    dailyUVWrapper.append(dailyUVData);
+    // Precip Sum Row
+    dailyRightCol.append(dailyPrecipSumWrapper);
+    dailyPrecipSumWrapper.append(dailyPrecipSumData);
+    // Precip Prob Row
+    dailyRightCol.append(dailyPrecipProbWrapper);    
+    dailyPrecipProbWrapper.append(dailyPrecipProbData);
 
+    // Append fragments to the DOM
     currentWeatherWrapper.append(currentFragment);
     currentWeatherWrapper.append(dailyFragment);
 
@@ -667,40 +686,30 @@ function sortForecastWeatherData(data) {
 
 // Render the data to the DOM
 function renderForecastData(dayData, timezone) {
-    const listWrapper = document.createElement("div");
-    listWrapper.classList.add("forecast-list-wrapper");
+    const dayListsWrapper = createDOMElement("div", "forecast-day-wrapper");
     console.log("dayData in renderForecastData", dayData)
 
     const properties = Object.keys(dayData);
 
     properties.forEach((property) => {
-        const newList = document.createElement("ul");
-        newList.classList.add("forecast-list");
-        const timeLi = document.createElement("li");
-        timeLi.style.fontWeight = "bold";
-        const apparentTempLi = document.createElement("li");
-        const precipProbLi = document.createElement("li");
-        const tempLi = document.createElement("li");
-        const weatherCodeLi = document.createElement("li");
-        const windLi = document.createElement("li");
-        // Unix time:
-        timeLi.textContent = convertUnixTimestampTo12HourFormat(dayData[property].time, timezone);
-        apparentTempLi.textContent = processWeatherUnits("temp", dayData[property].apparent_temp);
-        precipProbLi.textContent = processWeatherUnits("precipProb", dayData[property].precip_prob);
-        tempLi.textContent = processWeatherUnits("temp", dayData[property].temp);
-        weatherCodeLi.textContent = processWeatherCodes(dayData[property].weathercode);
-        /* windDirectionLi.textContent = dayData[property].wind_direction; */
-        windLi.textContent = `${convertWindDirection(dayData[property].wind_direction)} ${processWeatherUnits("speed", dayData[property].windspeed)}`;
+        const newList = createDOMElement("ul", "hourly-list");
+        const timeLi = createDOMElement("li", undefined, convertUnixTimestampTo12HourFormat(dayData[property].time, timezone));
+        const apparentTempLi = createDOMElement("li", undefined, processWeatherUnits("temp", dayData[property].apparent_temp));
+        const precipProbLi = createDOMElement("li", undefined, processWeatherUnits("temp", dayData[property].apparent_temp));
+        const tempLi = createDOMElement("li", undefined, processWeatherUnits("temp", dayData[property].temp));
+        const weatherCodeLi = createDOMElement("li", undefined, processWeatherCodes(dayData[property].weathercode));
+        const windLi = createDOMElement("li", undefined, `${convertWindDirection(dayData[property].wind_direction)} ${processWeatherUnits("speed", dayData[property].windspeed)}`);
+
         newList.append(timeLi);
         newList.append(apparentTempLi);
         newList.append(precipProbLi);
         newList.append(tempLi);
         newList.append(weatherCodeLi);
         newList.append(windLi);
-        listWrapper.append(newList)
+        dayListsWrapper.append(newList)
     });
 
-    forecastWeatherWrapper.append(listWrapper);
+    forecastWeatherWrapper.append(dayListsWrapper);
 }
 
 // Helper function - convert weathercodes to readable value (based on code meanings from API docs)

@@ -30,12 +30,12 @@ button {
     background-color: #f4f4f4;
 }
 
-.forecast-list {
+.hourly-list {
     display: flex;
     gap: 1.5rem;
 }
 
-.forecast-list-wrapper {
+.forecast-day-wrapper {
     border: 1px solid black;
 }
 
