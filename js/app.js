@@ -47,7 +47,7 @@ searchInputField.addEventListener("keyup", () => {
 useCurrentLocationButton.addEventListener("click", () => {
     removeAllElementChildren(currentWeatherWrapper);
     const loadingIcon = createLoadingElement();
-    currentWeatherWrapper.append(loadingIcon)
+    currentWeatherWrapper.append(loadingIcon);
     requestUserLocation();
 })
 
@@ -253,6 +253,8 @@ function processGeocodingAdminLevel1(geocodingResults) {
 
 // Get current weather data
 async function fetchCurrentWeather(locationName, adminLevel1, countryCode, lat, lon) {
+    const loadingIcon = createLoadingElement();
+    currentWeatherWrapper.append(loadingIcon);
     console.log(countryCode, "country code in fetchCurrentWeather")
     // Defined and check the result name for undefined values 
     let selectedResultName;
@@ -299,6 +301,8 @@ async function fetchCurrentWeather(locationName, adminLevel1, countryCode, lat, 
 
 // Get current weather data (current and today's weather)
 async function fetchQuickSearchWeather(locationName, adminLevel1, countryCode, lat, lon) {
+    const loadingIcon = createLoadingElement();
+    currentWeatherWrapper.append(loadingIcon);
     // Defined and check the result name for undefined values 
     let selectedResultName;
     if (locationName !== undefined && adminLevel1 !== undefined) {
@@ -545,6 +549,8 @@ function createViewForecastButton(lat, lon) {
 
 // Fetch the forecast data for the current location
 async function fetchForecastData(lat, lon) {
+    const loadingIcon = createLoadingElement();
+    forecastWeatherWrapper.append(loadingIcon);
     // How many days of forecast weather to fetch:
     const daysNum = 7;
     // Forecast endpoint for current location based on lat/lon of the "Current Weather"
