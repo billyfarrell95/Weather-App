@@ -1,11 +1,10 @@
-/***** Browser style resets *****/
-* {
-    box-sizing: border-box;
+/***** General styles *****/
+button {
+    cursor: pointer;
 }
 
-input {
-    border: none;
-    box-shadow: none;
+body {
+    font-family: "Open Sans", sans-serif;
 }
 
 /***** Main Layout *****/
@@ -15,11 +14,23 @@ main {
 }
 
 .container {
-    width: 800px;
+    width: 900px;
 }
 
-button {
-    cursor: pointer;
+/***** Search *****/
+#current-location-button {
+    display: flex;
+    gap: .4rem;
+    align-items: center;
+    background: transparent;
+    border: none;
+    padding: .3rem 0 .3rem 0;
+    margin-block: .3rem;
+}
+
+#current-location-button img {
+    height: 14px;
+    width: auto;
 }
 
 .search-input {
@@ -28,8 +39,8 @@ button {
     background-size: 15px;
     display: flex;
     flex-direction: column;
-    background-position: center left 5px;
-    padding: 1em 1em 1em 1.6rem;
+    background-position: center left 1rem;
+    padding: .6em 1em .6em 2.5rem;
     width: 100%;
     border-radius: .5rem;
     border: 1px solid black;
@@ -38,7 +49,10 @@ button {
 .search-results-wrapper {
     position: absolute;
     background-color: rgba(255, 255, 255);
-    width: 100%;
+    -webkit-box-shadow: 3px 4px 8px 0px rgba(0,0,0,0.1);
+    -moz-box-shadow: 3px 4px 8px 0px rgba(0,0,0,0.1);
+    box-shadow: 3px 4px 8px 0px rgba(0,0,0,0.1);
+    width: 800px;
 }
 
 .search-results-list {
@@ -49,6 +63,7 @@ button {
 .search-results-list li {
     list-style-type: none;
     padding-block: .4rem;
+    padding-inline: 1rem;
     cursor: pointer;    
 }
 
@@ -56,6 +71,92 @@ button {
     background-color: #f4f4f4;
 }
 
+/***** Quick Search *****/
+.quick-search-wrapper {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+}
+
+#quick-search-wrapper button {
+    text-align: left;
+    border-radius: .5rem;
+    padding-inline: .75rem;
+    padding-block: .5rem;
+    display: flex;
+    flex-direction: column;
+    gap: .75rem;
+    background: transparent;
+}
+
+.qs-location-name, .qs-state-name, .qs-temp {
+    min-height: 1em;
+}
+
+.qs-location-name {
+    font-size: 1.1rem;
+    font-weight: bold;
+}
+
+.qs-state-name {
+    font-size: 13px;
+}
+
+.qs-temp-wrapper {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+}
+
+.qs-icon {
+    min-height: 20px;
+    width: auto;
+}
+
+.qs-temp {
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+/***** Current/Day *****/
+.current-wrapper {
+    border: 1px solid black;
+    padding: 1rem;
+    border-radius: .5rem;
+}
+
+.current-data {
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+}
+
+.current-wrapper h3 {
+    font-size: 1rem;
+}
+
+.current-wrapper .temp-wrapper {
+    display: flex;
+    gap: 1.6rem;
+    align-items: center;
+}
+
+.current-wrapper .temp-wrapper .temp {
+    font-size: 60px;
+}
+
+.current-wrapper .info-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: .75rem;
+}
+
+.current-wrapper .info-wrapper .info-row {
+    display: flex;
+    gap: .5rem;
+}
+
+/***** Forecast *****/
 .hourly-list {
     display: flex;
     gap: 1.5rem;
@@ -63,23 +164,4 @@ button {
 
 .forecast-day-wrapper {
     border: 1px solid black;
-}
-
-.quick-search-wrapper {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 1rem;
-}
-
-#quick-search-wrapper button {
-    text-align: left;
-}
-
-.qs-location-name, .qs-state-name, .qs-temp {
-    height: 1em;
-}
-
-.qs-icon {
-    height: 20px;
-    width: auto;
 }

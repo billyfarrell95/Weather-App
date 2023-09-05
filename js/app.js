@@ -380,12 +380,13 @@ function renderCurrentAndDailyWeather(data, selectedName, latitude, longitude) {
     console.log("data in renderCurrentAndDailyWeather", data)
     const currentTime = createDOMElement("p", "time", get12HourTimeInTimezone(data.timezone));
     const currentIcon = createDOMElement("img", "icon-lg");
-    const currentTemp = createDOMElement("p", "temp", `Temperature: ${processWeatherUnits("temp", data.current_weather.temperature)}`);
-    const currentWeathercode = createDOMElement("p", "code", `Weathercode: ${processWeatherCodes(data.daily.weathercode)}`);
+    const currentTemp = createDOMElement("p", "temp", processWeatherUnits("temp", data.current_weather.temperature));
+    const currentWeathercode = createDOMElement("p", "code", processWeatherCodes(data.daily.weathercode));
     const currentWindWrapper = createDOMElement("div", "info-row");
     const currentWindIcon = createDOMElement("img", "icon-sm")
     const currentWind = createDOMElement("p", undefined, `Wind Direction: ${convertWindDirection(data.current_weather.winddirection)} ${processWeatherUnits("speed", data.current_weather.windspeed)}`);
-    currentWindIcon.setAttribute("src", "https://placehold.co/50x50"); // placeholder
+    currentIcon.setAttribute("src", "https://placehold.co/60x45")
+    currentWindIcon.setAttribute("src", "https://placehold.co/20x20"); // placeholder
     // Daily weather
     const dailyTitle = createDOMElement("h3", "daily-title", "Today");
     const dailyIcon = createDOMElement("img", "icon-lg");

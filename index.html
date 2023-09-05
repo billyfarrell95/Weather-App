@@ -6,15 +6,21 @@
         <title>Weather App</title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="/css/styles.css">
-    </head>
+        <link rel="stylesheet" href="/css/reset.css">
     <body>
         <main>
             <section class="container">
                 <h1>Weather App</h1>
                 <div class="input-wrapper" id="search-input-wrapper">
                     <input type="text" placeholder="Search by city or zipcode" id="search-input" class="search-input">
-                    <button id="current-location-button">Use current location</button>
+                    <div class="search-results-wrapper" id="search-results-wrapper">
+                        <ul id="search-results-list" class="search-results-list"></ul>    
+                    </div>
+                    <button id="current-location-button"><img src="/assets/icons/location.svg" alt="">Use current location</button>
                     <p><b>Quick Search:</b></p>
                     <div id="quick-search-wrapper" class="quick-search-wrapper">
                         <button>
@@ -57,9 +63,6 @@
                                 <div class="qs-temp"></div>
                             </div>
                         </button>
-                    </div>
-                    <div class="search-results-wrapper" id="search-results-wrapper">
-                        <ul id="search-results-list" class="search-results-list"></ul>    
                     </div>
                 </div>
                 <div id="current-weather-wrapper"></div>
