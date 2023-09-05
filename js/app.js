@@ -551,8 +551,8 @@ function createViewForecastButton(lat, lon) {
 
 // Fetch the forecast data for the current location
 async function fetchForecastData(lat, lon) {
-    const loadingIcon = createLoadingElement();
-    forecastWeatherWrapper.append(loadingIcon);
+    /* const loadingIcon = createLoadingElement();
+    forecastWeatherWrapper.append(loadingIcon); */
     // How many days of forecast weather to fetch:
     const daysNum = 7;
     // Forecast endpoint for current location based on lat/lon of the "Current Weather"
@@ -695,17 +695,24 @@ function sortForecastWeatherData(data) {
     removeAllElementChildren(forecastWeatherWrapper);
 
     // Create the heading element
-    const forecastHeading = createDOMElement("h2", undefined, "7 Day Forecast");
-    forecastWeatherWrapper.append(forecastHeading);
+    /* const forecastHeading = createDOMElement("h2", undefined, "7 Day Forecast");
+    forecastWeatherWrapper.append(forecastHeading); */
+
+    const modal = document.getElementById("forecast-modal");
+    const closeButton = createDOMElement("button", undefined, "Close");
+    modal.append(closeButton);
+    closeButton.addEventListener("click", () => {
+        modal.close();
+    })
 
     // Render the forecast data
     allForecastData.forEach((dayData) => {
-        renderForecastData(dayData, data.timezone) 
+        renderForecastData(dayData, data.timezone, modal) 
     })
 }
 
 // Render the data to the DOM
-function renderForecastData(dayData, timezone) {
+function renderForecastData(dayData, timezone, modal) {
     const forecastDayHeading = createDOMElement("h3", undefined, dayData[0].date); // Select the date from each "dayData" sent from sortForecastWeatherData
     const dayListsWrapper = createDOMElement("div", "forecast-day-wrapper");
 
@@ -778,8 +785,17 @@ function renderForecastData(dayData, timezone) {
         newList.append(precipProbLi);
         dayListsWrapper.append(newList)
     });
-    forecastWeatherWrapper.append(forecastDayHeading);
-    forecastWeatherWrapper.append(dayListsWrapper);
+    /* const modal = document.getElementById("forecast-modal");
+    const closeButton = createDOMElement("button", undefined, "Close");
+    modal.append(closeButton);
+    closeButton.addEventListener("click", () => {
+        modal.close();
+    }) */
+    /* forecastWeatherWrapper.append(forecastDayHeading);
+    forecastWeatherWrapper.append(dayListsWrapper); */
+    modal.append(forecastDayHeading);
+    modal.append(dayListsWrapper);
+    modal.showModal();
 }
 
 // Helper function - convert weathercodes to readable value (based on code meanings from API docs)
