@@ -710,21 +710,71 @@ function renderForecastData(dayData, timezone) {
 
     const properties = Object.keys(dayData);
 
+    console.log("DAY DATA IN RENDER FORECAST", dayData)
+
     properties.forEach((property) => {
         const newList = createDOMElement("ul", "hourly-list");
+        // Add role of list (reset.css)
+        newList.setAttribute("role", "list");
         const timeLi = createDOMElement("li", undefined, convertUnixTimestampTo12HourFormat(dayData[property].time, timezone));
-        const apparentTempLi = createDOMElement("li", undefined, processWeatherUnits("temp", dayData[property].apparent_temp));
-        const precipProbLi = createDOMElement("li", undefined, processWeatherUnits("temp", dayData[property].apparent_temp));
         const tempLi = createDOMElement("li", undefined, processWeatherUnits("temp", dayData[property].temp));
-        const weatherCodeLi = createDOMElement("li", undefined, processWeatherCodes(dayData[property].weathercode));
-        const windLi = createDOMElement("li", undefined, `${convertWindDirection(dayData[property].wind_direction)} ${processWeatherUnits("speed", dayData[property].windspeed)}`);
+        const weatherCodeLi = createDOMElement("li");
+        const weatherCodeWrapper = createDOMElement("div", "forecast-code-wrapper");
+        const weatherCodeIcon = createDOMElement("img", "icon-sm");
+        weatherCodeIcon.setAttribute("src", "https://placehold.co/25x25");
+        const weatherCodeData = createDOMElement("li", undefined, processWeatherCodes(dayData[property].weathercode));
+        const apparentTempLi = createDOMElement("li");
+        const apparentTempWrapper = createDOMElement("div", "apparent-temp-wrapper");
+        const apparentTempIcon = createDOMElement("img", "icon-sm");
+        apparentTempIcon.setAttribute("src", "https://placehold.co/25x25");
+        const apparentTempDataCol = createDOMElement("div", "data-col");
+        const apparentTempTitle = createDOMElement("span", "data-title", "Feels Like");
+        const apparentTempData = createDOMElement("span", "data", processWeatherUnits("temp", dayData[property].apparent_temp));
+
+        const windLi = createDOMElement("li");
+        const windWrapper = createDOMElement("div", "wind-wrapper");
+        const windIcon = createDOMElement("img", "icon-sm");
+        windIcon.setAttribute("src", "https://placehold.co/25x25");
+        const windDataCol = createDOMElement("div", "data-col");
+        const windTitle = createDOMElement("span", "data-title", "Wind");
+        const windData = createDOMElement("span", "data", processWeatherUnits("speed", dayData[property].apparent_temp));
+
+        const precipProbLi = createDOMElement("li");
+        const precipProbWrapper = createDOMElement("div", "precip-prob-wrapper");
+        const precipProbIcon = createDOMElement("img", "icon-sm");
+        precipProbIcon.setAttribute("src", "https://placehold.co/25x25");
+        const precipProbDataCol = createDOMElement("div", "data-col");
+        const precipProbTitle = createDOMElement("span", "data-title", "Precipitation");
+        const precipProbData = createDOMElement("span", "data", processWeatherUnits("precipProb", dayData[property].precip_prob));
+
+        weatherCodeLi.append(weatherCodeWrapper);
+        weatherCodeWrapper.append(weatherCodeIcon);
+        weatherCodeWrapper.append(weatherCodeData);
+
+        apparentTempLi.append(apparentTempWrapper);
+        apparentTempWrapper.append(apparentTempIcon);
+        apparentTempWrapper.append(apparentTempDataCol);
+        apparentTempDataCol.append(apparentTempTitle);
+        apparentTempDataCol.append(apparentTempData);
+
+        windLi.append(windWrapper);
+        windWrapper.append(windIcon);
+        windWrapper.append(windDataCol);
+        windDataCol.append(windTitle);
+        windDataCol.append(windData);
+
+        precipProbLi.append(precipProbWrapper);
+        precipProbWrapper.append(precipProbIcon);
+        precipProbWrapper.append(precipProbDataCol);
+        precipProbDataCol.append(precipProbTitle);
+        precipProbDataCol.append(precipProbData)
 
         newList.append(timeLi);
-        newList.append(apparentTempLi);
-        newList.append(precipProbLi);
         newList.append(tempLi);
         newList.append(weatherCodeLi);
+        newList.append(apparentTempLi);
         newList.append(windLi);
+        newList.append(precipProbLi);
         dayListsWrapper.append(newList)
     });
     forecastWeatherWrapper.append(forecastDayHeading);
