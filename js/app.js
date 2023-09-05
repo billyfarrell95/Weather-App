@@ -5,7 +5,7 @@ const searchResultsWrapper = document.querySelector("#search-results-wrapper")
 const searchResultsList = document.querySelector("#search-results-list");
 const currentWeatherWrapper = document.querySelector("#current-weather-wrapper");
 const useCurrentLocationButton = document.querySelector("#current-location-button");
-const quickSearchWrapper = document.querySelector("#quick-search-wrapper"); // The element that holds the quick search buttons
+const quickSearchButtonsWrapper = document.querySelector("#quick-search-buttons"); // The element that holds the quick search buttons
 const forecastWeatherWrapper = document.querySelector("#forecast-weather-wrapper");
 
 document.addEventListener("DOMContentLoaded", fetchQuickSearchButtonData());
@@ -14,10 +14,10 @@ document.addEventListener("DOMContentLoaded", fetchQuickSearchButtonData());
 document.addEventListener("click", () => {
     if (document.activeElement == searchInputField) {
         /* console.log("input wrapper is active"); */
-        searchResultsWrapper.style.display = "";
+        searchResultsWrapper.style.visibility = "visible";
     } else {
         /* console.log("input wrapper not active") */
-        searchResultsWrapper.style.display = "none"
+        searchResultsWrapper.style.visibility = "hidden"
     }
 });
 
@@ -384,7 +384,7 @@ function renderCurrentAndDailyWeather(data, selectedName, latitude, longitude) {
     const currentWeathercode = createDOMElement("p", "code", processWeatherCodes(data.daily.weathercode));
     const currentWindWrapper = createDOMElement("div", "info-row");
     const currentWindIcon = createDOMElement("img", "icon-sm")
-    const currentWind = createDOMElement("p", undefined, `Wind Direction: ${convertWindDirection(data.current_weather.winddirection)} ${processWeatherUnits("speed", data.current_weather.windspeed)}`);
+    const currentWind = createDOMElement("p", undefined, `${convertWindDirection(data.current_weather.winddirection)} ${processWeatherUnits("speed", data.current_weather.windspeed)}`);
     currentIcon.setAttribute("src", "https://placehold.co/60x45")
     currentWindIcon.setAttribute("src", "https://placehold.co/20x20"); // placeholder
     // Daily weather
@@ -392,7 +392,7 @@ function renderCurrentAndDailyWeather(data, selectedName, latitude, longitude) {
     const dailyIcon = createDOMElement("img", "icon-lg");
     const dailyHigh = createDOMElement("p", "daily-temp high", `High: ${processWeatherUnits("temp", data.daily.temperature_2m_max)}`);
     const dailyLow = createDOMElement("p", "daily-temp low", `Low: ${processWeatherUnits("temp", data.daily.temperature_2m_min)}`);
-    const dailyWeathercode = createDOMElement("p", "code", `Weathercode: ${processWeatherCodes(data.daily.weathercode)}`);
+    const dailyWeathercode = createDOMElement("p", "code", processWeatherCodes(data.daily.weathercode));
     const dailyFeelsLikeWrapper = createDOMElement("p", "data-row", "Feels Like Min/Max");
     const dailyFeelsLikeData = createDOMElement("p", undefined, `${processWeatherUnits("temp", data.daily.apparent_temperature_max)} / ${processWeatherUnits("temp", data.daily.apparent_temperature_min)}`);
     const dailyUVWrapper = createDOMElement("p", "data-row", "UV Index Max");
@@ -499,7 +499,7 @@ async function fetchQuickSearchButtonData() {
         const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true&temperature_unit=fahrenheit&timeformat=unixtime&forecast_days=1&timezone=auto`;
         
         // Select each quick search button/temp when looping through parent element
-        const currentQuickSearchButton = quickSearchWrapper.children[i];
+        const currentQuickSearchButton = quickSearchButtonsWrapper.children[i];
         const currentName = currentQuickSearchButton.querySelector(".qs-location-name");
         const currentState = currentQuickSearchButton.querySelector(".qs-state-name");
         const currentIcon = currentQuickSearchButton.querySelector(".qs-icon");
@@ -539,8 +539,7 @@ async function fetchQuickSearchButtonData() {
 }
 
 function createViewForecastButton(lat, lon) {
-    const viewForecastButton = document.createElement("button");
-    viewForecastButton.textContent = "View 7-Day Forecast";
+    const viewForecastButton = createDOMElement("button", "view-forecast-button", "View 7-Day Forecast");
     currentWeatherWrapper.append(viewForecastButton);
 
     viewForecastButton.addEventListener("click", () => {

@@ -9,64 +9,68 @@
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-        <link rel="stylesheet" href="/css/styles.css">
         <link rel="stylesheet" href="/css/reset.css">
+        <link rel="stylesheet" href="/css/styles.css">
     <body>
         <main>
-            <section class="container">
-                <h1>Weather App</h1>
-                <div class="input-wrapper" id="search-input-wrapper">
-                    <input type="text" placeholder="Search by city or zipcode" id="search-input" class="search-input">
-                    <div class="search-results-wrapper" id="search-results-wrapper">
-                        <ul id="search-results-list" class="search-results-list"></ul>    
+            <section class="hero-section">
+                <div class="container">
+                    <h1>Weather App</h1>
+                    <div class="input-wrapper" id="search-input-wrapper">
+                        <input type="text" placeholder="Search by city or zipcode" id="search-input" class="search-input">
+                        <div class="search-results-wrapper" id="search-results-wrapper">
+                            <button id="current-location-button" class="current-location-button"><img src="/assets/icons/location.svg" alt="">Use current location</button>
+                            <ul id="search-results-list" class="search-results-list"></ul>
+                        </div>
+                        <div class="quick-search-wrapper">
+                            <p class="qs-title">Quick Search:</p>
+                            <div id="quick-search-buttons" class="quick-search-buttons">
+                                <button>
+                                    <div>
+                                        <div class="qs-location-name"></div>
+                                        <div class="qs-state-name"></div>
+                                    </div>
+                                    <div class="qs-temp-wrapper">
+                                        <img src="" alt="" class="qs-icon">
+                                        <div class="qs-temp"></div>
+                                    </div>
+                                </button>
+                                <button>
+                                    <div>
+                                        <div class="qs-location-name"></div>
+                                        <div class="qs-state-name"></div>
+                                    </div>
+                                    <div class="qs-temp-wrapper">
+                                        <img src="" alt="" class="qs-icon">
+                                        <div class="qs-temp"></div>
+                                    </div>
+                                </button>
+                                <button>
+                                    <div>
+                                        <div class="qs-location-name"></div>
+                                        <div class="qs-state-name"></div>
+                                    </div>
+                                    <div class="qs-temp-wrapper">
+                                        <img src="" alt="" class="qs-icon">
+                                        <div class="qs-temp"></div>
+                                    </div>
+                                </button>
+                                <button>
+                                    <div>
+                                        <div class="qs-location-name"></div>
+                                        <div class="qs-state-name"></div>
+                                    </div>
+                                    <div class="qs-temp-wrapper">
+                                        <img src="" alt="" class="qs-icon">
+                                        <div class="qs-temp"></div>
+                                    </div>
+                                </button>
+                            </div>
+                        </div>
                     </div>
-                    <button id="current-location-button"><img src="/assets/icons/location.svg" alt="">Use current location</button>
-                    <p><b>Quick Search:</b></p>
-                    <div id="quick-search-wrapper" class="quick-search-wrapper">
-                        <button>
-                            <div>
-                                <div class="qs-location-name"></div>
-                                <div class="qs-state-name"></div>
-                            </div>
-                            <div class="qs-temp-wrapper">
-                                <img src="" alt="" class="qs-icon">
-                                <div class="qs-temp"></div>
-                            </div>
-                        </button>
-                        <button>
-                            <div>
-                                <div class="qs-location-name"></div>
-                                <div class="qs-state-name"></div>
-                            </div>
-                            <div class="qs-temp-wrapper">
-                                <img src="" alt="" class="qs-icon">
-                                <div class="qs-temp"></div>
-                            </div>
-                        </button>
-                        <button>
-                            <div>
-                                <div class="qs-location-name"></div>
-                                <div class="qs-state-name"></div>
-                            </div>
-                            <div class="qs-temp-wrapper">
-                                <img src="" alt="" class="qs-icon">
-                                <div class="qs-temp"></div>
-                            </div>
-                        </button>
-                        <button>
-                            <div>
-                                <div class="qs-location-name"></div>
-                                <div class="qs-state-name"></div>
-                            </div>
-                            <div class="qs-temp-wrapper">
-                                <img src="" alt="" class="qs-icon">
-                                <div class="qs-temp"></div>
-                            </div>
-                        </button>
-                    </div>
+                    <div id="current-weather-wrapper" class="current-weather-wrapper"></div>
+                    <div id="forecast-weather-wrapper" class="forecast-weather-wrapper"></div>
                 </div>
-                <div id="current-weather-wrapper" class="current-weather-wrapper"></div>
-                <div id="forecast-weather-wrapper" class="forecast-weather-wrapper"></div>
             </section>
         </main>
         <script src="/js/app.js" type="module"></script>
