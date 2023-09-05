@@ -8,7 +8,9 @@ const useCurrentLocationButton = document.querySelector("#current-location-butto
 const quickSearchButtonsWrapper = document.querySelector("#quick-search-buttons"); // The element that holds the quick search buttons
 const forecastWeatherWrapper = document.querySelector("#forecast-weather-wrapper");
 
-document.addEventListener("DOMContentLoaded", fetchQuickSearchButtonData());
+document.addEventListener("DOMContentLoaded", () => {
+    fetchQuickSearchButtonData();
+})
 
 // Handle showing and hiding the search results when the field is/isn't active
 document.addEventListener("click", () => {
