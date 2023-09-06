@@ -1,3 +1,6 @@
+import removeAllElementChildren from "./utils/removeElementChildren.js";
+import get12HourTimeInTimezone from "./utils/get12HourTimeInTimezone.js";
+
 // Select UI Elements
 const searchInputField = document.querySelector("#search-input");
 const searchInputWrapper = document.querySelector("#search-input-wrapper");
@@ -173,13 +176,6 @@ function displaySearchResults(data) {
     }
 }
 
-// Helper function - clear all the children of a selected HTML element
-function removeAllElementChildren(item) {
-    while (item.firstChild) {
-        item.removeChild(item.firstChild)
-    }
-}
-
 // Helper function - get the current time
 /* function getCurrent12HourTime() {
     let date = new Date();
@@ -202,19 +198,6 @@ function removeAllElementChildren(item) {
     
     return new12HourTime;
 } */
-
-function get12HourTimeInTimezone(timezone) {
-    const date = new Date();
-
-    const time = date.toLocaleTimeString("en-US", {
-        hour: "numeric",
-        minute: "2-digit",
-        hour12: true,
-        timeZone: timezone
-    })
-
-    return time;
-}
 
 // Helper function - Convert Unix timestamp to 12 hour time
 function convertUnixTimestampTo12HourFormat(unixTimestamp, timezone) {
@@ -572,7 +555,7 @@ async function fetchForecastData(lat, lon) {
         })
 }
 
-// Render the forecast data for the current location
+// Sort the forecast data for the current location
 function sortForecastWeatherData(data) {
     console.log(data)
     // Variables to hold each forecast day's weather
@@ -654,7 +637,7 @@ function sortForecastWeatherData(data) {
     })
 }
 
-// Render the data to the DOM
+// Render Forecast data to the DOM
 function renderForecastData(dayData, timezone, modal) {
     const forecastDayHeading = createDOMElement("h3", undefined, dayData[0].date); // Select the date from each "dayData" sent from sortForecastWeatherData
     const dayListsWrapper = createDOMElement("div", "forecast-day-wrapper");
