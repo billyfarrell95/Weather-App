@@ -316,7 +316,26 @@ h1 {
 }
 
 .forecast-modal {
-    width: 90vw;
+    width: 80vw;
+    position: relative;
+}
+
+.modal-close-button {
+    position: fixed;
+    top: .5rem;
+    right: .5rem;
+}
+
+@media screen and (min-width: 600px) {
+    .forecast-modal {
+        width: 90vw;
+    }
+    
+    .modal-close-button {
+        position: fixed;
+        top: 1rem;
+        right: 1rem;
+    }
 }
 
 .forecast-modal .hourly-list {

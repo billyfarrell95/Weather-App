@@ -48,8 +48,6 @@ searchInputField.addEventListener("keyup", () => {
 // useCurrentLocationButton event listener
 useCurrentLocationButton.addEventListener("click", () => {
     removeAllElementChildren(currentWeatherWrapper);
-    /* const loadingIcon = createLoadingElement(); */
-    /* currentWeatherWrapper.append(loadingIcon); */
     requestUserLocation();
 })
 
@@ -158,9 +156,6 @@ function displaySearchResults(data) {
             fetchCurrentWeather(locationName, adminLevel1, countryCode, lat, lon);
         })
 
-        //const name = data.results[i].name; // Location name
-        //const adminLevel1 = data.results[i].admin1; // Administrative area the location resides in
-
         // Check for values returned as "undefined", if so, exclude from search result text
         if (locationName !== undefined) {
             newResultLi.textContent += locationName + ", ";
@@ -255,8 +250,6 @@ function processGeocodingAdminLevel1(geocodingResults) {
 
 // Get current weather data
 async function fetchCurrentWeather(locationName, adminLevel1, countryCode, lat, lon) {
-    /* const loadingIcon = createLoadingElement(); */
-    /* currentWeatherWrapper.append(loadingIcon); */
     console.log(countryCode, "country code in fetchCurrentWeather")
     // Defined and check the result name for undefined values 
     let selectedResultName;
@@ -303,8 +296,6 @@ async function fetchCurrentWeather(locationName, adminLevel1, countryCode, lat, 
 
 // Get current weather data (current and today's weather)
 async function fetchQuickSearchWeather(locationName, adminLevel1, countryCode, lat, lon) {
-    /* const loadingIcon = createLoadingElement(); */
-    /* currentWeatherWrapper.append(loadingIcon); */
     // Defined and check the result name for undefined values 
     let selectedResultName;
     if (locationName !== undefined && adminLevel1 !== undefined) {
@@ -359,8 +350,6 @@ function createDOMElement(tagName, classes, textContent) {
 }
 
 function renderCurrentAndDailyWeather(data, selectedName, latitude, longitude) {
-    // getWeatherUnits() expects: temp, precip, or speed
-    // createDOMElement(tagName, className, textContent)
     // Create UI layout elements
     const dataRow = createDOMElement("div", "current-daily-row");
     // Current Weather
@@ -450,9 +439,6 @@ function renderCurrentAndDailyWeather(data, selectedName, latitude, longitude) {
 
     dataRow.append(currentFragment);
     dataRow.append(dailyFragment)
-    // Append fragments to the DOM
-    /* currentWeatherWrapper.append(currentFragment);
-    currentWeatherWrapper.append(dailyFragment); */
     currentWeatherWrapper.append(locationNameEl);
     currentWeatherWrapper.append(dataRow);
 
@@ -556,10 +542,11 @@ function createViewForecastButton(lat, lon) {
 
 // Fetch the forecast data for the current location
 async function fetchForecastData(lat, lon) {
-    /* const loadingIcon = createLoadingElement();
-    forecastWeatherWrapper.append(loadingIcon); */
-    // How many days of forecast weather to fetch:
-    const daysNum = 7;
+    const modal = document.getElementById("forecast-modal");
+    removeAllElementChildren(modal)
+    // How many days of forecast weather to fetch (if changed, sortForecastWeatherData will have to be updated)
+    const daysNum = 3;
+
     // Forecast endpoint for current location based on lat/lon of the "Current Weather"
     // Unix time:
     const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=temperature_2m,apparent_temperature,precipitation_probability,weathercode,windspeed_10m,winddirection_10m&temperature_unit=fahrenheit&windspeed_unit=mph&precipitation_unit=inch&timezone=auto&timeformat=unixtime&forecast_days=${daysNum}`;
@@ -592,13 +579,9 @@ function sortForecastWeatherData(data) {
     let dayOne = [];
     let dayTwo = [];
     let dayThree = [];
-    let dayFour = [];
-    let dayFive = [];
-    let daySix = [];
-    let daySeven = [];
 
     // Loop through and save one day's weather to the variables above
-    for (let i = 0; i < 168; i++) {
+    for (let i = 0; i < 72; i++) {
         if (i <= 23) {
             dayOne.push({
                 "apparent_temp": data.hourly.apparent_temperature[i],
@@ -635,54 +618,8 @@ function sortForecastWeatherData(data) {
                 "date": createForecastDisplayDates()[2]
             });
         }
-        if (i > 71 && i <= 95) {
-            dayFour.push({
-                "apparent_temp": data.hourly.apparent_temperature[i],
-                "precip_prob": data.hourly.precipitation_probability[i],
-                "temp": data.hourly.temperature_2m[i],
-                "weathercode": data.hourly.weathercode[i],
-                "wind_direction": data.hourly.winddirection_10m[i],
-                "windspeed": data.hourly.windspeed_10m[i],
-                "time": data.hourly.time[i],
-                "date": createForecastDisplayDates()[3]
-            });
-        }
-        if (i > 95 && i <= 119) {
-            dayFive.push({
-                "apparent_temp": data.hourly.apparent_temperature[i],
-                "precip_prob": data.hourly.precipitation_probability[i],
-                "temp": data.hourly.temperature_2m[i],
-                "weathercode": data.hourly.weathercode[i],
-                "wind_direction": data.hourly.winddirection_10m[i],
-                "windspeed": data.hourly.windspeed_10m[i],
-                "time": data.hourly.time[i],
-                "date": createForecastDisplayDates()[4]
-            });
-        }
-        if (i > 119 && i <= 143) {
-            daySix.push({
-                "apparent_temp": data.hourly.apparent_temperature[i],
-                "precip_prob": data.hourly.precipitation_probability[i],
-                "temp": data.hourly.temperature_2m[i],
-                "weathercode": data.hourly.weathercode[i],
-                "wind_direction": data.hourly.winddirection_10m[i],
-                "windspeed": data.hourly.windspeed_10m[i],
-                "time": data.hourly.time[i],
-                "date": createForecastDisplayDates()[5]
-            });
-        }
-        if (i > 143) {
-            daySeven.push({
-                "apparent_temp": data.hourly.apparent_temperature[i],
-                "precip_prob": data.hourly.precipitation_probability[i],
-                "temp": data.hourly.temperature_2m[i],
-                "weathercode": data.hourly.weathercode[i],
-                "wind_direction": data.hourly.winddirection_10m[i],
-                "windspeed": data.hourly.windspeed_10m[i],
-                "time": data.hourly.time[i],
-                "date": createForecastDisplayDates()[6]
-            });
-        }
+
+        localStorage.setItem("dayOne", JSON.stringify(dayOne));
     }
 
     // Calculate the current day based on user's timezone offset
@@ -694,21 +631,22 @@ function sortForecastWeatherData(data) {
     const currentHourIndex = now.getUTCHours();
 
     dayOne = dayOne.filter((_, index) => index > currentHourIndex);
-    const allForecastData = [dayOne, dayTwo, dayThree, dayFour, dayFive, daySix, daySeven];
+    const allForecastData = [dayOne, dayTwo, dayThree];
 
     // Clear the forecast wrapper before rendering (prevents the re-rendered data to be appended after the already present data)
     removeAllElementChildren(forecastWeatherWrapper);
 
-    // Create the heading element
-    /* const forecastHeading = createDOMElement("h2", undefined, "7 Day Forecast");
-    forecastWeatherWrapper.append(forecastHeading); */
-
     const modal = document.getElementById("forecast-modal");
-    const closeButton = createDOMElement("button", undefined, "Close");
+    const closeButton = createDOMElement("button", "modal-close-button", null);
+    const closeIcon = createDOMElement("img");
+    closeIcon.setAttribute("src", "/assets/icons/close.svg");
+    closeButton.append(closeIcon)
     modal.append(closeButton);
     closeButton.addEventListener("click", () => {
         modal.close();
     })
+    const forecastHeading = createDOMElement("h2", undefined, "3-Day Hourly Weather");
+    modal.append(forecastHeading);
 
     // Render the forecast data
     allForecastData.forEach((dayData) => {
@@ -723,7 +661,7 @@ function renderForecastData(dayData, timezone, modal) {
 
     const properties = Object.keys(dayData);
 
-    console.log("DAY DATA IN RENDER FORECAST", dayData)
+    /* console.log("DAY DATA IN RENDER FORECAST", dayData) */
 
     properties.forEach((property) => {
         const newList = createDOMElement("ul", "hourly-list");
@@ -790,17 +728,11 @@ function renderForecastData(dayData, timezone, modal) {
         newList.append(precipProbLi);
         dayListsWrapper.append(newList)
     });
-    /* const modal = document.getElementById("forecast-modal");
-    const closeButton = createDOMElement("button", undefined, "Close");
-    modal.append(closeButton);
-    closeButton.addEventListener("click", () => {
-        modal.close();
-    }) */
-    /* forecastWeatherWrapper.append(forecastDayHeading);
-    forecastWeatherWrapper.append(dayListsWrapper); */
+
     modal.append(forecastDayHeading);
     modal.append(dayListsWrapper);
     modal.showModal();
+    modal.focus();
 }
 
 // Helper function - convert weathercodes to readable value (based on code meanings from API docs)
