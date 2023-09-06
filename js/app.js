@@ -48,8 +48,8 @@ searchInputField.addEventListener("keyup", () => {
 // useCurrentLocationButton event listener
 useCurrentLocationButton.addEventListener("click", () => {
     removeAllElementChildren(currentWeatherWrapper);
-    const loadingIcon = createLoadingElement();
-    currentWeatherWrapper.append(loadingIcon);
+    /* const loadingIcon = createLoadingElement(); */
+    /* currentWeatherWrapper.append(loadingIcon); */
     requestUserLocation();
 })
 
@@ -255,8 +255,8 @@ function processGeocodingAdminLevel1(geocodingResults) {
 
 // Get current weather data
 async function fetchCurrentWeather(locationName, adminLevel1, countryCode, lat, lon) {
-    const loadingIcon = createLoadingElement();
-    currentWeatherWrapper.append(loadingIcon);
+    /* const loadingIcon = createLoadingElement(); */
+    /* currentWeatherWrapper.append(loadingIcon); */
     console.log(countryCode, "country code in fetchCurrentWeather")
     // Defined and check the result name for undefined values 
     let selectedResultName;
@@ -303,8 +303,8 @@ async function fetchCurrentWeather(locationName, adminLevel1, countryCode, lat, 
 
 // Get current weather data (current and today's weather)
 async function fetchQuickSearchWeather(locationName, adminLevel1, countryCode, lat, lon) {
-    const loadingIcon = createLoadingElement();
-    currentWeatherWrapper.append(loadingIcon);
+    /* const loadingIcon = createLoadingElement(); */
+    /* currentWeatherWrapper.append(loadingIcon); */
     // Defined and check the result name for undefined values 
     let selectedResultName;
     if (locationName !== undefined && adminLevel1 !== undefined) {
@@ -362,6 +362,7 @@ function renderCurrentAndDailyWeather(data, selectedName, latitude, longitude) {
     // getWeatherUnits() expects: temp, precip, or speed
     // createDOMElement(tagName, className, textContent)
     // Create UI layout elements
+    const dataRow = createDOMElement("div", "current-daily-row");
     // Current Weather
     const currentWrapper = createDOMElement("div", "current-wrapper");
     const currentDataWrapper = createDOMElement("div", "current-data");
@@ -396,7 +397,7 @@ function renderCurrentAndDailyWeather(data, selectedName, latitude, longitude) {
     const dailyLow = createDOMElement("p", "daily-temp low", `Low: ${processWeatherUnits("temp", data.daily.temperature_2m_min)}`);
     const dailyWeathercode = createDOMElement("p", "code", processWeatherCodes(data.daily.weathercode));
     const dailyFeelsLikeWrapper = createDOMElement("p", "data-row", "Feels Like Min/Max");
-    const dailyFeelsLikeData = createDOMElement("p", undefined, `${processWeatherUnits("temp", data.daily.apparent_temperature_max)} / ${processWeatherUnits("temp", data.daily.apparent_temperature_min)}`);
+    const dailyFeelsLikeData = createDOMElement("p", undefined, `${processWeatherUnits("temp", data.daily.apparent_temperature_min)} / ${processWeatherUnits("temp", data.daily.apparent_temperature_max)}`);
     const dailyUVWrapper = createDOMElement("p", "data-row", "UV Index Max");
     const dailyUVData = createDOMElement("p", undefined, data.daily.uv_index_max);
     const dailyPrecipSumWrapper = createDOMElement("p", "data-row", "Precipitation Sum");
@@ -447,9 +448,13 @@ function renderCurrentAndDailyWeather(data, selectedName, latitude, longitude) {
     dailyRightCol.append(dailyPrecipProbWrapper);    
     dailyPrecipProbWrapper.append(dailyPrecipProbData);
 
+    dataRow.append(currentFragment);
+    dataRow.append(dailyFragment)
     // Append fragments to the DOM
-    currentWeatherWrapper.append(currentFragment);
-    currentWeatherWrapper.append(dailyFragment);
+    /* currentWeatherWrapper.append(currentFragment);
+    currentWeatherWrapper.append(dailyFragment); */
+    currentWeatherWrapper.append(locationNameEl);
+    currentWeatherWrapper.append(dataRow);
 
     // Add the button to view the forecast for current location
     createViewForecastButton(latitude, longitude);
@@ -745,7 +750,7 @@ function renderForecastData(dayData, timezone, modal) {
         windIcon.setAttribute("src", "https://placehold.co/25x25");
         const windDataCol = createDOMElement("div", "data-col");
         const windTitle = createDOMElement("span", "data-title", "Wind");
-        const windData = createDOMElement("span", "data", processWeatherUnits("speed", dayData[property].apparent_temp));
+        const windData = createDOMElement("span", "data", processWeatherUnits("speed", dayData[property].windspeed));
 
         const precipProbLi = createDOMElement("li");
         const precipProbWrapper = createDOMElement("div", "precip-prob-wrapper");

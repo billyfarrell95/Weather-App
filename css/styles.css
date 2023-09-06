@@ -8,13 +8,13 @@ body {
 }
 
 /***** Main Layout *****/
-main {
+/* main {
     display: flex;
     flex-direction: column;
-}
+} */
 
 .container {
-    max-width: 900px;
+    max-width: 1600px;
     padding-inline: 1rem;
     padding-block: 4.5vh;
     margin-left: auto;
@@ -36,7 +36,6 @@ h1 {
 .hero-section {
     min-height: 100vh;
     width: 100vw;
-    /* background-image: url("/assets/bg-images/hero-background-1.jpg"); */
     background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('/assets/bg-images/hero-background-1.jpg');
     background-size: cover;
     background-position: bottom left;
@@ -88,6 +87,7 @@ h1 {
 .search-results-list {
     margin: 0;
     padding: 0;
+    color: black;
 }
 
 .search-results-list li {
@@ -132,6 +132,10 @@ h1 {
     color: white;
 }
 
+.quick-search-buttons button:hover {
+    background-color: rgba(255, 255, 255, .2);
+}
+
 @media screen and (orientation: landscape) {
     .quick-search-buttons {
         grid-template-columns: repeat(2, 1fr);
@@ -143,17 +147,6 @@ h1 {
         display: grid;
         grid-template-columns: repeat(4, 1fr);
         gap: 1.5rem;
-    }
-
-    .quick-search-buttons button {
-        text-align: left;
-        border-radius: .5rem;
-        padding-inline: .75rem;
-        padding-block: .5rem;
-        display: flex;
-        align-items: flex-start;
-        flex-direction: column;
-        gap: .75rem;
     }
 }
 
@@ -188,11 +181,23 @@ h1 {
 
 /***** Current/Day *****/
 .current-weather-wrapper {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
     padding-block: 2vh;
 }
+
+.current-daily-row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    padding-bottom: 2vh;
+}
+
+@media screen and (min-width: 1100px) {
+    .current-daily-row {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+
 .current-weather-wrapper .location-name {
     font-size: clamp(1rem, 2.9vh, 1.5rem);
 }
@@ -296,8 +301,22 @@ h1 {
     margin-bottom: .4rem;
 }
 /***** Forecast *****/
+.view-forecast-button {
+    border-radius: .3rem;
+    background: transparent;
+    border: 2px solid white;
+    color: white;
+}
+.view-forecast-button:hover {
+    background-color: rgba(255, 255, 255, .2);
+}
+
 .forecast-day-wrapper {
     padding-bottom: 2rem;
+}
+
+.forecast-modal {
+    width: 90vw;
 }
 
 .forecast-modal .hourly-list {
