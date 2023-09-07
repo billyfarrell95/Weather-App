@@ -303,16 +303,25 @@ h1 {
 /***** Forecast *****/
 .forecast-heading {
     display: flex;
-    align-items: center;
+    flex-direction: column;
     gap: 1rem;
     margin-bottom: 2rem;
 }
+
+@media screen and (min-width: 768px) {
+    .forecast-heading {
+        flex-direction: row;
+        align-items: center;
+    }
+}
+
 .forecast-sub-heading {
     padding-inline: .6rem;
     padding-block: .3rem;
     font-size: 1rem;
     background-color: lightblue;
     border-radius: .3rem;
+    max-width: fit-content;
 }
 .view-forecast-button {
     border-radius: .3rem;
