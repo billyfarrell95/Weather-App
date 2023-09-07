@@ -1,9 +1,16 @@
 import removeAllElementChildren from "./utils/removeElementChildren.js";
 import get12HourTimeInTimezone from "./utils/get12HourTimeInTimezone.js";
+import convertUnixTimestampTo12HourFormat from "./utils/convertUnixTimestamp.js";
+import processGeocodingLocationName from "./utils/processGeocodingLocationName.js";
+import processGeocodingAdminLevel1 from "./utils/processGeocodingAdminLevel1.js";
+import createDOMElement from "./utils/createDOMElement.js";
+import processWeatherCodes from "./utils/processWeatherCodes.js";
+import convertWindDirection from "./utils/convertWindDirection.js";
+import processWeatherUnits from "./utils/processWeatherUnits.js";
+import createForecastDisplayDates from "./utils/createForecastDisplayDates.js"
 
 // Select UI Elements
 const searchInputField = document.querySelector("#search-input");
-const searchInputWrapper = document.querySelector("#search-input-wrapper");
 const searchResultsWrapper = document.querySelector("#search-results-wrapper")
 const searchResultsList = document.querySelector("#search-results-list");
 const currentWeatherWrapper = document.querySelector("#current-weather-wrapper");
@@ -176,61 +183,6 @@ function displaySearchResults(data) {
     }
 }
 
-// Helper function - get the current time
-/* function getCurrent12HourTime() {
-    let date = new Date();
-
-    let hours = date.getHours();
-    let minutes = date.getMinutes();
-
-    // Check whether AM or PM
-    let ampm = hours >= 12 ? "PM": "AM";
-
-    // Find the current hour in AM-PM format
-    hours = hours % 12;
-
-    // Display "0" as "12"
-    hours = hours ? hours : 12;
-    minutes = minutes < 10 ? "0" + minutes : minutes;
-
-
-    const new12HourTime = hours + ":" + minutes + " " + ampm;
-    
-    return new12HourTime;
-} */
-
-// Helper function - Convert Unix timestamp to 12 hour time
-function convertUnixTimestampTo12HourFormat(unixTimestamp, timezone) {
-    // Create a new Date object from the Unix timestamp (in milliseconds)
-    const date = new Date(unixTimestamp * 1000);
-    console.log(timezone)
-    // Format time
-    const formattedTime = date.toLocaleString("en-US", {
-        hour: "numeric",
-        minute: "numeric",
-        hour12: true,
-        timeZone: timezone, // the timezone of the location the user is viewing (pulled from the API response)
-
-    });
-
-    return formattedTime;
-}
-
-// Helper function - process geocoding location results
-function processGeocodingLocationName(geocodingResults) {
-    // Check common expected results in specified order
-    const locationName = geocodingResults.city || geocodingResults.town || geocodingResults.country || geocodingResults.postcode || geocodingResults.neighbourhood || geocodingResults.suburb || geocodingResults.office || geocodingResults.municipality || geocodingResults.city_district || geocodingResults.state_district || null;
-    
-    return locationName
-}
-
-// Helper function - process geocoding administrative level results
-function processGeocodingAdminLevel1(geocodingResults) {
-    // Check common expected results in specified order
-    const adminLevel1 = geocodingResults.state || geocodingResults.country || geocodingResults.region || null;
-    return adminLevel1
-}
-
 // Get current weather data
 async function fetchCurrentWeather(locationName, adminLevel1, countryCode, lat, lon) {
     console.log(countryCode, "country code in fetchCurrentWeather")
@@ -318,18 +270,6 @@ async function fetchQuickSearchWeather(locationName, adminLevel1, countryCode, l
         .catch (error => {
             console.error("Error fetching CURRENT weather data:", error)
         })
-}
-
-// Helper function to create DOM elements, textContent and className are optional
-function createDOMElement(tagName, classes, textContent) {
-    const element = document.createElement(tagName);
-    if (textContent !== undefined) {
-        element.textContent = textContent;
-    }
-    if (classes !== undefined) {
-        element.className = classes;
-    }
-    return element;
 }
 
 function renderCurrentAndDailyWeather(data, selectedName, latitude, longitude) {
@@ -716,149 +656,4 @@ function renderForecastData(dayData, timezone, modal) {
     modal.append(dayListsWrapper);
     modal.showModal();
     modal.focus();
-}
-
-// Helper function - convert weathercodes to readable value (based on code meanings from API docs)
-function processWeatherCodes(code) {
-    const weatherCodeValues = [
-        { number: 0, value: "Clear sky" },
-        { number: 1, value: "Mainly clear" },
-        { number: 2, value: "Partly cloudy" },
-        { number: 3, value: "Overcast" },
-        { number: 45, value: "Fog and depositing rime fog" },
-        { number: 48, value: "Fog and depositing rime fog" },
-        { number: 51, value: "Drizzle: Light intensity" },
-        { number: 53, value: "Drizzle: Moderate intensity" },
-        { number: 55, value: "Drizzle: Dense intensity" },
-        { number: 56, value: "Freezing Drizzle: Light intensity" },
-        { number: 57, value: "Freezing Drizzle: Dense intensity" },
-        { number: 61, value: "Rain: Slight intensity" },
-        { number: 63, value: "Rain: Moderate intensity" },
-        { number: 65, value: "Rain: Heavy intensity" },
-        { number: 66, value: "Freezing Rain: Light intensity" },
-        { number: 67, value: "Freezing Rain: Heavy intensity" },
-        { number: 71, value: "Snow fall: Slight intensity" },
-        { number: 73, value: "Snow fall: Moderate intensity" },
-        { number: 75, value: "Snow fall: Heavy intensity" },
-        { number: 77, value: "Snow grains" },
-        { number: 80, value: "Rain showers: Slight intensity" },
-        { number: 81, value: "Rain showers: Moderate intensity" },
-        { number: 82, value: "Rain showers: Violent intensity" },
-        { number: 85, value: "Snow showers: Slight intensity" },
-        { number: 86, value: "Snow showers: Heavy intensity" },
-        { number: 95, value: "Thunderstorm: Slight or moderate" },
-        { number: 96, value: "Thunderstorm with slight hail" },
-        { number: 99, value: "Thunderstorm with heavy hail" }
-      ];
-
-      const weathercode = weatherCodeValues.find(item => item.number == code)
-      return weathercode.value;
-}
-
-// Helper function - convert the degrees to a compass direction
-function convertWindDirection(degrees) {
-    const directions = {
-        north: "N",
-        northNortheast: "NNE",
-        northeast: "NE",
-        eastNortheast: "ENE",
-        east: "E",
-        eastSoutheast: "ESE",
-        southeast: "SE",
-        southSoutheast: "SSE",
-        south: "S",
-        southSouthwest: "SSW",
-        southwest: "SW",
-        westSouthwest: "WSW",
-        west: "W",
-        westNorthwest: "WNW",
-        northwest: "NW",
-        northNorthwest: "NNW",
-    }
-
-    const compass = [
-        { dir: directions.north, min: 0, max: 11.25 },
-        { dir: directions.northNortheast, min: 11.25, max: 33.75 },
-        { dir: directions.northeast, min: 33.75, max: 56.25 },
-        { dir: directions.eastNortheast, min: 56.25, max: 78.75 },
-        { dir: directions.east, min: 78.75, max: 101.25 },
-        { dir: directions.eastSoutheast, min: 101.25, max: 123.75 },
-        { dir: directions.southeast, min: 123.75, max: 146.25 },
-        { dir: directions.southSoutheast, min: 146.25, max: 168.75 },
-        { dir: directions.south, min: 168.75, max: 191.25 },
-        { dir: directions.southSouthwest, min: 191.25, max: 213.75 },
-        { dir: directions.southwest, min: 213.75, max: 236.25 },
-        { dir: directions.westSouthwest, min: 236.25, max: 258.75 },
-        { dir: directions.west, min: 258.75, max: 281.25 },
-        { dir: directions.westNorthwest, min: 281.25, max: 303.75 },
-        { dir: directions.northwest, min: 303.75, max: 326.25 },
-        { dir: directions.northNorthwest, min: 326.25, max: 348.75 },
-        { dir: directions.north, min: 348.75, max: 360 }
-    ];
-    let direction;
-    for (const item of compass) {
-        if (degrees >= item.min && degrees <= item.max) {
-            direction = item.dir;
-            break;
-        }
-    }
-
-    return direction;
-}
-
-// Helper function - process weather when rendering
-function processWeatherUnits(unitType, data) {
-    // Round the value
-    const roundedvalue = Math.round(data);
-
-    const units = {
-        temperature: "°F",
-        precipSum: "in",
-        precipProb: "%",
-        speed: "mph",
-      };
-
-      let unit;
-      // Assign a value to "unit" based on the unit passed from render function
-      if (unitType === "temp") {
-        unit = units.temperature;
-      } else if (unitType === "precipSum") {
-        unit = units.precipSum;
-      } else if (unitType === "precipProb") {
-        unit = units.precipProb;
-      } else if (unitType === "speed") {
-        unit = units.speed;
-      }
-      else {
-        console.log("Invalid unit passed to getWeatherUnits()")
-      }
-
-      return roundedvalue + unit;
-}
-
-// Helper function - get date in Monday, August, 21 format
-function createForecastDisplayDates() {
-    const weekdays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-  
-    const newDate = new Date();
-    const dates = [];
-  
-    for (let i = 0; i < 7; i++) {
-      const dayOfWeek = weekdays[newDate.getDay()];
-      const month = newDate.toLocaleString('default', { month: 'long' });
-      const date = newDate.getDate();
-      const formattedDate = `${dayOfWeek}, ${month} ${date}`;
-      dates.push(formattedDate);
-      
-      // Increment the date for the next day
-      newDate.setDate(newDate.getDate() + 1);
-    }
-  
-    return dates;
-}
-
-// Create loading element
-function createLoadingElement() {
-    const loadingIcon = createDOMElement("span", "loading", "Loading...");
-    return loadingIcon;
 }
