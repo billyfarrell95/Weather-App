@@ -1,11 +1,31 @@
+import convertUnixTimestampTo12HourFormat from "./utils/convertUnixTimestamp.js";
+import createForecastDisplayDates from "./utils/createForecastDisplayDates.js";
+import removeAllElementChildren from "./utils/removeElementChildren.js";
+import createDOMElement from "./utils/createDOMElement.js";
+import processWeatherUnits from "./utils/processWeatherUnits.js";
+import processWeatherCodes from "./utils/processWeatherCodes.js";
+
 const forecastWeatherWrapper = document.querySelector("#forecast-weather-wrapper");
+
+// Get local storage data
+const locationName = localStorage.getItem("locationName");
+const adminLevel1 = localStorage.getItem("adminLevel1");
+const countryCode = localStorage.getItem("countryCode");
+const lat = localStorage.getItem("currentLat");
+const lon = localStorage.getItem("currentLon");
+
+console.log("CURRENT LAT", lat);
+console.log("CURRENT LON", lon);
+
+console.log("ALL THE DATA", locationName, adminLevel1, countryCode)
 
 // Fetch the forecast data for the current location
 async function fetchForecastData(lat, lon) {
-    const modal = document.getElementById("forecast-modal");
-    removeAllElementChildren(modal)
+    removeAllElementChildren(forecastWeatherWrapper)
     // How many days of forecast weather to fetch (if changed, sortForecastWeatherData will have to be updated)
     const daysNum = 3;
+
+    console.log(forecastWeatherWrapper, lat, lon, "all this is in forecast.html fetchForecastData function")
 
     // Forecast endpoint for current location based on lat/lon of the "Current Weather"
     // Unix time:
@@ -30,6 +50,10 @@ async function fetchForecastData(lat, lon) {
         .catch (error => {
             console.error("Error fetching FORECAST weather data:", error)
         })
+}
+
+if (lat !== null && lon !== null) {
+    fetchForecastData(lat, lon);
 }
 
 // Sort the forecast data for the current location
@@ -78,8 +102,6 @@ function sortForecastWeatherData(data) {
                 "date": createForecastDisplayDates()[2]
             });
         }
-
-        localStorage.setItem("dayOne", JSON.stringify(dayOne));
     }
 
     // Calculate the current day based on user's timezone offset
@@ -96,26 +118,35 @@ function sortForecastWeatherData(data) {
     // Clear the forecast wrapper before rendering (prevents the re-rendered data to be appended after the already present data)
     removeAllElementChildren(forecastWeatherWrapper);
 
-    const modal = document.getElementById("forecast-modal");
-    const closeButton = createDOMElement("button", "modal-close-button", null);
-    const closeIcon = createDOMElement("img");
-    closeIcon.setAttribute("src", "/assets/icons/close.svg");
-    closeButton.append(closeIcon)
-    modal.append(closeButton);
-    closeButton.addEventListener("click", () => {
-        modal.close();
-    })
-    const forecastHeading = createDOMElement("h2", undefined, "3-Day Hourly Weather");
-    modal.append(forecastHeading);
+    /* const forecastHeading = createDOMElement("h2", undefined, "3-Day Hourly Weather"); */
+
+    // Create the location name from local storage data
+    let currentLocationName;
+    if (locationName !== null && adminLevel1 !== null) {
+        currentLocationName = locationName + ", " + adminLevel1 + ", " + countryCode;
+        console.log("adminLevel1 in BLOCK ONE" , adminLevel1)
+        console.log("BLOCK ONE RAN")
+    } else if (locationName !== null && adminLevel1 == null) {
+        currentLocationName = locationName + ", " + countryCode;
+        console.log("BLOCK TWO RAN")
+    } else if (locationName == null && adminLevel1 !== null) {
+        currentLocationName = adminLevel1;
+        console.log("BLOCK THREE RAN")
+    }
+
+    const forecastHeading = createDOMElement("h2", "forecast-heading", currentLocationName);
+    const forecastSubHeading = createDOMElement("span", "forecast-sub-heading", "3-Day Hourly Forecast");
+    forecastWeatherWrapper.append(forecastHeading);
+    forecastHeading.append(forecastSubHeading);
 
     // Render the forecast data
     allForecastData.forEach((dayData) => {
-        renderForecastData(dayData, data.timezone, modal) 
+        renderForecastData(dayData, data.timezone) 
     })
 }
 
 // Render Forecast data to the DOM
-function renderForecastData(dayData, timezone, modal) {
+function renderForecastData(dayData, timezone) {
     const forecastDayHeading = createDOMElement("h3", undefined, dayData[0].date); // Select the date from each "dayData" sent from sortForecastWeatherData
     const dayListsWrapper = createDOMElement("div", "forecast-day-wrapper");
 
@@ -189,8 +220,6 @@ function renderForecastData(dayData, timezone, modal) {
         dayListsWrapper.append(newList)
     });
 
-    modal.append(forecastDayHeading);
-    modal.append(dayListsWrapper);
-    modal.showModal();
-    modal.focus();
+    forecastWeatherWrapper.append(forecastDayHeading);
+    forecastWeatherWrapper.append(dayListsWrapper);
 }

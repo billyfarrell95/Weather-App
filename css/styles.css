@@ -301,6 +301,19 @@ h1 {
     margin-bottom: .4rem;
 }
 /***** Forecast *****/
+.forecast-heading {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+.forecast-sub-heading {
+    padding-inline: .6rem;
+    padding-block: .3rem;
+    font-size: 1rem;
+    background-color: lightblue;
+    border-radius: .3rem;
+}
 .view-forecast-button {
     border-radius: .3rem;
     background: transparent;
@@ -315,30 +328,7 @@ h1 {
     padding-bottom: 2rem;
 }
 
-.forecast-modal {
-    width: 80vw;
-    position: relative;
-}
-
-.modal-close-button {
-    position: fixed;
-    top: .5rem;
-    right: .5rem;
-}
-
-@media screen and (min-width: 600px) {
-    .forecast-modal {
-        width: 90vw;
-    }
-    
-    .modal-close-button {
-        position: fixed;
-        top: 1rem;
-        right: 1rem;
-    }
-}
-
-.forecast-modal .hourly-list {
+.forecast-weather-wrapper .hourly-list {
     padding: .75rem 0 .75rem 0;
     display: grid;
     gap: 2rem;
@@ -347,22 +337,22 @@ h1 {
 }
 
 @media screen and (min-width: 700px) {
-    .forecast-modal .hourly-list {
+    .forecast-weather-wrapper .hourly-list {
         grid-template-columns: repeat(3, 1fr);
     }
 }
 
 @media screen and (min-width: 900px) {
-    .forecast-modal .hourly-list {
+    .forecast-weather-wrapper .hourly-list {
         grid-template-columns: repeat(6, 1fr);
     }
 }
 
-.forecast-modal .data-col span {
+.forecast-weather-wrapper .data-col span {
     line-height: 1em;
 }
 
-.forecast-modal .data-col {
+.forecast-weather-wrapper .data-col {
     display: flex;
     flex-direction: column;
     gap: .4rem;
@@ -373,7 +363,7 @@ h1 {
     gap: .4rem;
 }
 
-.forecast-modal .icon-sm {
+.forecast-weather-wrapper .icon-sm {
     align-self: flex-start;
 }
 
