@@ -14,7 +14,7 @@ body {
 } */
 
 .container {
-    max-width: 1600px;
+    max-width: 1000px;
     padding-inline: 1rem;
     padding-block: 4.5vh;
     margin-left: auto;
@@ -35,7 +35,6 @@ h1 {
 /***** Hero section *****/
 .hero-section {
     min-height: 100vh;
-    width: 100vw;
     background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('/assets/bg-images/hero-background-1.jpg');
     background-size: cover;
     background-position: bottom left;
@@ -189,14 +188,15 @@ h1 {
     grid-template-columns: 1fr;
     gap: 2rem;
     padding-bottom: 2vh;
+    width: 100%;
 }
 
-@media screen and (min-width: 1100px) {
+/* @media screen and (min-width: 1100px) {
     .current-daily-row {
         grid-template-columns: repeat(2, 1fr);
     }
 }
-
+ */
 
 .current-weather-wrapper .location-name {
     font-size: clamp(1rem, 2.9vh, 1.5rem);
@@ -206,7 +206,7 @@ h1 {
     border: 1px solid white;
     padding: 1rem;
     border-radius: .5rem;
-    /* min-width: 100%; */
+    max-width: calc(100vw - 2rem);
 }
 
 .current-wrapper .current-data {
@@ -216,7 +216,7 @@ h1 {
 }
 
 @media screen and (orientation: landscape) {
-    .current-wrapepr .current-data {
+    .current-wrapper .current-data {
         grid-template-columns: 1fr 1.5fr;
     }
 }
@@ -250,7 +250,7 @@ h1 {
     justify-content: center;
 }
 
-.current-wrapper .info-wrapper .info-row {
+.current-wrapper .wind-wrapper {
     display: flex;
     gap: .5rem;
 }
@@ -289,17 +289,45 @@ h1 {
     gap: 1rem;
 }
 
-.daily-wrapper .temp-wrapper {
+.current-wrapper .temp-wrapper {
     font-size: 1.6rem;
+    align-self: flex-start;
 }
 
-.daily-wrapper .data-row {
+.current-data .data-row {
     display: flex;
     justify-content: space-between;
     border-bottom: 1px solid lightgray;
     padding-block: .5rem;
     margin-bottom: .4rem;
 }
+
+.daily-temps-list-wrapper {
+    display: flex;
+    justify-content: center;
+    padding-block: 1rem;
+}
+
+.daily-temps-list {
+    margin: 0;
+    padding: 0 0 1rem 0;
+    display: flex;
+    gap: 1rem;
+    overflow-x: scroll;
+    max-width: 900px;
+}
+
+.daily-temps-list li {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 5rem;
+}
+
+/* .high-low-wrapper {
+    display: flex;
+} */
+
 /***** Forecast *****/
 .forecast-heading {
     display: flex;
