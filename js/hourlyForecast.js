@@ -27,8 +27,7 @@ async function fetchForecastData(lat, lon) {
 
     console.log(forecastWeatherWrapper, lat, lon, "all this is in forecast.html fetchForecastData function")
 
-    // Forecast endpoint for current location based on lat/lon of the "Current Weather"
-    // Unix time:
+    // Hourly forecast endpoint for current location based on lat/lon of the "Current Weather"
     const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=temperature_2m,apparent_temperature,precipitation_probability,weathercode,windspeed_10m,winddirection_10m&temperature_unit=fahrenheit&windspeed_unit=mph&precipitation_unit=inch&timezone=auto&timeformat=unixtime&forecast_days=${daysNum}`;
 
     fetch (url)

@@ -45,7 +45,7 @@ h1 {
 .current-location-button {
     display: inline-flex;
     gap: .4rem;
-    /* width: 100%; */
+    width: 100%;
     align-items: center;
     background: transparent;
     border: none;
@@ -76,7 +76,7 @@ h1 {
 
 .search-results-wrapper {
     visibility: hidden;
-    position: absolute;
+    /* position: absolute; */
     background-color: rgba(255, 255, 255);
     -webkit-box-shadow: 3px 4px 8px 0px rgba(0,0,0,0.1);
     -moz-box-shadow: 3px 4px 8px 0px rgba(0,0,0,0.1);
