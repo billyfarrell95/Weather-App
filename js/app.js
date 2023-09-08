@@ -185,12 +185,6 @@ function displaySearchResults(data) {
 
 // Get current weather data
 async function fetchCurrentWeather(locationName, adminLevel1, countryCode, lat, lon) {
-    localStorage.setItem("locationName", locationName);
-    localStorage.setItem("adminLevel1", adminLevel1);
-    localStorage.setItem("countryCode", countryCode)
-    localStorage.setItem("currentLat", lat);
-    localStorage.setItem("currentLon", lon);
-
     console.log(countryCode, "country code in fetchCurrentWeather")
     // Defined and check the result name for undefined values 
     let selectedResultName;
@@ -205,6 +199,10 @@ async function fetchCurrentWeather(locationName, adminLevel1, countryCode, lat, 
         selectedResultName = adminLevel1;
         console.log("BLOCK THREE RAN")
     }
+
+    localStorage.setItem("locationName", selectedResultName);
+    localStorage.setItem("currentLat", lat);
+    localStorage.setItem("currentLon", lon);
 
     // Current weather data endpoint URL -- same as the quick search weather endpoint
     const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=temperature_2m,weathercode&daily=weathercode,temperature_2m_max,temperature_2m_min,apparent_temperature_max,apparent_temperature_min,uv_index_max,precipitation_sum,precipitation_probability_max&&current_weather=true&temperature_unit=fahrenheit&windspeed_unit=mph&precipitation_unit=inch&timeformat=unixtime&forecast_days=1&timezone=auto`
@@ -237,13 +235,6 @@ async function fetchCurrentWeather(locationName, adminLevel1, countryCode, lat, 
 
 // Get current weather data (current and today's weather)
 async function fetchQuickSearchWeather(locationName, adminLevel1, countryCode, lat, lon) {
-
-    localStorage.setItem("locationName", locationName);
-    localStorage.setItem("adminLevel1", adminLevel1);
-    localStorage.setItem("countryCode", countryCode)
-    localStorage.setItem("currentLat", lat);
-    localStorage.setItem("currentLon", lon);
-
     // Defined and check the result name for undefined values 
     let selectedResultName;
     if (locationName !== undefined && adminLevel1 !== undefined) {
@@ -257,6 +248,10 @@ async function fetchQuickSearchWeather(locationName, adminLevel1, countryCode, l
         selectedResultName = adminLevel1;
         console.log("BLOCK THREE RAN")
     }
+
+    localStorage.setItem("locationName", selectedResultName);
+    localStorage.setItem("currentLat", lat);
+    localStorage.setItem("currentLon", lon);
 
     // Quick search weather data endpoint URL -- same as the current weather endpoint
     const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=temperature_2m,weathercode&daily=weathercode,temperature_2m_max,temperature_2m_min,apparent_temperature_max,apparent_temperature_min,uv_index_max,precipitation_sum,precipitation_probability_max&&current_weather=true&temperature_unit=fahrenheit&windspeed_unit=mph&precipitation_unit=inch&timeformat=unixtime&forecast_days=1&timezone=auto`
@@ -287,34 +282,33 @@ async function fetchQuickSearchWeather(locationName, adminLevel1, countryCode, l
 
 function renderCurrentAndDailyWeather(data, selectedName, latitude, longitude) {
     // Create UI layout elements
-    const dataRow = createDOMElement("div", "current-daily-row");
+    const dataRow = createDOMElement("div", "current-weather-row");
     const currentWrapper = createDOMElement("div", "current-wrapper");
     const currentDataWrapper = createDOMElement("div", "current-data");
+    const leftCol = createDOMElement("div", "col");
+    const rightCol = createDOMElement("div", "col");
     const currentTempWrapper = createDOMElement("div", "temp-wrapper");
     const currentInfoWrapper = createDOMElement("div", "info-wrapper");
 
     // Create UI Data elements
-    const locationNameEl = createDOMElement("h2", "location-name", selectedName);
+    const locationNameEl = createDOMElement("h2", undefined, selectedName);
     const currentTitle = createDOMElement("h3", "current-title", "Today");
     const currentTime = createDOMElement("p", "time", get12HourTimeInTimezone(data.timezone));
     const currentIcon = createDOMElement("img", "icon-lg");
     const currentTemp = createDOMElement("p", "temp", processWeatherUnits("temp", data.current_weather.temperature));
     const highLowWrapper = createDOMElement("div", "high-low-wrapper");
     const dailyWeathercode = createDOMElement("p", "code", processWeatherCodes(data.daily.weathercode));
-    const dailyWindWrapper = createDOMElement("div", "wind-wrapper");
-    const dailyWindIcon = createDOMElement("img", "icon-sm")
+    const dailyWindWrapper = createDOMElement("div", "data-row", "Wind");
     const dailyWind = createDOMElement("p", undefined, `${convertWindDirection(data.current_weather.winddirection)} ${processWeatherUnits("speed", data.current_weather.windspeed)}`);
     currentIcon.setAttribute("src", "https://placehold.co/60x45")
-    dailyWindIcon.setAttribute("src", "https://placehold.co/20x20"); // placeholder
     // Daily weather
     const dailyIcon = createDOMElement("img", "icon-lg");
-    const dailyHigh = createDOMElement("p", "daily-temp high", `High: ${processWeatherUnits("temp", data.daily.temperature_2m_max)}`);
-    const dailyLow = createDOMElement("p", "daily-temp low", `Low: ${processWeatherUnits("temp", data.daily.temperature_2m_min)}`);
-    const dailyFeelsLikeWrapper = createDOMElement("p", "data-row", "Feels Like Min/Max");
-    const dailyFeelsLikeData = createDOMElement("p", undefined, `${processWeatherUnits("temp", data.daily.apparent_temperature_min)} / ${processWeatherUnits("temp", data.daily.apparent_temperature_max)}`);
+    const dailyHighLow = createDOMElement("p", "daily-temp high", `${processWeatherUnits("temp", data.daily.temperature_2m_max)} High / ${processWeatherUnits("temp", data.daily.temperature_2m_min)} Low`);
+    const dailyFeelsLikeWrapper = createDOMElement("p", "data-row", "Feels Like");
+    const dailyFeelsLikeData = createDOMElement("p", undefined, `${processWeatherUnits("temp", data.daily.apparent_temperature_max)} High / ${processWeatherUnits("temp", data.daily.apparent_temperature_min)} Low`);
     const dailyUVWrapper = createDOMElement("p", "data-row", "UV Index Max");
     const dailyUVData = createDOMElement("p", undefined, data.daily.uv_index_max);
-    const dailyPrecipSumWrapper = createDOMElement("p", "data-row", "Precipitation Sum");
+    const dailyPrecipSumWrapper = createDOMElement("p", "data-row", "Precipitation");
     const dailyPrecipSumData = createDOMElement("p", undefined, processWeatherUnits("precipSum", data.daily.precipitation_sum));
     const dailyPrecipProbWrapper = createDOMElement("p", "data-row", "Precipitation Probability");
     const dailyPrecipProbData = createDOMElement("p", undefined, processWeatherUnits("precipProb", data.daily.precipitation_probability_max));
@@ -358,19 +352,16 @@ function renderCurrentAndDailyWeather(data, selectedName, latitude, longitude) {
     currentWrapper.append(currentTitle);
     currentWrapper.append(currentTime);
     currentWrapper.append(currentDataWrapper);
+    currentDataWrapper.append(leftCol);
+    currentDataWrapper.append(rightCol);
     currentWrapper.append(dailyTempsListWrapper);
-    currentDataWrapper.append(currentTempWrapper);
-    currentDataWrapper.append(currentInfoWrapper);
+    leftCol.append(currentTempWrapper);
+    rightCol.append(currentInfoWrapper);
     currentTempWrapper.append(currentIcon);
     currentTempWrapper.append(currentTemp);
-    currentTempWrapper.append(highLowWrapper);
-    highLowWrapper.append(dailyHigh);
-    highLowWrapper.append(dailyLow);
-    currentInfoWrapper.append(dailyWeathercode);
-    // Wind data row
-    currentInfoWrapper.append(dailyWindWrapper);
-    dailyWindWrapper.append(dailyWindIcon);
-    dailyWindWrapper.append(dailyWind);
+    leftCol.append(dailyWeathercode);
+    leftCol.append(highLowWrapper);
+    highLowWrapper.append(dailyHighLow);
     // Feels like data row
     currentInfoWrapper.append(dailyFeelsLikeWrapper);
     dailyFeelsLikeWrapper.append(dailyFeelsLikeData);
@@ -383,7 +374,10 @@ function renderCurrentAndDailyWeather(data, selectedName, latitude, longitude) {
     // Precip Prob Row
     currentInfoWrapper.append(dailyPrecipProbWrapper);    
     dailyPrecipProbWrapper.append(dailyPrecipProbData);
-
+    // Wind data row
+    currentInfoWrapper.append(dailyWindWrapper);
+    dailyWindWrapper.append(dailyWind);
+    
     dataRow.append(currentFragment);
     currentWeatherWrapper.append(locationNameEl);
     currentWeatherWrapper.append(dataRow);
