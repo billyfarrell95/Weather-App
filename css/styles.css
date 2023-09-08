@@ -1,4 +1,4 @@
-/***** General styles *****/
+/************************* General styles *************************/
 button {
     cursor: pointer;
 }
@@ -7,7 +7,7 @@ body {
     font-family: "Open Sans", sans-serif;
 }
 
-/***** Main Layout *****/
+/************************* Main Layout *************************/
 .container {
     max-width: 1000px;
     padding-inline: 1rem;
@@ -16,7 +16,7 @@ body {
     margin-right: auto;
 }
 
-/***** General Typography *****/
+/************************* General Typography *************************/
 h1, h2, h3, h4, h5, h6 {
     line-height: 1.25em;
     margin-bottom: .75rem;
@@ -27,8 +27,8 @@ h1 {
     color: white;
 }
 
-/***** Hero section *****/
-.hero-section {
+/********************v Fullscreen Background Image *************************/
+.fullscreen-bg-img {
     min-height: 100vh;
     background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('/assets/bg-images/hero-background-1.jpg');
     background-size: cover;
@@ -36,7 +36,7 @@ h1 {
     color: white;
 }
 
-/***** Search *****/
+/************************* Search ***************v*****/
 .current-location-button {
     display: inline-flex;
     gap: .4rem;
@@ -93,11 +93,6 @@ h1 {
 
 .search-results-list li:hover {
     background-color: #f4f4f4;
-}
-
-/***** Quick Search *****/
-.quick-search-wrapper {
-    padding-block: 1rem;
 }
 
 .qs-title {
@@ -164,8 +159,8 @@ h1 {
 }
 
 .qs-icon {
-    min-height: 20px;
-    width: auto;
+    width: 30px;
+    height: auto;
 }
 
 .qs-temp {
@@ -173,7 +168,7 @@ h1 {
     font-size: 1.2rem;
 }
 
-/***** Current Weather  *****/
+/********************v Current Weather  *************************/
 .current-weather-wrapper {
     padding-block: 2vh;
 }
@@ -215,7 +210,7 @@ h1 {
 }
 
 .current-wrapper h3 {
-    font-size: 1rem;
+    font-size: 1.2rem;
 }
 
 .current-wrapper .temp-wrapper {
@@ -313,11 +308,50 @@ h1 {
     display: flex;
 }
 
-/***** Forecast *****/
+.current-weather-wrapper .icon-lg {
+    height: 50px;
+    width: auto;
+}
+
+.current-weather-wrapper .icon-sm {
+    width: 30px;
+    height: auto;
+}
+
+.view-forecast-wrapper {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.view-forecast-wrapper a {
+    color: black;
+    padding-block: .7rem;
+    padding-inline: 1rem;
+    background-color: white;
+    border: 1px solid white;
+    border-radius: .5rem;
+    text-decoration: none;
+    font-weight: bold;
+    width: 100%;
+    text-align: center;
+}
+
+@media screen and (min-width: 1200px) {
+    .view-forecast-wrapper a {
+        width: fit-content;
+    }
+}
+
+.view-forecast-wrapper a:hover {
+    background-color: rgba(255, 255, 255, .2);
+    color: white;
+}
+
+/************************* Forecast *************************/
 .forecast-heading {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 2rem;
     margin-bottom: 2rem;
 }
 
@@ -329,16 +363,28 @@ h1 {
 }
 
 .forecast-sub-heading {
-    padding-inline: .6rem;
+    padding-inline: 1rem;
     padding-block: .3rem;
     font-size: 1rem;
-    background-color: lightblue;
+    color: black;
+    background-color: white;
     border-radius: .3rem;
     max-width: fit-content;
 }
 
+.daily-forecast-heading {
+    border-bottom: 3px solid rgba(255, 255, 255, .5);
+    padding-bottom: .3rem;
+    margin-bottom: 2rem;
+}
+
 .forecast-day-wrapper {
     padding-bottom: 2rem;
+}
+
+.forecast-day-wrapper .icon-lg {
+    height: 50px;
+    width: auto;
 }
 
 .forecast-day-wrapper .day-data {
@@ -355,6 +401,17 @@ h1 {
 .forecast-day-wrapper .temp-wrapper {
     display: flex;
     gap: 1rem;
+    align-items: center;
+}
+
+.forecast-day-wrapper .high-low-wrapper {
+    display: flex;
+    flex-direction: column;
+    font-size: 1.2rem;
+}
+
+.forecast-day-wrapper .high-low-wrapper .title {
+    font-size: .8rem;
 }
 
 .forecast-day-wrapper .col:nth-of-type(1) {
@@ -369,4 +426,13 @@ h1 {
     border-bottom: 1px solid lightgray;
     padding-block: .5rem;
     margin-bottom: .4rem;
+}
+
+.forecast-day-wrapper .data-row .title {
+    font-weight: bold;
+}
+
+.forecast-day-wrapper .weathercode {
+    font-weight: bold;
+    font-size: 1.1rem;
 }
