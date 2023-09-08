@@ -2,14 +2,14 @@
   <g id="Group_70" data-name="Group 70" transform="translate(-1323.709 5106.436)">
     <g id="Group_55" data-name="Group 55">
       <g id="Group_27" data-name="Group 27" transform="translate(-131.242 -2216)">
-        <path id="Path_69" data-name="Path 69" d="M2577.137,634.426a33.474,33.474,0,0,0,1.005-66.933A28.272,28.272,0,0,0,2533.03,539.9a50,50,0,0,0-96.749,17.705c0,.05,0,.1,0,.147-1.073-.09-2.156-.147-3.252-.147a38.409,38.409,0,1,0,0,76.817" transform="translate(-934.619 -3393.004)" fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="10.104"/>
-        <line id="Line_114" data-name="Line 114" x1="10.395" y2="23.451" transform="translate(1523.62 -2760.442)" fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="10.104"/>
-        <line id="Line_115" data-name="Line 115" x1="10.395" y2="23.451" transform="translate(1562.067 -2760.442)" fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="10.104"/>
+        <path id="Path_69" data-name="Path 69" d="M2577.137,634.426a33.474,33.474,0,0,0,1.005-66.933A28.272,28.272,0,0,0,2533.03,539.9a50,50,0,0,0-96.749,17.705c0,.05,0,.1,0,.147-1.073-.09-2.156-.147-3.252-.147a38.409,38.409,0,1,0,0,76.817" transform="translate(-934.619 -3393.004)" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="10.104"/>
+        <line id="Line_114" data-name="Line 114" x1="10.395" y2="23.451" transform="translate(1523.62 -2760.442)" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="10.104"/>
+        <line id="Line_115" data-name="Line 115" x1="10.395" y2="23.451" transform="translate(1562.067 -2760.442)" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="10.104"/>
       </g>
       <g id="Group_29" data-name="Group 29" transform="translate(-1416.267 -3175.135) rotate(21)">
-        <line id="Line_187" data-name="Line 187" y2="38.053" transform="translate(2062.524 -2725.789)" fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="9"/>
-        <line id="Line_188" data-name="Line 188" x2="32.322" y2="20.084" transform="translate(2046.364 -2716.804)" fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="9"/>
-        <line id="Line_189" data-name="Line 189" y1="20.084" x2="32.322" transform="translate(2046.364 -2716.804)" fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="9"/>
+        <line id="Line_187" data-name="Line 187" y2="38.053" transform="translate(2062.524 -2725.789)" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="9"/>
+        <line id="Line_188" data-name="Line 188" x2="32.322" y2="20.084" transform="translate(2046.364 -2716.804)" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="9"/>
+        <line id="Line_189" data-name="Line 189" y1="20.084" x2="32.322" transform="translate(2046.364 -2716.804)" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="9"/>
       </g>
     </g>
   </g>

@@ -1,19 +1,19 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 230.923 234.588">
   <g id="Group_37" data-name="Group 37" transform="translate(-3661.722 1550.194)">
-    <line id="Line_156" data-name="Line 156" y2="224.484" transform="translate(3777.258 -1545.143)" fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="10.104"/>
-    <line id="Line_157" data-name="Line 157" x2="190.671" y2="118.481" transform="translate(3681.922 -1492.141)" fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="10.104"/>
-    <line id="Line_158" data-name="Line 158" y1="118.481" x2="190.671" transform="translate(3681.922 -1492.141)" fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="10.104"/>
-    <line id="Line_159" data-name="Line 159" x2="39.216" y2="46.471" transform="translate(3738.042 -1537.615)" fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="10.104"/>
-    <line id="Line_160" data-name="Line 160" x1="39.216" y2="46.471" transform="translate(3777.258 -1537.615)" fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="10.104"/>
-    <line id="Line_161" data-name="Line 161" y1="46.471" x2="39.216" transform="translate(3738.042 -1374.657)" fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="10.104"/>
-    <line id="Line_162" data-name="Line 162" x1="39.216" y1="46.471" transform="translate(3777.258 -1374.657)" fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="10.104"/>
-    <line id="Line_163" data-name="Line 163" x1="18.815" y2="57.823" transform="translate(3826.75 -1521.428)" fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="10.104"/>
-    <line id="Line_164" data-name="Line 164" x1="60.163" y1="8.826" transform="translate(3826.75 -1463.605)" fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="10.104"/>
-    <line id="Line_165" data-name="Line 165" x1="18.815" y1="57.823" transform="translate(3826.75 -1402.196)" fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="10.104"/>
-    <line id="Line_166" data-name="Line 166" x1="60.163" y2="8.826" transform="translate(3826.75 -1411.021)" fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="10.104"/>
-    <line id="Line_167" data-name="Line 167" y1="9.171" x2="60.111" transform="translate(3667.478 -1463.321)" fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="10.104"/>
-    <line id="Line_168" data-name="Line 168" x2="19.146" y2="57.714" transform="translate(3708.443 -1521.034)" fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="10.104"/>
-    <line id="Line_169" data-name="Line 169" x2="60.111" y2="9.171" transform="translate(3667.478 -1411.651)" fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="10.104"/>
-    <line id="Line_170" data-name="Line 170" y1="57.714" x2="19.146" transform="translate(3708.443 -1402.48)" fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="10.104"/>
+    <line id="Line_156" data-name="Line 156" y2="224.484" transform="translate(3777.258 -1545.143)" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="10.104"/>
+    <line id="Line_157" data-name="Line 157" x2="190.671" y2="118.481" transform="translate(3681.922 -1492.141)" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="10.104"/>
+    <line id="Line_158" data-name="Line 158" y1="118.481" x2="190.671" transform="translate(3681.922 -1492.141)" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="10.104"/>
+    <line id="Line_159" data-name="Line 159" x2="39.216" y2="46.471" transform="translate(3738.042 -1537.615)" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="10.104"/>
+    <line id="Line_160" data-name="Line 160" x1="39.216" y2="46.471" transform="translate(3777.258 -1537.615)" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="10.104"/>
+    <line id="Line_161" data-name="Line 161" y1="46.471" x2="39.216" transform="translate(3738.042 -1374.657)" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="10.104"/>
+    <line id="Line_162" data-name="Line 162" x1="39.216" y1="46.471" transform="translate(3777.258 -1374.657)" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="10.104"/>
+    <line id="Line_163" data-name="Line 163" x1="18.815" y2="57.823" transform="translate(3826.75 -1521.428)" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="10.104"/>
+    <line id="Line_164" data-name="Line 164" x1="60.163" y1="8.826" transform="translate(3826.75 -1463.605)" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="10.104"/>
+    <line id="Line_165" data-name="Line 165" x1="18.815" y1="57.823" transform="translate(3826.75 -1402.196)" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="10.104"/>
+    <line id="Line_166" data-name="Line 166" x1="60.163" y2="8.826" transform="translate(3826.75 -1411.021)" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="10.104"/>
+    <line id="Line_167" data-name="Line 167" y1="9.171" x2="60.111" transform="translate(3667.478 -1463.321)" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="10.104"/>
+    <line id="Line_168" data-name="Line 168" x2="19.146" y2="57.714" transform="translate(3708.443 -1521.034)" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="10.104"/>
+    <line id="Line_169" data-name="Line 169" x2="60.111" y2="9.171" transform="translate(3667.478 -1411.651)" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="10.104"/>
+    <line id="Line_170" data-name="Line 170" y1="57.714" x2="19.146" transform="translate(3708.443 -1402.48)" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="10.104"/>
   </g>
 </svg>

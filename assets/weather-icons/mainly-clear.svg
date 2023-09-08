@@ -1,13 +1,13 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 356.131 275.28">
   <g id="Group_18" data-name="Group 18" transform="translate(-1697.551 2992.711)">
-    <path id="Path_118" data-name="Path 118" d="M594.411,153.909A62,62,0,1,0,555.9,264.491" transform="translate(1275 -3058.171)" fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="10.104"/>
-    <line id="Line_178" data-name="Line 178" y1="29.917" transform="translate(1831.288 -2987.659)" fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="10.104"/>
-    <line id="Line_179" data-name="Line 179" y1="24.109" x2="17.713" transform="translate(1892.052 -2961.929)" fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="10.104"/>
-    <line id="Line_182" data-name="Line 182" x1="0.796" y2="29.906" transform="translate(1827.761 -2752.521)" fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="10.104"/>
-    <line id="Line_181" data-name="Line 181" x1="18.348" y2="23.629" transform="translate(1749.996 -2774.053)" fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="10.104"/>
-    <line id="Line_180" data-name="Line 180" x1="28.777" y2="8.179" transform="translate(1703.792 -2827.057)" fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="10.104"/>
-    <line id="Line_177" data-name="Line 177" x1="28.033" y1="10.447" transform="translate(1707.087 -2901.4)" fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="10.104"/>
-    <line id="Line_176" data-name="Line 176" x1="16.406" y1="25.017" transform="translate(1758.602 -2965.952)" fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="10.104"/>
-    <path id="Path_119" data-name="Path 119" d="M746.634,211.426a27.093,27.093,0,0,0-5.007.471,60.668,60.668,0,0,0-117.9-27.037,40.594,40.594,0,1,0-7.131,80.557H746.634a27,27,0,1,0,0-53.991Z" transform="translate(1275 -3058.171)" fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="10.104"/>
+    <path id="Path_118" data-name="Path 118" d="M594.411,153.909A62,62,0,1,0,555.9,264.491" transform="translate(1275 -3058.171)" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="10.104"/>
+    <line id="Line_178" data-name="Line 178" y1="29.917" transform="translate(1831.288 -2987.659)" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="10.104"/>
+    <line id="Line_179" data-name="Line 179" y1="24.109" x2="17.713" transform="translate(1892.052 -2961.929)" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="10.104"/>
+    <line id="Line_182" data-name="Line 182" x1="0.796" y2="29.906" transform="translate(1827.761 -2752.521)" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="10.104"/>
+    <line id="Line_181" data-name="Line 181" x1="18.348" y2="23.629" transform="translate(1749.996 -2774.053)" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="10.104"/>
+    <line id="Line_180" data-name="Line 180" x1="28.777" y2="8.179" transform="translate(1703.792 -2827.057)" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="10.104"/>
+    <line id="Line_177" data-name="Line 177" x1="28.033" y1="10.447" transform="translate(1707.087 -2901.4)" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="10.104"/>
+    <line id="Line_176" data-name="Line 176" x1="16.406" y1="25.017" transform="translate(1758.602 -2965.952)" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="10.104"/>
+    <path id="Path_119" data-name="Path 119" d="M746.634,211.426a27.093,27.093,0,0,0-5.007.471,60.668,60.668,0,0,0-117.9-27.037,40.594,40.594,0,1,0-7.131,80.557H746.634a27,27,0,1,0,0-53.991Z" transform="translate(1275 -3058.171)" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="10.104"/>
   </g>
 </svg>

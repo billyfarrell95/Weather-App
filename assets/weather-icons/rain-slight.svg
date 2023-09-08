@@ -1,10 +1,10 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 226.097 160.111">
   <g id="Group_68" data-name="Group 68" transform="translate(-1323.709 5512.436)">
     <g id="Group_23" data-name="Group 23" transform="translate(-131.242 -2622)">
-      <path id="Path_69" data-name="Path 69" d="M2577.137,634.426a33.474,33.474,0,0,0,1.005-66.933A28.272,28.272,0,0,0,2533.03,539.9a50,50,0,0,0-96.749,17.705c0,.05,0,.1,0,.147-1.073-.09-2.156-.147-3.252-.147a38.409,38.409,0,1,0,0,76.817" transform="translate(-934.619 -3393.004)" fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="10.104"/>
-      <line id="Line_114" data-name="Line 114" x1="10.395" y2="23.451" transform="translate(1523.62 -2760.442)" fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="10.104"/>
-      <line id="Line_115" data-name="Line 115" x1="10.395" y2="23.451" transform="translate(1562.067 -2760.442)" fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="10.104"/>
-      <line id="Line_116" data-name="Line 116" x1="10.395" y2="23.451" transform="translate(1600.514 -2760.442)" fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="10.104"/>
+      <path id="Path_69" data-name="Path 69" d="M2577.137,634.426a33.474,33.474,0,0,0,1.005-66.933A28.272,28.272,0,0,0,2533.03,539.9a50,50,0,0,0-96.749,17.705c0,.05,0,.1,0,.147-1.073-.09-2.156-.147-3.252-.147a38.409,38.409,0,1,0,0,76.817" transform="translate(-934.619 -3393.004)" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="10.104"/>
+      <line id="Line_114" data-name="Line 114" x1="10.395" y2="23.451" transform="translate(1523.62 -2760.442)" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="10.104"/>
+      <line id="Line_115" data-name="Line 115" x1="10.395" y2="23.451" transform="translate(1562.067 -2760.442)" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="10.104"/>
+      <line id="Line_116" data-name="Line 116" x1="10.395" y2="23.451" transform="translate(1600.514 -2760.442)" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="10.104"/>
     </g>
   </g>
 </svg>
