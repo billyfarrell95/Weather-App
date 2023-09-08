@@ -4,8 +4,8 @@ function processWeatherCodes(code) {
         { number: 1, value: "Mainly clear" },
         { number: 2, value: "Partly cloudy" },
         { number: 3, value: "Overcast" },
-        { number: 45, value: "Fog and depositing rime fog" },
-        { number: 48, value: "Fog and depositing rime fog" },
+        { number: 45, value: "Fog" },
+        { number: 48, value: "Depositing Rime Fog" },
         { number: 51, value: "Drizzle: Light intensity" },
         { number: 53, value: "Drizzle: Moderate intensity" },
         { number: 55, value: "Drizzle: Dense intensity" },
@@ -31,7 +31,13 @@ function processWeatherCodes(code) {
       ];
 
       const weathercode = weatherCodeValues.find(item => item.number == code)
-      return weathercode.value;
+
+      if (weathercode) {
+        return weathercode.value;
+      } else {
+        console.log(weathercode, "Weathercode not found")
+        return "" // add a default or fallback here
+      }
 }
 
 export default processWeatherCodes;
