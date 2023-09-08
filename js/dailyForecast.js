@@ -4,6 +4,7 @@ import createDOMElement from "./utils/createDOMElement.js";
 import processWeatherUnits from "./utils/processWeatherUnits.js";
 import processWeatherCodes from "./utils/processWeatherCodes.js";
 import convertWindDirection from "./utils/convertWindDirection.js";
+import processWeatherCodeIcon from "./utils/processWeatherCodeIcon.js"
 
 const forecastWeatherWrapper = document.querySelector("#forecast-weather-wrapper");
 
@@ -211,7 +212,7 @@ function sortDailyForecastData(data) {
     // Clear the forecast wrapper before rendering (prevents the re-rendered data to be appended after the already present data)
     removeAllElementChildren(forecastWeatherWrapper);
 
-    const forecastHeading = createDOMElement("h2", "forecast-heading", locationName);
+    const forecastHeading = createDOMElement("h1", "forecast-heading", locationName);
     const forecastSubHeading = createDOMElement("span", "forecast-sub-heading", "7-Day Forecast");
     forecastWeatherWrapper.append(forecastHeading);
     forecastHeading.append(forecastSubHeading);
@@ -238,8 +239,11 @@ function renderDailyForecast(data) {
     // Data Elements
     const date = createDOMElement("h3", "daily-forecast-heading", data[0].date);
     const icon = createDOMElement("img", "icon-lg");
-    icon.setAttribute("src", "https://placehold.co/60x45");
-    const dayHighLowData = createDOMElement("p", "forecast-temp high", `${processWeatherUnits("temp", data[0].temp_max)} High / ${processWeatherUnits("temp", data[0].temp_min)} Low`);
+    icon.setAttribute("src", processWeatherCodeIcon(data[0].weathercode))
+    const dayHighData = createDOMElement("p", "forecast-temp high", `${processWeatherUnits("temp", data[0].temp_max)} `);
+    const dayHighTitle = createDOMElement("span", "title", "High");
+    const dayLowData = createDOMElement("p", "forecast-temp low", `${processWeatherUnits("temp", data[0].temp_min)} `);
+    const dayLowTitle = createDOMElement("span", "title", "Low");
     const weathercode = createDOMElement("p", "weathercode", processWeatherCodes(data[0].weathercode));
     const apparentTempWrapper = createDOMElement("p", undefined, "Feels Like:");
     const apparentTempData = createDOMElement("span", "apparent-temp", ` ${processWeatherUnits("temp", data[0].apparent_temp_max)} High / ${processWeatherUnits("temp", data[0].apparent_temp_min)} Low`)
@@ -263,7 +267,10 @@ function renderDailyForecast(data) {
     leftCol.append(tempWrapper);
     tempWrapper.append(icon);
     tempWrapper.append(highLowWrapper);
-    highLowWrapper.append(dayHighLowData);
+    highLowWrapper.append(dayHighData);
+    dayHighData.append(dayHighTitle);
+    highLowWrapper.append(dayLowData);
+    dayLowData.append(dayLowTitle);
     leftCol.append(weathercode);
     leftCol.append(apparentTempWrapper);
     apparentTempWrapper.append(apparentTempData)

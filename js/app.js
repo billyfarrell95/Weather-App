@@ -7,6 +7,7 @@ import processWeatherCodes from "./utils/processWeatherCodes.js";
 import convertWindDirection from "./utils/convertWindDirection.js";
 import processWeatherUnits from "./utils/processWeatherUnits.js";
 import convertUnixTimestampTo12HourFormat from "./utils/convertUnixTimestamp.js";
+import processWeatherCodeIcon from "./utils/processWeatherCodeIcon.js";
 
 // Select UI Elements
 const searchInputField = document.querySelector("#search-input");
@@ -224,7 +225,7 @@ async function fetchCurrentWeather(locationName, adminLevel1, countryCode, lat, 
             removeAllElementChildren(currentWeatherWrapper);
             /* removeAllElementChildren(forecastWeatherWrapper); */
             searchInputField.value = "";
-            renderCurrentAndDailyWeather(data, selectedResultName, data.latitude, data.longitude);
+            renderCurrentWeather(data, selectedResultName, data.latitude, data.longitude);
             fetchQuickSearchButtonData();
         })
 
@@ -272,7 +273,7 @@ async function fetchQuickSearchWeather(locationName, adminLevel1, countryCode, l
             removeAllElementChildren(currentWeatherWrapper);
             /* removeAllElementChildren(forecastWeatherWrapper); */
             searchInputField.value = "";
-            renderCurrentAndDailyWeather(data, selectedResultName, data.latitude, data.longitude);
+            renderCurrentWeather(data, selectedResultName, data.latitude, data.longitude);
         })
 
         .catch (error => {
@@ -280,7 +281,7 @@ async function fetchQuickSearchWeather(locationName, adminLevel1, countryCode, l
         })
 }
 
-function renderCurrentAndDailyWeather(data, selectedName, latitude, longitude) {
+function renderCurrentWeather(data, selectedName, latitude, longitude) {
     // Create UI layout elements
     const dataRow = createDOMElement("div", "current-weather-row");
     const currentWrapper = createDOMElement("div", "current-wrapper");
@@ -300,9 +301,8 @@ function renderCurrentAndDailyWeather(data, selectedName, latitude, longitude) {
     const dailyWeathercode = createDOMElement("p", "code", processWeatherCodes(data.daily.weathercode));
     const dailyWindWrapper = createDOMElement("div", "data-row", "Wind");
     const dailyWind = createDOMElement("p", undefined, `${convertWindDirection(data.current_weather.winddirection)} ${processWeatherUnits("speed", data.current_weather.windspeed)}`);
-    currentIcon.setAttribute("src", "https://placehold.co/60x45")
+    currentIcon.setAttribute("src", processWeatherCodeIcon(data.daily.weathercode))
     // Daily weather
-    const dailyIcon = createDOMElement("img", "icon-lg");
     const dailyHighLow = createDOMElement("p", "daily-temp high", `${processWeatherUnits("temp", data.daily.temperature_2m_max)} High / ${processWeatherUnits("temp", data.daily.temperature_2m_min)} Low`);
     const dailyFeelsLikeWrapper = createDOMElement("p", "data-row", "Feels Like");
     const dailyFeelsLikeData = createDOMElement("p", undefined, `${processWeatherUnits("temp", data.daily.apparent_temperature_max)} High / ${processWeatherUnits("temp", data.daily.apparent_temperature_min)} Low`);
@@ -312,7 +312,6 @@ function renderCurrentAndDailyWeather(data, selectedName, latitude, longitude) {
     const dailyPrecipSumData = createDOMElement("p", undefined, processWeatherUnits("precipSum", data.daily.precipitation_sum));
     const dailyPrecipProbWrapper = createDOMElement("p", "data-row", "Precipitation Probability");
     const dailyPrecipProbData = createDOMElement("p", undefined, processWeatherUnits("precipProb", data.daily.precipitation_probability_max));
-    dailyIcon.setAttribute("src", "https://placehold.co/50x50"); // placeholder
 
     const dailyTempsListWrapper = createDOMElement("div", "daily-temps-list-wrapper")
     const dailyTempsList = createDOMElement("ul", "daily-temps-list");
@@ -324,17 +323,19 @@ function renderCurrentAndDailyWeather(data, selectedName, latitude, longitude) {
 
     const hourlyTemps = data.hourly.temperature_2m.filter((_, index) => index >= currentHourIndex);
     const hourlyTimes = data.hourly.time.filter((_, index) => index >= currentHourIndex);
+    const hourlyCodes = data.hourly.weathercode.filter((_, index) => index >= currentHourIndex);
 
     const properties = Object.keys(hourlyTemps);
 
     properties.forEach((property) => {
         console.log("TEMP:", hourlyTemps[property]);
         console.log("TIME:", hourlyTimes[property]);
+        console.log("CODES:", hourlyCodes[property])
 
         const newLi = createDOMElement("li");
         const timeSpan = createDOMElement("span", "time", convertUnixTimestampTo12HourFormat(hourlyTimes[property], data.timezone));
         const icon = createDOMElement("img", "icon-sm");
-        icon.setAttribute("src", "https://placehold.co/25x25"); // placeholder
+        icon.setAttribute("src", processWeatherCodeIcon(hourlyCodes[property]));
         const tempSpan = createDOMElement("span", "temp", processWeatherUnits("temp", hourlyTemps[property]));
         newLi.append(timeSpan);
         newLi.append(icon)
@@ -383,9 +384,11 @@ function renderCurrentAndDailyWeather(data, selectedName, latitude, longitude) {
     currentWeatherWrapper.append(dataRow);
 
     // Add the link to view the forecast for current location
-    const viewForecastLink = createDOMElement("a", "view-forecast-link", "View 3-Day Hourly Forecast");
+    const viewForecastLinkWrapper = createDOMElement("div", "view-forecast-wrapper");
+    const viewForecastLink = createDOMElement("a", null, "View 7-Day Forecast");
     viewForecastLink.setAttribute("href", "forecast.html");
-    currentWeatherWrapper.append(viewForecastLink);
+    viewForecastLinkWrapper.append(viewForecastLink)
+    currentWeatherWrapper.append(viewForecastLinkWrapper);
 }
 
 // Fetch the data for the quick search buttons
@@ -442,7 +445,6 @@ async function fetchQuickSearchButtonData() {
 
         currentName.textContent = quickSearchItems[i].city;
         currentState.textContent = quickSearchItems[i].state;
-        currentIcon.setAttribute("src", "https://placehold.co/20x20");
 
         // Add event listener to each quick search button / pass data to fetchQuickSearchWeather 
         currentQuickSearchButton.addEventListener("click", () => {
@@ -463,8 +465,9 @@ async function fetchQuickSearchButtonData() {
             })
 
             .then (data => {
-                /* console.log("Quick search Weather response data:", data); */
-                currentQuickTemp.textContent = `${processWeatherUnits("temp", data.current_weather.temperature)}`
+                console.log("Quick search Weather response data:", data);
+                currentQuickTemp.textContent = `${processWeatherUnits("temp", data.current_weather.temperature)}`;
+                currentIcon.setAttribute("src", processWeatherCodeIcon(data.current_weather.weathercode));
             })
 
             .catch (error => {
