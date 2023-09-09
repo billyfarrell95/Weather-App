@@ -148,6 +148,7 @@ function sortDailyForecastData(data) {
                 "apparent_temp_max": data.daily.apparent_temperature_max[i],
                 "apparent_temp_min": data.daily.apparent_temperature_min[i],
                 "precip_sum": data.daily.precipitation_sum[i],
+                "precip_prob_max": data.daily.precipitation_probability_max[i],
                 "sunrise": data.daily.sunrise[i],
                 "sunset": data.daily.sunset[i],
                 "temp_max": data.daily.temperature_2m_max[i],

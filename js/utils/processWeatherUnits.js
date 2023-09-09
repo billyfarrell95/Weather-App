@@ -1,8 +1,8 @@
 function processWeatherUnits(unitType, data) {
     // Round the value
     const roundedvalue = Math.round(data);
-    console.log("data to round", data)
-    console.log("rounded data", roundedvalue)
+    /* console.log("data to round", data)
+    console.log("rounded data", roundedvalue) */
 
     const units = {
         temperature: "°F",
