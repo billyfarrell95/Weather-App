@@ -205,8 +205,8 @@ async function fetchCurrentWeather(locationName, adminLevel1, countryCode, lat, 
     localStorage.setItem("currentLat", lat);
     localStorage.setItem("currentLon", lon);
 
-    // Current weather data endpoint URL -- same as the quick search weather endpoint
-    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=temperature_2m,weathercode&daily=weathercode,temperature_2m_max,temperature_2m_min,apparent_temperature_max,apparent_temperature_min,uv_index_max,precipitation_sum,precipitation_probability_max&&current_weather=true&temperature_unit=fahrenheit&windspeed_unit=mph&precipitation_unit=inch&timeformat=unixtime&forecast_days=1&timezone=auto`
+    // Current weather data endpoint URL -- same as the quick search weather endpoint. Two days fetched for the 24 hour temperature display
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=temperature_2m,weathercode&daily=weathercode,temperature_2m_max,temperature_2m_min,apparent_temperature_max,apparent_temperature_min,uv_index_max,precipitation_sum,precipitation_probability_max&&current_weather=true&temperature_unit=fahrenheit&windspeed_unit=mph&precipitation_unit=inch&timeformat=unixtime&forecast_days=2&timezone=auto`
     
     fetch (url)
         .then (response => {
@@ -254,8 +254,8 @@ async function fetchQuickSearchWeather(locationName, adminLevel1, countryCode, l
     localStorage.setItem("currentLat", lat);
     localStorage.setItem("currentLon", lon);
 
-    // Quick search weather data endpoint URL -- same as the current weather endpoint
-    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=temperature_2m,weathercode&daily=weathercode,temperature_2m_max,temperature_2m_min,apparent_temperature_max,apparent_temperature_min,uv_index_max,precipitation_sum,precipitation_probability_max&&current_weather=true&temperature_unit=fahrenheit&windspeed_unit=mph&precipitation_unit=inch&timeformat=unixtime&forecast_days=1&timezone=auto`
+    // Quick search weather data endpoint URL -- same as the current weather endpoint. Two days fetched for the 24 hour temperature display
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=temperature_2m,weathercode&daily=weathercode,temperature_2m_max,temperature_2m_min,apparent_temperature_max,apparent_temperature_min,uv_index_max,precipitation_sum,precipitation_probability_max&&current_weather=true&temperature_unit=fahrenheit&windspeed_unit=mph&precipitation_unit=inch&timeformat=unixtime&forecast_days=2&timezone=auto`
 
     fetch (url)
         .then (response => {
@@ -282,6 +282,7 @@ async function fetchQuickSearchWeather(locationName, adminLevel1, countryCode, l
 }
 
 function renderCurrentWeather(data, selectedName, latitude, longitude) {
+    console.log("DATA IN RENDER", data)
     // Create UI layout elements
     const dataRow = createDOMElement("div", "current-weather-row");
     const currentWrapper = createDOMElement("div", "current-wrapper");
@@ -296,41 +297,43 @@ function renderCurrentWeather(data, selectedName, latitude, longitude) {
     const currentTitle = createDOMElement("h3", "current-title", "Today");
     const currentTime = createDOMElement("p", "time", get12HourTimeInTimezone(data.timezone));
     const currentIcon = createDOMElement("img", "icon-lg");
+    currentIcon.setAttribute("src", processWeatherCodeIcon(data.daily.weathercode[0]));
     const currentTemp = createDOMElement("p", "temp", processWeatherUnits("temp", data.current_weather.temperature));
-    const highLowWrapper = createDOMElement("div", "high-low-wrapper");
-    const dailyWeathercode = createDOMElement("p", "code", processWeatherCodes(data.daily.weathercode));
+    const currentWeatherCode = createDOMElement("p", "code", processWeatherCodes(data.current_weather.weathercode));
+
     const dailyWindWrapper = createDOMElement("div", "data-row", "Wind");
     const dailyWind = createDOMElement("p", undefined, `${convertWindDirection(data.current_weather.winddirection)} ${processWeatherUnits("speed", data.current_weather.windspeed)}`);
-    currentIcon.setAttribute("src", processWeatherCodeIcon(data.daily.weathercode))
-    // Daily weather
-    const dailyHighLow = createDOMElement("p", "daily-temp high", `${processWeatherUnits("temp", data.daily.temperature_2m_max)} High / ${processWeatherUnits("temp", data.daily.temperature_2m_min)} Low`);
+    const highLowWrapper = createDOMElement("div", "high-low-wrapper");
+    const dailyHighLowData = createDOMElement("p", "daily-temp high", `${processWeatherUnits("temp", data.daily.temperature_2m_max[0])} High / ${processWeatherUnits("temp", data.daily.temperature_2m_min[0])} Low`); // select first day from returned array
     const dailyFeelsLikeWrapper = createDOMElement("p", "data-row", "Feels Like");
-    const dailyFeelsLikeData = createDOMElement("p", undefined, `${processWeatherUnits("temp", data.daily.apparent_temperature_max)} High / ${processWeatherUnits("temp", data.daily.apparent_temperature_min)} Low`);
+    const dailyFeelsLikeData = createDOMElement("p", undefined, `${processWeatherUnits("temp", data.daily.apparent_temperature_max[0])} High / ${processWeatherUnits("temp", data.daily.apparent_temperature_min[0])} Low`); // select first day from returned array
     const dailyUVWrapper = createDOMElement("p", "data-row", "UV Index Max");
-    const dailyUVData = createDOMElement("p", undefined, data.daily.uv_index_max);
+    const dailyUVData = createDOMElement("p", undefined, processWeatherUnits("uv", data.daily.uv_index_max[0])); // select first day from returned array
     const dailyPrecipSumWrapper = createDOMElement("p", "data-row", "Precipitation");
-    const dailyPrecipSumData = createDOMElement("p", undefined, processWeatherUnits("precipSum", data.daily.precipitation_sum));
+    const dailyPrecipSumData = createDOMElement("p", undefined, processWeatherUnits("precipSum", data.daily.precipitation_sum[0])); // select first day from returned array
     const dailyPrecipProbWrapper = createDOMElement("p", "data-row", "Precipitation Probability");
-    const dailyPrecipProbData = createDOMElement("p", undefined, processWeatherUnits("precipProb", data.daily.precipitation_probability_max));
+    const dailyPrecipProbData = createDOMElement("p", undefined, processWeatherUnits("precipProb", data.daily.precipitation_probability_max[0])); // select first day from returned array
 
     const dailyTempsListWrapper = createDOMElement("div", "daily-temps-list-wrapper")
     const dailyTempsList = createDOMElement("ul", "daily-temps-list");
     dailyTempsList.setAttribute("role", "list");
+
     // Calculate the current hour index based on the user's timezone offset
     const now = new Date();
     now.setSeconds(now.getSeconds() + data.utc_offset_seconds);
     const currentHourIndex = now.getUTCHours();
-
-    const hourlyTemps = data.hourly.temperature_2m.filter((_, index) => index >= currentHourIndex);
-    const hourlyTimes = data.hourly.time.filter((_, index) => index >= currentHourIndex);
-    const hourlyCodes = data.hourly.weathercode.filter((_, index) => index >= currentHourIndex);
+    
+    // use the currentHourIndex to filter hours that have passed. Select 24 of the filtered array items.
+    const hourlyTemps = data.hourly.temperature_2m.filter((_, index) => index >= currentHourIndex).slice(0, 24);
+    const hourlyTimes = data.hourly.time.filter((_, index) => index >= currentHourIndex).slice(0, 24);
+    const hourlyCodes = data.hourly.weathercode.filter((_, index) => index >= currentHourIndex).slice(0, 24);
 
     const properties = Object.keys(hourlyTemps);
 
     properties.forEach((property) => {
-        console.log("TEMP:", hourlyTemps[property]);
+        /* console.log("TEMP:", hourlyTemps[property]);
         console.log("TIME:", hourlyTimes[property]);
-        console.log("CODES:", hourlyCodes[property])
+        console.log("CODES:", hourlyCodes[property]) */
 
         const newLi = createDOMElement("li");
         const timeSpan = createDOMElement("span", "time", convertUnixTimestampTo12HourFormat(hourlyTimes[property], data.timezone));
@@ -360,9 +363,9 @@ function renderCurrentWeather(data, selectedName, latitude, longitude) {
     rightCol.append(currentInfoWrapper);
     currentTempWrapper.append(currentIcon);
     currentTempWrapper.append(currentTemp);
-    leftCol.append(dailyWeathercode);
+    leftCol.append(currentWeatherCode);
     leftCol.append(highLowWrapper);
-    highLowWrapper.append(dailyHighLow);
+    highLowWrapper.append(dailyHighLowData);
     // Feels like data row
     currentInfoWrapper.append(dailyFeelsLikeWrapper);
     dailyFeelsLikeWrapper.append(dailyFeelsLikeData);
