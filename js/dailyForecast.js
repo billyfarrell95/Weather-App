@@ -248,7 +248,7 @@ function renderDailyForecast(data) {
     const apparentTempWrapper = createDOMElement("p", undefined, "Feels Like:");
     const apparentTempData = createDOMElement("span", "apparent-temp", ` ${processWeatherUnits("temp", data[0].apparent_temp_max)} High / ${processWeatherUnits("temp", data[0].apparent_temp_min)} Low`)
     const UVWrapper = createDOMElement("div", "data-row", "UV Index Max");
-    const UVData = createDOMElement("p", undefined, data[0].uv_index_max);
+    const UVData = createDOMElement("p", undefined, processWeatherUnits("uv", data[0].uv_index_max));
     const precipSumWrapper = createDOMElement("div", "data-row", "Precipitation");
     const precipSumData = createDOMElement("p", undefined, processWeatherUnits("precipSum", data[0].precip_sum))
     const precipProbWrapper = createDOMElement("div", "data-row", "Precipitation Probability");

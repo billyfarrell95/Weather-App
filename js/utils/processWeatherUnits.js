@@ -1,6 +1,8 @@
 function processWeatherUnits(unitType, data) {
     // Round the value
     const roundedvalue = Math.round(data);
+    console.log("data to round", data)
+    console.log("rounded data", roundedvalue)
 
     const units = {
         temperature: "°F",
@@ -13,18 +15,22 @@ function processWeatherUnits(unitType, data) {
       // Assign a value to "unit" based on the unit passed from render function
       if (unitType === "temp") {
         unit = units.temperature;
+        return roundedvalue + unit;
       } else if (unitType === "precipSum") {
         unit = units.precipSum;
+        return roundedvalue + unit;
       } else if (unitType === "precipProb") {
         unit = units.precipProb;
+        return roundedvalue + unit;
       } else if (unitType === "speed") {
         unit = units.speed;
+        return roundedvalue + unit;
+      } else if (unitType === "uv") {
+        return roundedvalue;
       }
       else {
         console.log("Invalid unit passed to getWeatherUnits()")
       }
-
-      return roundedvalue + unit;
 }
 
 export default processWeatherUnits;
