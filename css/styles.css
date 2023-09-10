@@ -8,6 +8,10 @@ body {
 }
 
 /************************* Main Layout *************************/
+section {
+    padding-inline: 1rem;
+}
+
 .container {
     max-width: 1000px;
     padding-block: 4.5vh;
@@ -27,13 +31,21 @@ h1 {
     color: white;
 }
 
-/********************v Fullscreen Background Image *************************/
-.fullscreen-bg-img {
+/******************** Fullscreen Background Image *************************/
+.fullscreen-background {
     min-height: 100vh;
-    background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('/assets/bg-images/hero-background-1.jpg');
+    background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('/assets/bg-images/background-small.jpg');
     background-size: cover;
-    background-position: bottom left;
+    background-position: bottom center;
     color: white;
+    background-repeat: no-repeat;
+}
+
+@media screen and (min-width: 1200px) {
+    .fullscreen-background {
+        background-position: top center;
+        background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('/assets/bg-images/background-large.jpg');
+    }
 }
 
 /**************** Skeleton Loading *********************/
