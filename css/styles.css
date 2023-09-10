@@ -10,10 +10,10 @@ body {
 /************************* Main Layout *************************/
 .container {
     max-width: 1000px;
-    padding-inline: 1rem;
     padding-block: 4.5vh;
     margin-left: auto;
     margin-right: auto;
+    position: relative;
 }
 
 /************************* General Typography *************************/
@@ -37,7 +37,6 @@ h1 {
 }
 
 /**************** Skeleton Loading *********************/
-
 .skeleton {
     opacity: .75;
     animation: skeleton-loading 1.3s linear infinite alternate;
@@ -69,12 +68,12 @@ h1 {
 .current-location-button {
     display: inline-flex;
     gap: .4rem;
-    width: 100%;
     align-items: center;
     background: transparent;
     border: none;
     padding: .5rem 0 .5rem 1rem;
     margin-bottom: .2rem;
+    width: 100%;
 }
 
 .current-location-button:hover {
@@ -99,12 +98,13 @@ h1 {
 }
 
 .search-results-wrapper {
+    position: absolute;
     visibility: hidden;
-    /* position: absolute; */
     background-color: rgba(255, 255, 255);
     -webkit-box-shadow: 3px 4px 8px 0px rgba(0,0,0,0.1);
     -moz-box-shadow: 3px 4px 8px 0px rgba(0,0,0,0.1);
     box-shadow: 3px 4px 8px 0px rgba(0,0,0,0.1);
+    width: 100%;
 }
 
 .search-results-list {
@@ -117,11 +117,17 @@ h1 {
     list-style-type: none;
     padding-block: .4rem;
     padding-inline: 1rem;
-    cursor: pointer;    
+    cursor: pointer;   
+    display: flex;
+    flex-grow: 1;
 }
 
 .search-results-list li:hover {
     background-color: #f4f4f4;
+}
+
+.quick-search-wrapper {
+    padding-block: 1.5rem;
 }
 
 .qs-title {
@@ -331,6 +337,8 @@ h1 {
     flex-direction: column;
     align-items: center;
     min-width: 5rem;
+    justify-content: space-between;
+    gap: .2rem;
 }
 
 .high-low-wrapper {
