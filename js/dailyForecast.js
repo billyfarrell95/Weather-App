@@ -9,7 +9,7 @@ import processWeatherCodeIcon from "./utils/processWeatherCodeIcon.js"
 const forecastWeatherWrapper = document.querySelector("#forecast-weather-wrapper");
 
 // Get local storage data
-const locationName = localStorage.getItem("locationName");
+const fullLocationName = localStorage.getItem("fullLocationName");
 const lat = localStorage.getItem("currentLat");
 const lon = localStorage.getItem("currentLon");
 
@@ -213,7 +213,7 @@ function sortDailyForecastData(data) {
     // Clear the forecast wrapper before rendering (prevents the re-rendered data to be appended after the already present data)
     removeAllElementChildren(forecastWeatherWrapper);
 
-    const forecastHeading = createDOMElement("h1", "forecast-heading", locationName);
+    const forecastHeading = createDOMElement("h1", "forecast-heading", fullLocationName);
     const forecastSubHeading = createDOMElement("span", "forecast-sub-heading", "7-Day Forecast");
     forecastWeatherWrapper.append(forecastHeading);
     forecastHeading.append(forecastSubHeading);

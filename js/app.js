@@ -20,7 +20,16 @@ const quickSearchButtonsWrapper = document.querySelector("#quick-search-buttons"
 
 document.addEventListener("DOMContentLoaded", () => {
     fetchQuickSearchButtonData();
-    localStorage.clear();
+    if (localStorage.length > 0) {
+        console.log("LOCAL STORAGE DATA", localStorage);
+        const fullLocationName = localStorage.getItem("fullLocationName");
+        const locationName = localStorage.getItem("locationName");
+        const adminLevel1 = localStorage.getItem("adminLevel1");
+        const countryCode = localStorage.getItem("countryCode")
+        const lat = localStorage.getItem("currentLat");
+        const lon = localStorage.getItem("currentLon");
+        fetchCurrentWeather(locationName, adminLevel1, countryCode, lat, lon, fullLocationName);
+    }
 })
 
 // Handle showing and hiding the search results when the field is/isn't active
@@ -102,7 +111,7 @@ async function reverseGeocode(lat, lon) {
             const adminLevel1 = processGeocodingAdminLevel1(data.results[0].components); // the pair of the first key that matches the requirements is returned   
             const countryCode = data.results[0].components.country_code.toUpperCase(); // country code
 
-            console.log("DATA IN REVERSE GEOCODE", data)
+            /* console.log("DATA IN REVERSE GEOCODE", data) */
             fetchCurrentWeather(locationName, adminLevel1, countryCode, lat, lon)
         })
 
@@ -186,22 +195,25 @@ function displaySearchResults(data) {
 
 // Get current weather data
 async function fetchCurrentWeather(locationName, adminLevel1, countryCode, lat, lon) {
-    console.log(countryCode, "country code in fetchCurrentWeather")
+    console.log(locationName, "admin in fetchCurrentWeather")
     // Defined and check the result name for undefined values 
-    let selectedResultName;
-    if (locationName !== undefined && adminLevel1 !== undefined) {
+    let selectedResultName = localStorage.getItem("fullLocationName")
+    
+    if (locationName !== undefined && locationName !== "undefined" && adminLevel1 !== undefined && adminLevel1 !== "undefined") {
         selectedResultName = locationName + ", " + adminLevel1 + ", " + countryCode;
-        console.log("adminLevel1 in BLOCK ONE" , adminLevel1)
-        console.log("BLOCK ONE RAN")
-    } else if (locationName !== undefined && adminLevel1 == undefined) {
+    } else if (locationName !== undefined && locationName !== "undefined") {
         selectedResultName = locationName + ", " + countryCode;
-        console.log("BLOCK TWO RAN")
-    } else if (locationName == undefined && adminLevel1 !== undefined) {
+    } else if (adminLevel1 !== undefined && adminLevel1 !== "undefined") {
         selectedResultName = adminLevel1;
-        console.log("BLOCK THREE RAN")
     }
 
-    localStorage.setItem("locationName", selectedResultName);
+    localStorage.clear();
+    // Name to be displayed on forecast page
+    localStorage.setItem("fullLocationName", selectedResultName);
+    // Data to be re-used when navigating back/re-fetching weather 
+    localStorage.setItem("locationName", locationName)   
+    localStorage.setItem("adminLevel1", adminLevel1);
+    localStorage.setItem("countryCode", countryCode);
     localStorage.setItem("currentLat", lat);
     localStorage.setItem("currentLon", lon);
 
@@ -238,19 +250,21 @@ async function fetchCurrentWeather(locationName, adminLevel1, countryCode, lat, 
 async function fetchQuickSearchWeather(locationName, adminLevel1, countryCode, lat, lon) {
     // Defined and check the result name for undefined values 
     let selectedResultName;
-    if (locationName !== undefined && adminLevel1 !== undefined) {
+    
+    if (locationName !== undefined && locationName !== "undefined" && adminLevel1 !== undefined && adminLevel1 !== "undefined") {
         selectedResultName = locationName + ", " + adminLevel1 + ", " + countryCode;
-        console.log("adminLevel1 in BLOCK ONE" , adminLevel1)
-        console.log("BLOCK ONE RAN")
-    } else if (locationName !== undefined && adminLevel1 == undefined) {
+    } else if (locationName !== undefined && locationName !== "undefined") {
         selectedResultName = locationName + ", " + countryCode;
-        console.log("BLOCK TWO RAN")
-    } else if (locationName == undefined && adminLevel1 !== undefined) {
+    } else if (adminLevel1 !== undefined && adminLevel1 !== "undefined") {
         selectedResultName = adminLevel1;
-        console.log("BLOCK THREE RAN")
     }
-
-    localStorage.setItem("locationName", selectedResultName);
+    localStorage.clear();
+    // Name to be displayed on forecast page
+    localStorage.setItem("fullLocationName", selectedResultName);
+    // Data to be re-used when navigating back/re-fetching weather 
+    localStorage.setItem("locationName", locationName)   
+    localStorage.setItem("adminLevel1", adminLevel1);
+    localStorage.setItem("countryCode", countryCode);
     localStorage.setItem("currentLat", lat);
     localStorage.setItem("currentLon", lon);
 
@@ -474,7 +488,7 @@ async function fetchQuickSearchButtonData() {
             })
 
             .then (data => {
-                console.log("Quick search Weather response data:", data);
+                /* console.log("Quick search Weather response data:", data); */
                 currentQuickTemp.textContent = `${processWeatherUnits("temp", data.current_weather.temperature)}`;
                 currentIcon.setAttribute("src", processWeatherCodeIcon(data.current_weather.weathercode));
             })
