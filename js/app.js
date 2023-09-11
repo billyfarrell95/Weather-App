@@ -297,7 +297,7 @@ function renderCurrentWeather(data, selectedName, latitude, longitude) {
     const currentTitle = createDOMElement("h3", "current-title", "Today");
     const currentTime = createDOMElement("p", "time", get12HourTimeInTimezone(data.timezone));
     const currentIcon = createDOMElement("img", "icon-lg");
-    currentIcon.setAttribute("src", processWeatherCodeIcon(data.daily.weathercode[0]));
+    currentIcon.setAttribute("src", processWeatherCodeIcon(data.current_weather.weathercode));
     const currentTemp = createDOMElement("p", "temp", processWeatherUnits("temp", data.current_weather.temperature));
     const currentWeatherCode = createDOMElement("p", "code", processWeatherCodes(data.current_weather.weathercode));
 
