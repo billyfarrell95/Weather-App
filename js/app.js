@@ -316,6 +316,12 @@ function renderCurrentWeather(data, selectedName, latitude, longitude) {
 
     const dailyTempsListWrapper = createDOMElement("div", "daily-temps-list-wrapper")
     const dailyTempsList = createDOMElement("ul", "daily-temps-list");
+
+    // Scroll eventListener for the hourly items -- allows automatic horizontal scrolling
+    dailyTempsList.addEventListener("wheel", (e) => {
+        e.preventDefault();
+        dailyTempsList.scrollLeft += e.deltaY;
+    })
     dailyTempsList.setAttribute("role", "list");
 
     // Calculate the current hour index based on the user's timezone offset
