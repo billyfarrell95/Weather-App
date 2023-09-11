@@ -11,12 +11,19 @@ import processWeatherCodeIcon from "./utils/processWeatherCodeIcon.js";
 
 // Select UI Elements
 const searchInputField = document.querySelector("#search-input");
-const searchResultsWrapper = document.querySelector("#search-results-wrapper")
+const searchResultsWrapper = document.querySelector("#search-results-wrapper");
 const searchResultsList = document.querySelector("#search-results-list");
 const currentWeatherWrapper = document.querySelector("#current-weather-wrapper");
 const useCurrentLocationButton = document.querySelector("#current-location-button");
 const quickSearchButtonsWrapper = document.querySelector("#quick-search-buttons"); // The element that holds the quick search buttons
 /* const forecastWeatherWrapper = document.querySelector("#forecast-weather-wrapper"); */
+
+document.addEventListener("keydown", (e) => {
+    if (e.key === "ArrowDown") {
+        let index = 0;
+        searchResultsList[index].classList.add("selected");
+    }
+});
 
 document.addEventListener("DOMContentLoaded", () => {
     fetchQuickSearchButtonData();
@@ -250,7 +257,7 @@ async function fetchCurrentWeather(locationName, adminLevel1, countryCode, lat, 
 async function fetchQuickSearchWeather(locationName, adminLevel1, countryCode, lat, lon) {
     // Defined and check the result name for undefined values 
     let selectedResultName;
-    
+
     if (locationName !== undefined && locationName !== "undefined" && adminLevel1 !== undefined && adminLevel1 !== "undefined") {
         selectedResultName = locationName + ", " + adminLevel1 + ", " + countryCode;
     } else if (locationName !== undefined && locationName !== "undefined") {
