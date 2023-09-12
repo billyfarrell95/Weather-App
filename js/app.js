@@ -336,7 +336,7 @@ function renderCurrentWeather(data, selectedName) {
     dailyTempsList.addEventListener("wheel", (e) => {
         e.preventDefault();
         dailyTempsList.scrollLeft += e.deltaY;
-    }, {passive: true})
+    },{passive: true});
 
     dailyTempsList.setAttribute("role", "list");
 
