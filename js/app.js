@@ -37,9 +37,11 @@ document.addEventListener("click", () => {
     if (document.activeElement == searchInputField) {
         /* console.log("input wrapper is active"); */
         searchResultsWrapper.style.visibility = "visible";
+        quickSearchButtonsWrapper.classList.add("disabled");
     } else {
         /* console.log("input wrapper not active") */
         searchResultsWrapper.style.visibility = "hidden"
+        quickSearchButtonsWrapper.classList.remove("disabled");
     }
 });
 
@@ -295,7 +297,7 @@ async function fetchQuickSearchWeather(locationName, adminLevel1, countryCode, l
         })
 }
 
-function renderCurrentWeather(data, selectedName, latitude, longitude) {
+function renderCurrentWeather(data, selectedName) {
     document.title = `${selectedName} | Current Weather`;
     console.log("DATA IN RENDER", data)
     // Create UI layout elements
@@ -332,11 +334,12 @@ function renderCurrentWeather(data, selectedName, latitude, longitude) {
     const dailyTempsListWrapper = createDOMElement("div", "daily-temps-list-wrapper")
     const dailyTempsList = createDOMElement("ul", "daily-temps-list");
 
-    // Scroll eventListener for the hourly items -- allows automatic horizontal scrolling
+    // Scroll eventListener for the hourly items -- allows automatic horizontal scrolling (https://developer.chrome.com/en/docs/lighthouse/best-practices/uses-passive-event-listeners/)
     dailyTempsList.addEventListener("wheel", (e) => {
         e.preventDefault();
         dailyTempsList.scrollLeft += e.deltaY;
-    })
+    }, {passive: true})
+
     dailyTempsList.setAttribute("role", "list");
 
     // Calculate the current hour index based on the user's timezone offset
@@ -352,12 +355,17 @@ function renderCurrentWeather(data, selectedName, latitude, longitude) {
     const properties = Object.keys(hourlyTemps);
 
     properties.forEach((property) => {
-        /* console.log("TEMP:", hourlyTemps[property]);
-        console.log("TIME:", hourlyTimes[property]);
-        console.log("CODES:", hourlyCodes[property]) */
+        /* console.log("TIME:", property); */
 
         const newLi = createDOMElement("li");
-        const timeSpan = createDOMElement("span", "time", convertUnixTimestampTo12HourFormat(hourlyTimes[property], data.timezone));
+        /* const timeSpan = createDOMElement("span", "time", convertUnixTimestampTo12HourFormat(hourlyTimes[property], data.timezone)); */
+        let timeSpan;
+        // Display "Now" instead of the time for the first item
+        if (property == 0) {
+            timeSpan = createDOMElement("span", "time", "Now");
+        } else {
+            timeSpan = createDOMElement("span", "time", convertUnixTimestampTo12HourFormat(hourlyTimes[property], data.timezone));
+        }
         const icon = createDOMElement("img", "icon-sm");
         icon.setAttribute("src", processWeatherCodeIcon(hourlyCodes[property]));
         const tempSpan = createDOMElement("span", "temp", processWeatherUnits("temp", hourlyTemps[property]));
@@ -461,6 +469,7 @@ async function fetchQuickSearchButtonData() {
         const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true&temperature_unit=fahrenheit&timeformat=unixtime&forecast_days=1&timezone=auto`;
         
         // Select each quick search button/temp when looping through parent element
+        const allQuickSearchButtons = quickSearchButtonsWrapper.children;
         const currentQuickSearchButton = quickSearchButtonsWrapper.children[i];
         const currentName = currentQuickSearchButton.querySelector(".qs-location-name");
         const currentState = currentQuickSearchButton.querySelector(".qs-state-name");

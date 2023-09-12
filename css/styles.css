@@ -38,7 +38,7 @@ h1 {
 /******************** Fullscreen Background Image *************************/
 .fullscreen-background {
     min-height: 100vh;
-    background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('/assets/bg-images/background-small.jpg');
+    background-image: radial-gradient(circle, rgba(2,47,64,0.6) 0%, rgba(2,47,64,0.8) 100%), url('/assets/bg-images/background-small.jpg');
     background-size: cover;
     background-position: bottom center;
     color: white;
@@ -48,7 +48,7 @@ h1 {
 @media screen and (min-width: 1200px) {
     .fullscreen-background {
         background-position: top center;
-        background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('/assets/bg-images/background-large.jpg');
+        background-image: radial-gradient(circle, rgba(2,47,64,0.6) 0%, rgba(2,47,64,0.8) 100%), url('/assets/bg-images/background-large.jpg');
     }
 }
 
@@ -121,6 +121,7 @@ h1 {
     -moz-box-shadow: 3px 4px 8px 0px rgba(0,0,0,0.1);
     box-shadow: 3px 4px 8px 0px rgba(0,0,0,0.1);
     width: 100%;
+    z-index: 10;
 }
 
 .search-results-list {
@@ -158,6 +159,12 @@ h1 {
     gap: 1rem;
 }
 
+@media screen and (orientation: landscape), (orientation: portrait) {
+    .quick-search-buttons button:hover {
+        background: transparent;
+    }
+}
+
 .quick-search-buttons button {
     text-align: left;
     border-radius: .5rem;
@@ -184,6 +191,12 @@ h1 {
 
 @media screen and (min-width: 768px) {
     .quick-search-buttons {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media screen and (min-width: 1000px) {
+    .quick-search-buttons {
         display: grid;
         grid-template-columns: repeat(4, 1fr);
         gap: 1.5rem;
@@ -201,6 +214,7 @@ h1 {
 
 .qs-state-name {
     font-size: 13px;
+    color: #E6E6EA;
 }
 
 .qs-temp-wrapper {
@@ -219,7 +233,12 @@ h1 {
     font-size: 1.2rem;
 }
 
-/********************v Current Weather  *************************/
+/******************** General Icon Styles *********************/
+.icon-lg {
+    opacity: .9;
+}
+
+/******************** Current Weather  *************************/
 .current-weather-wrapper {
     padding-block: 2vh;
 }
@@ -238,6 +257,10 @@ h1 {
     padding-block: 1.5rem;
     border-radius: .5rem;
     max-width: calc(100vw - 2rem);
+}
+
+.current-wrapper .code {
+    font-weight: bold;
 }
 
 .current-wrapper .current-data {
@@ -343,9 +366,15 @@ h1 {
     margin: 0;
     padding: 0 0 1rem 0;
     display: flex;
-    gap: 1rem;
+    gap: 1%;
     overflow-x: scroll;
     max-width: 900px;
+}
+
+@media screen and (min-width: 1000px) {
+    .daily-temps-list {
+        gap: 1rem;
+    }
 }
 
 .daily-temps-list li {
@@ -442,19 +471,14 @@ h1 {
 }
 
 .daily-forecast-heading {
-    border-bottom: 3px solid rgba(255, 255, 255, .5);
+    border-bottom: 3px solid rgba(255, 255, 255, .4);
     padding-bottom: .3rem;
     margin-bottom: 2rem;
 }
 
 .forecast-day-wrapper {
-    padding-bottom: 2rem;
+    padding-bottom: 3rem;
 }
-
-/* .forecast-day-wrapper .icon-lg {
-    height: 120px;
-    width: auto;
-} */
 
 .forecast-day-wrapper .icon-lg {
     height: auto;
@@ -490,6 +514,7 @@ h1 {
 
 .forecast-day-wrapper .high-low-wrapper .title {
     font-size: 1.2rem;
+    color: #E6E6EA;
 }
 
 .forecast-day-wrapper .col:nth-of-type(1) {
@@ -501,7 +526,7 @@ h1 {
 .forecast-day-wrapper .data-row {
     display: flex;
     justify-content: space-between;
-    border-bottom: 1px solid lightgray;
+    border-bottom: 1px solid rgba(255, 255, 255, .4);
     padding-block: .5rem;
     margin-bottom: .4rem;
 }

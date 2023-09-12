@@ -11,7 +11,13 @@ function convertUnixTimestampTo12HourFormat(unixTimestamp, timezone) {
 
     });
 
-    return formattedTime;
+    const corrections = {
+        "0": "",
+        ":": "",
+    }
+
+    const finalFormattedTime = formattedTime.replace(/[0:]/g, (match) => corrections[match]);
+    return finalFormattedTime.replace(" ", "");
 }
 
 export default convertUnixTimestampTo12HourFormat;

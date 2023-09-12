@@ -18,13 +18,13 @@ function processWeatherUnits(unitType, data) {
         return roundedvalue + unit;
       } else if (unitType === "precipSum") {
         unit = units.precipSum;
-        return roundedvalue + unit;
+        return roundedvalue + ` ${unit}`;
       } else if (unitType === "precipProb") {
         unit = units.precipProb;
         return roundedvalue + unit;
       } else if (unitType === "speed") {
         unit = units.speed;
-        return roundedvalue + unit;
+        return roundedvalue + ` ${unit}`;
       } else if (unitType === "uv") {
         return roundedvalue;
       }
