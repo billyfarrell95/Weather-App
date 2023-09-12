@@ -159,12 +159,6 @@ h1 {
     gap: 1rem;
 }
 
-@media screen and (max-width: 1200px) {
-    .quick-search-buttons button:hover {
-        background-color: transparent;
-    }
-}
-
 .quick-search-buttons button {
     text-align: left;
     border-radius: .5rem;
@@ -179,8 +173,10 @@ h1 {
     color: white;
 }
 
-.quick-search-buttons button:hover {
-    background-color: rgba(255, 255, 255, .2);
+@media screen and (min-width: 1000px) {
+    .quick-search-buttons button:hover {
+        background-color: rgba(255, 255, 255, .2);
+    }
 }
 
 @media screen and (orientation: landscape) {

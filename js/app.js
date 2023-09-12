@@ -37,11 +37,9 @@ document.addEventListener("click", () => {
     if (document.activeElement == searchInputField) {
         /* console.log("input wrapper is active"); */
         searchResultsWrapper.style.visibility = "visible";
-        quickSearchButtonsWrapper.classList.add("disabled");
     } else {
         /* console.log("input wrapper not active") */
         searchResultsWrapper.style.visibility = "hidden"
-        quickSearchButtonsWrapper.classList.remove("disabled");
     }
 });
 
