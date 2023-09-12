@@ -161,7 +161,7 @@ h1 {
 
 @media screen and (max-width: 1200px) {
     .quick-search-buttons button:hover {
-        background: transparent;
+        background-color: transparent;
     }
 }
 
