@@ -18,13 +18,6 @@ const useCurrentLocationButton = document.querySelector("#current-location-butto
 const quickSearchButtonsWrapper = document.querySelector("#quick-search-buttons"); // The element that holds the quick search buttons
 /* const forecastWeatherWrapper = document.querySelector("#forecast-weather-wrapper"); */
 
-document.addEventListener("keydown", (e) => {
-    if (e.key === "ArrowDown") {
-        let index = 0;
-        searchResultsList[index].classList.add("selected");
-    }
-});
-
 document.addEventListener("DOMContentLoaded", () => {
     fetchQuickSearchButtonData();
     if (localStorage.length > 0) {
@@ -303,6 +296,7 @@ async function fetchQuickSearchWeather(locationName, adminLevel1, countryCode, l
 }
 
 function renderCurrentWeather(data, selectedName, latitude, longitude) {
+    document.title = `${selectedName} | Current Weather`;
     console.log("DATA IN RENDER", data)
     // Create UI layout elements
     const dataRow = createDOMElement("div", "current-weather-row");

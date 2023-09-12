@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 32 32">
+  <defs>
+    <clipPath id="clip-path">
+      <rect id="Rectangle_17" data-name="Rectangle 17" width="32" height="32" transform="translate(-5290 -7257)" fill="#fff"/>
+    </clipPath>
+    <clipPath id="clip-path-2">
+      <rect id="Rectangle_16" data-name="Rectangle 16" width="34" height="19" transform="translate(-5531.873 -7117.485)" fill="#00b2ca" opacity="0.49"/>
+    </clipPath>
+  </defs>
+  <g id="Mask_Group_6" data-name="Mask Group 6" transform="translate(5290 7257)" clip-path="url(#clip-path)">
+    <g id="Mask_Group_5" data-name="Mask Group 5" transform="translate(240.873 -133.515)" clip-path="url(#clip-path-2)">
+      <path id="Icon_metro-weather" data-name="Icon metro-weather" d="M21.259,8.656a1.215,1.215,0,0,0,1.215-1.215V5.011a1.215,1.215,0,1,0-2.43,0v2.43A1.215,1.215,0,0,0,21.259,8.656Zm9.45,3.2,1.718-1.718a1.215,1.215,0,0,0-1.718-1.718L28.991,10.14a1.215,1.215,0,0,0,1.718,1.718ZM6.678,20.807h2.43a1.215,1.215,0,1,0,0-2.43H6.678a1.215,1.215,0,1,0,0,2.43Zm25.516-1.215a1.215,1.215,0,0,0,1.215,1.215h2.43a1.215,1.215,0,1,0,0-2.43h-2.43A1.215,1.215,0,0,0,32.194,19.592ZM11.807,11.858a1.215,1.215,0,0,0,1.718-1.718L11.807,8.422a1.215,1.215,0,0,0-1.718,1.718Zm1.07,8.948h2.43a6.075,6.075,0,1,1,11.9,0h2.43a8.105,8.105,0,0,0,.123-1.215,8.505,8.505,0,1,0-17.011,0,8.545,8.545,0,0,0,.123,1.215Zm22.963,2.43H6.678a1.215,1.215,0,1,0,0,2.43H35.84a1.215,1.215,0,0,0,0-2.43Zm0,4.86H6.678a1.215,1.215,0,0,0,0,2.43H35.84a1.215,1.215,0,0,0,0-2.43Zm0,4.86H6.678a1.215,1.215,0,0,0,0,2.43H35.84a1.215,1.215,0,0,0,0-2.43Z" transform="translate(-5536.202 -7120.348)" fill="#00b2ca"/>
+    </g>
+  </g>
+</svg>

@@ -1,4 +1,8 @@
 /************************* General styles *************************/
+html {
+    scroll-behavior: smooth;
+}
+
 button {
     cursor: pointer;
 }
@@ -34,7 +38,7 @@ h1 {
 /******************** Fullscreen Background Image *************************/
 .fullscreen-background {
     min-height: 100vh;
-    background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('/assets/bg-images/background-small.jpg');
+    background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('/assets/bg-images/background-small.jpg');
     background-size: cover;
     background-position: bottom center;
     color: white;
@@ -44,7 +48,7 @@ h1 {
 @media screen and (min-width: 1200px) {
     .fullscreen-background {
         background-position: top center;
-        background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('/assets/bg-images/background-large.jpg');
+        background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('/assets/bg-images/background-large.jpg');
     }
 }
 
@@ -397,6 +401,22 @@ h1 {
 }
 
 /************************* Forecast *************************/
+.forecast-weather-wrapper {
+    padding-block: 2vh;
+}
+
+.forecast-nav-back {
+    color: white;
+    display: inline-flex;
+    align-items: center;
+    gap: .5rem;
+}
+
+.forecast-nav-back img {
+    height: .8rem;
+    width: auto;
+}
+
 .forecast-heading {
     display: flex;
     flex-direction: column;
@@ -493,4 +513,37 @@ h1 {
 .forecast-day-wrapper .weathercode {
     font-weight: bold;
     font-size: 1.1rem;
+}
+
+/************************* Back to top button *************************/
+
+/* Back to top button */
+
+.back-to-top {
+    border: none;
+    border-radius: .2rem;
+    position: fixed;
+    bottom: 1rem;
+    right: 1rem;
+    background-color: white;
+    height: 2.5rem;
+    width: 2.5rem;
+    display: flex;
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.back-to-top.hidden {
+    visibility: hidden;
+}
+
+@media screen and (min-width: 600px) {
+    .back-to-top {
+        bottom: 2rem;
+        right: 2rem;
+    }
 }

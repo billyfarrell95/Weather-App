@@ -8,6 +8,32 @@ import processWeatherCodeIcon from "./utils/processWeatherCodeIcon.js"
 
 const forecastWeatherWrapper = document.querySelector("#forecast-weather-wrapper");
 
+// Scroll to top button/functionality
+const backToTopButton = document.getElementById("back-to-top");
+
+window.onscroll = function() {
+    topTopScrollHandler();
+};
+
+backToTopButton.addEventListener("click", () => {
+    scrollToTop();
+})
+
+function scrollToTop() {
+    document.body.scrollTop = 0;
+    document.documentElement.scrollTop = 0;
+};
+
+function topTopScrollHandler() {
+    if (document.body.scrollTop > 1200 || document.documentElement.scrollTop > 1200) {
+        backToTopButton.classList.remove("hidden");
+    } else {
+        setTimeout(()=> {
+            backToTopButton.classList.add("hidden")
+        }, 100)
+    }
+};
+
 // Get local storage data
 const fullLocationName = localStorage.getItem("fullLocationName");
 const lat = localStorage.getItem("currentLat");
@@ -227,6 +253,7 @@ function sortDailyForecastData(data) {
 
 // Render Forecast data to the DOM
 function renderDailyForecast(data) {
+    document.title = `${fullLocationName} | Daily Forecast`;
 
     const dayWrapper = createDOMElement("div", "forecast-day-wrapper");
 

@@ -4,6 +4,7 @@
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <title>Forecast</title>
+        <link rel="icon" type="image/x-icon" href="/assets/favicon.ico">
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -15,9 +16,13 @@
         <main>
             <section class="fullscreen-background">
                 <div class="container">
+                    <a href="index.html" class="forecast-nav-back"><img src="/assets/icons/chevron-left.svg">Home</a>
                     <div id="forecast-weather-wrapper" class="forecast-weather-wrapper"></div>
                 </div>
             </section>
+            <button id="back-to-top" class="back-to-top hidden">
+                <img src="/assets/icons/chevron-up.svg" alt="Back to Top">
+            </button>
         </main>
         <script src="/js/dailyForecast.js" type="module"></script>
     </body>
