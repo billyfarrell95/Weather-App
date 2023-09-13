@@ -20,14 +20,29 @@ const quickSearchButtonsWrapper = document.querySelector("#quick-search-buttons"
 
 document.addEventListener("DOMContentLoaded", () => {
     fetchQuickSearchButtonData();
-    if (localStorage.length > 0) {
-        console.log("LOCAL STORAGE DATA", localStorage);
-        const fullLocationName = localStorage.getItem("fullLocationName");
-        const locationName = localStorage.getItem("locationName");
-        const adminLevel1 = localStorage.getItem("adminLevel1");
-        const countryCode = localStorage.getItem("countryCode")
-        const lat = localStorage.getItem("currentLat");
-        const lon = localStorage.getItem("currentLon");
+    
+    // Select all the keys in session storage
+    const sessionKeys = Object.keys(sessionStorage);
+
+    // Loop through all the keys and if they have a value of null, remove from sessionStorage
+    sessionKeys.forEach(key => {
+        const value = sessionStorage.getItem(key);
+        // key === "IsThisFirstTime_Log_From_LiveServer" added because VSCode LiveServer plugin...
+        if (value === "null" || key === "IsThisFirstTime_Log_From_LiveServer") {
+            sessionStorage.removeItem(key)
+        }
+    })
+
+    // After check/removing "null" sessionStorage values, fetchCurrentWeather if there is weather data in sessionStorage
+    if (sessionStorage.length > 0) {
+        console.log("DOMContentLoaded sessionStorage", sessionStorage)
+        const fullLocationName = sessionStorage.getItem("fullLocationName");
+        const locationName = sessionStorage.getItem("locationName");
+        const adminLevel1 = sessionStorage.getItem("adminLevel1");
+        const countryCode = sessionStorage.getItem("countryCode")
+        const lat = sessionStorage.getItem("currentLat");
+        const lon = sessionStorage.getItem("currentLon");
+        // Fetch Current Weather Based on sessionStorageData
         fetchCurrentWeather(locationName, adminLevel1, countryCode, lat, lon, fullLocationName);
     }
 })
@@ -35,10 +50,8 @@ document.addEventListener("DOMContentLoaded", () => {
 // Handle showing and hiding the search results when the field is/isn't active
 document.addEventListener("click", () => {
     if (document.activeElement == searchInputField) {
-        /* console.log("input wrapper is active"); */
         searchResultsWrapper.style.visibility = "visible";
     } else {
-        /* console.log("input wrapper not active") */
         searchResultsWrapper.style.visibility = "hidden"
     }
 });
@@ -52,16 +65,14 @@ searchInputField.addEventListener("focus", () => {
 
 // Search input event listener
 searchInputField.addEventListener("keyup", () => {
-    // Empty string or 1 character returns empty result. 2 characters will match exact location. 3 or more characters will perform fuzzy matching
+    // Empty string or 1 character returns empty result. 2 characters will match exact location. 3 or more characters will perform fuzzy matching (from API Docs)
+
+    // Only make API Search call when input is greater than two characters
     if (searchInputField.value.length >= 2) {
         // Remove whitespace from search value
         const userInput = searchInputField.value.trim();
         
         fetchSearchResults(userInput);
-    }
-
-    if (searchInputField.value.length < 2) {
-        removeAllElementChildren(searchResultsList);
     }
 })
 
@@ -139,7 +150,6 @@ async function fetchSearchResults(userInput) {
         .then (data => {    
             // Check if results were returned before trying to display them
             if (data?.results?.length) {
-                /* console.log("Search results response data:", data); */
                 displaySearchResults(data)
             } else {
                 // If there are no search results clear container (this prevents previous results from showing if characters that don't match are added to search string)
@@ -159,14 +169,11 @@ function displaySearchResults(data) {
 
     // Loop through results
     for (let i = 0; i < data.results.length; i++) {
-        /* console.log(data, "data in display search results") */
         const newResultLi = document.createElement("li"); // New search result item
         newResultLi.setAttribute("tabindex", i)
-        /* console.log(data.results[i]) */
         const locationName = data.results[i].name; // Select the location name and pass to fetchCurrentWeather
         const adminLevel1 = data.results[i].admin1; // Select the 1st hierarchical admin area (state, etc)
         const countryCode = data.results[i].country_code; // Country code
-        /* console.log("ADMIN LEVEL 1", adminLevel1) */
         const lat = data.results[i].latitude;
         const lon = data.results[i].longitude;
 
@@ -189,16 +196,17 @@ function displaySearchResults(data) {
             newResultLi.textContent += countryCode;
         }
 
+        // Add search results to the list
         searchResultsList.append(newResultLi)
     }
 }
 
 // Get current weather data
 async function fetchCurrentWeather(locationName, adminLevel1, countryCode, lat, lon) {
-    console.log(locationName, "admin in fetchCurrentWeather")
-    // Defined and check the result name for undefined values 
-    let selectedResultName = localStorage.getItem("fullLocationName")
-    
+    // Weather heading name
+    let selectedResultName;
+
+    // Check values and assign data to selectedResultName
     if (locationName !== undefined && locationName !== "undefined" && adminLevel1 !== undefined && adminLevel1 !== "undefined") {
         selectedResultName = locationName + ", " + adminLevel1 + ", " + countryCode;
     } else if (locationName !== undefined && locationName !== "undefined") {
@@ -207,15 +215,16 @@ async function fetchCurrentWeather(locationName, adminLevel1, countryCode, lat, 
         selectedResultName = adminLevel1;
     }
 
-    localStorage.clear();
+    console.log(sessionStorage, "SESSION STORAGE IN FETCH CURRENT WEATHER")
+
     // Name to be displayed on forecast page
-    localStorage.setItem("fullLocationName", selectedResultName);
+    sessionStorage.setItem("fullLocationName", selectedResultName);
     // Data to be re-used when navigating back/re-fetching weather 
-    localStorage.setItem("locationName", locationName)   
-    localStorage.setItem("adminLevel1", adminLevel1);
-    localStorage.setItem("countryCode", countryCode);
-    localStorage.setItem("currentLat", lat);
-    localStorage.setItem("currentLon", lon);
+    sessionStorage.setItem("locationName", locationName)   
+    sessionStorage.setItem("adminLevel1", adminLevel1);
+    sessionStorage.setItem("countryCode", countryCode);
+    sessionStorage.setItem("currentLat", lat);
+    sessionStorage.setItem("currentLon", lon);
 
     // Current weather data endpoint URL -- same as the quick search weather endpoint. Two days fetched for the 24 hour temperature display
     const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=temperature_2m,weathercode&daily=weathercode,temperature_2m_max,temperature_2m_min,apparent_temperature_max,apparent_temperature_min,uv_index_max,precipitation_sum,precipitation_probability_max&&current_weather=true&temperature_unit=fahrenheit&windspeed_unit=mph&precipitation_unit=inch&timeformat=unixtime&forecast_days=2&timezone=auto`
@@ -235,10 +244,8 @@ async function fetchCurrentWeather(locationName, adminLevel1, countryCode, lat, 
             console.log("CURRENT Weather response data:", data);
             removeAllElementChildren(searchResultsList);
             removeAllElementChildren(currentWeatherWrapper);
-            /* removeAllElementChildren(forecastWeatherWrapper); */
             searchInputField.value = "";
             renderCurrentWeather(data, selectedResultName, data.latitude, data.longitude);
-            fetchQuickSearchButtonData();
         })
 
         .catch (error => {
@@ -248,9 +255,10 @@ async function fetchCurrentWeather(locationName, adminLevel1, countryCode, lat, 
 
 // Get current weather data (current and today's weather)
 async function fetchQuickSearchWeather(locationName, adminLevel1, countryCode, lat, lon) {
-    // Defined and check the result name for undefined values 
+    // Weather heading name
     let selectedResultName;
 
+    // Check values and assign data to selectedResultName
     if (locationName !== undefined && locationName !== "undefined" && adminLevel1 !== undefined && adminLevel1 !== "undefined") {
         selectedResultName = locationName + ", " + adminLevel1 + ", " + countryCode;
     } else if (locationName !== undefined && locationName !== "undefined") {
@@ -258,15 +266,17 @@ async function fetchQuickSearchWeather(locationName, adminLevel1, countryCode, l
     } else if (adminLevel1 !== undefined && adminLevel1 !== "undefined") {
         selectedResultName = adminLevel1;
     }
-    localStorage.clear();
+
+    console.log(sessionStorage, "SESSION STORAGE IN FETCH QUICK SEARCH WEATHER")
+
     // Name to be displayed on forecast page
-    localStorage.setItem("fullLocationName", selectedResultName);
+    sessionStorage.setItem("fullLocationName", selectedResultName);
     // Data to be re-used when navigating back/re-fetching weather 
-    localStorage.setItem("locationName", locationName)   
-    localStorage.setItem("adminLevel1", adminLevel1);
-    localStorage.setItem("countryCode", countryCode);
-    localStorage.setItem("currentLat", lat);
-    localStorage.setItem("currentLon", lon);
+    sessionStorage.setItem("locationName", locationName)   
+    sessionStorage.setItem("adminLevel1", adminLevel1);
+    sessionStorage.setItem("countryCode", countryCode);
+    sessionStorage.setItem("currentLat", lat);
+    sessionStorage.setItem("currentLon", lon);
 
     // Quick search weather data endpoint URL -- same as the current weather endpoint. Two days fetched for the 24 hour temperature display
     const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=temperature_2m,weathercode&daily=weathercode,temperature_2m_max,temperature_2m_min,apparent_temperature_max,apparent_temperature_min,uv_index_max,precipitation_sum,precipitation_probability_max&&current_weather=true&temperature_unit=fahrenheit&windspeed_unit=mph&precipitation_unit=inch&timeformat=unixtime&forecast_days=2&timezone=auto`
@@ -296,8 +306,9 @@ async function fetchQuickSearchWeather(locationName, adminLevel1, countryCode, l
 }
 
 function renderCurrentWeather(data, selectedName) {
+    // Update document title based on current location
     document.title = `${selectedName} | Current Weather`;
-    console.log("DATA IN RENDER", data)
+
     // Create UI layout elements
     const dataRow = createDOMElement("div", "current-weather-row");
     const currentWrapper = createDOMElement("div", "current-wrapper");
@@ -331,14 +342,7 @@ function renderCurrentWeather(data, selectedName) {
 
     const dailyTempsListWrapper = createDOMElement("div", "daily-temps-list-wrapper")
     const dailyTempsList = createDOMElement("ul", "daily-temps-list");
-
-    // Scroll eventListener for the hourly items -- allows automatic horizontal scrolling (https://developer.chrome.com/en/docs/lighthouse/best-practices/uses-passive-event-listeners/)
-    dailyTempsList.addEventListener("wheel", (e) => {
-        e.preventDefault();
-        dailyTempsList.scrollLeft += e.deltaY;
-    },{passive: true});
-
-    dailyTempsList.setAttribute("role", "list");
+    dailyTempsList.setAttribute("role", "list"); // See reset.css list styles
 
     // Calculate the current hour index based on the user's timezone offset
     const now = new Date();
@@ -350,13 +354,12 @@ function renderCurrentWeather(data, selectedName) {
     const hourlyTimes = data.hourly.time.filter((_, index) => index >= currentHourIndex).slice(0, 24);
     const hourlyCodes = data.hourly.weathercode.filter((_, index) => index >= currentHourIndex).slice(0, 24);
 
+    // Select all of the keys for the hourly temps
     const properties = Object.keys(hourlyTemps);
 
+    // Loop through the keys and render times, icons, and temperatures
     properties.forEach((property) => {
-        /* console.log("TIME:", property); */
-
         const newLi = createDOMElement("li");
-        /* const timeSpan = createDOMElement("span", "time", convertUnixTimestampTo12HourFormat(hourlyTimes[property], data.timezone)); */
         let timeSpan;
         // Display "Now" instead of the time for the first item
         if (property == 0) {
@@ -481,7 +484,6 @@ async function fetchQuickSearchButtonData() {
         currentQuickSearchButton.addEventListener("click", () => {
             // Params expected: locationName, adminLevel1, countryCode, lat, lon
             fetchQuickSearchWeather(quickSearchItems[i].city, quickSearchItems[i].state, quickSearchItems[i].countryCode, lat, lon);
-            fetchQuickSearchButtonData(); // Refresh the temperatures displayed in the buttons
         })
 
         fetch (url)

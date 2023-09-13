@@ -35,9 +35,9 @@ function topTopScrollHandler() {
 };
 
 // Get local storage data
-const fullLocationName = localStorage.getItem("fullLocationName");
-const lat = localStorage.getItem("currentLat");
-const lon = localStorage.getItem("currentLon");
+const fullLocationName = sessionStorage.getItem("fullLocationName");
+const lat = sessionStorage.getItem("currentLat");
+const lon = sessionStorage.getItem("currentLon");
 
 console.log("CURRENT LAT", lat);
 console.log("CURRENT LON", lon);
