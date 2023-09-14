@@ -18,9 +18,11 @@ const useCurrentLocationButton = document.querySelector("#current-location-butto
 const quickSearchButtonsWrapper = document.querySelector("#quick-search-buttons"); // The element that holds the quick search buttons
 /* const forecastWeatherWrapper = document.querySelector("#forecast-weather-wrapper"); */
 
+// This array will store the current search results -- Includes data required to fetch current weather
+let searchResultItemsArray = [];
+
 document.addEventListener("DOMContentLoaded", () => {
     fetchQuickSearchButtonData();
-    
     // Select all the keys in session storage
     const sessionKeys = Object.keys(sessionStorage);
 
@@ -51,8 +53,11 @@ document.addEventListener("DOMContentLoaded", () => {
 document.addEventListener("click", () => {
     if (document.activeElement == searchInputField) {
         searchResultsWrapper.style.visibility = "visible";
+        /* searchResultItemsArray = []; */
+        handleSearchResultsKeyNav();
+        console.log(searchResultItemsArray, "before render")
     } else {
-        searchResultsWrapper.style.visibility = "hidden"
+        searchResultsWrapper.style.visibility = "hidden";
     }
 });
 
@@ -65,7 +70,7 @@ searchInputField.addEventListener("focus", () => {
 
 // Search input event listener
 searchInputField.addEventListener("keyup", () => {
-    // Empty string or 1 character returns empty result. 2 characters will match exact location. 3 or more characters will perform fuzzy matching (from API Docs)
+    // API Docs note: Empty string or 1 character returns empty result. 2 characters will match exact location. 3 or more characters will perform fuzzy matching
 
     // Only make API Search call when input is greater than two characters
     if (searchInputField.value.length >= 2) {
@@ -164,13 +169,13 @@ async function fetchSearchResults(userInput) {
 
 // Handle displaying/updating search results
 function displaySearchResults(data) {
-    // Clear search results and re-render everytime function is called (keyup)
+    console.log(data, "DATA IN DISPLAY")
+    // Clear search results UI Elements -- re-render everytime function is called (keyup)
     removeAllElementChildren(searchResultsList);
-    let searchResultItemsArray = [];
     // Loop through results
     for (let i = 0; i < data.results.length; i++) {
         const newResultLi = document.createElement("li"); // New search result item
-        newResultLi.setAttribute("tabindex", i)
+        newResultLi.setAttribute("tabindex", i + 1)
         const locationName = data.results[i].name; // Select the location name and pass to fetchCurrentWeather
         const adminLevel1 = data.results[i].admin1; // Select the 1st hierarchical admin area (state, etc)
         const countryCode = data.results[i].country_code; // Country code
@@ -196,73 +201,74 @@ function displaySearchResults(data) {
             newResultLi.textContent += countryCode;
         }
 
-        /* searchResultItemsArray.push(newResultLi.textContent); */
-        searchResultItemsArray.push({"locationName": locationName, "adminLevel1": adminLevel1, "countryCode": countryCode, "lat": lat, "lon": lon});
-        /* console.log(searchResultItemsArray) */
+        // Save the current search results globally to be accessed in handleSearchResultsKeyNav()
+        searchResultItemsArray = data.results;
 
         // Add search results to the list
         searchResultsList.append(newResultLi)
     }
-
-    handleSearchResultsKeyNav(searchResultItemsArray)
 }
 
-function handleSearchResultsKeyNav(resultsArrayData) {
+function handleSearchResultsKeyNav() {
     // Navigate through search results with up/down arrow keys
     let itemIndex = -1;
+    // Select search results list children (<li>)
     const children = searchResultsList.children;
+    // Holds the UI element the user has selected
     let selectedListItem;
 
     function handleEnterKeyPress(index) {
-        /* fetchCurrentWeather(resultsArrayData[index].locationName, resultsArrayData[index].adminLevel1, resultsArrayData[index].countryCode, resultsArrayData[index].lat, resultsArrayData[index].lon); */
-        console.log("handleEnterKeyPress", index)
-        /************ Issue of some sort that has to do with how the function is called **************/
+        // Fetch current weather using data saved in the global search results variable. Global data and UI results items match indexes.
+        fetchCurrentWeather(searchResultItemsArray[index].name, searchResultItemsArray[index].admin1, searchResultItemsArray[index].country_code, searchResultItemsArray[index].latitude, searchResultItemsArray[index].longitude);
     }
 
     // Add an event listener to capture keydown events
-    document.addEventListener("keydown", (e) => {
-    if (resultsArrayData.length > 0) {
-        switch (e.key) {
-        // Case for down arrow press    
-        case "ArrowDown":
-            if (itemIndex === resultsArrayData.length - 1) {
-                itemIndex = 0;
-            } else {
-                itemIndex++;
-            }
-            children[itemIndex].focus(); // Focus on the selected search results list child
-            selectedListItem = children[itemIndex]; // Select the current HTML List item
-            break;
+    if (document.activeElement == searchInputField) {
+        document.addEventListener("keydown", (e) => {
+        if (searchResultItemsArray.length > 0) {
+            switch (e.key) {
+            // Case for down arrow press    
+            case "ArrowDown":
+                /* console.log("arrowdown case ran", itemIndex) */
+                if (itemIndex === searchResultItemsArray.length - 1) {
+                    itemIndex = 0;
+                } else {
+                    itemIndex++;
+                }
+                children[itemIndex].focus(); // Focus on the selected search results list child
+                selectedListItem = children[itemIndex]; // Select the current HTML List item
+                break;
 
-        // Case to up arrow press
-        case "ArrowUp":
-            if (itemIndex === 0) {
-                itemIndex = resultsArrayData.length - 1;
-            } else if (itemIndex > 0) {
-                itemIndex--;
+            // Case to up arrow press
+            case "ArrowUp":
+                /* console.log("arrowup case ran", itemIndex) */
+                if (itemIndex === 0) {
+                    itemIndex = searchResultItemsArray.length - 1;
+                } else if (itemIndex > 0) {
+                    itemIndex--;
+                }
+                children[itemIndex].focus(); // Focus on the selected search results list child
+                selectedListItem = children[itemIndex]; // Select the current HTML list item
+                break;
+            case "Enter":
+                /* console.log("enter case ran", itemIndex) */
+                if (selectedListItem) {
+                    selectedListItem.addEventListener("keypress", (e) => {
+                        if (e.key === "Enter") {
+                            handleEnterKeyPress(itemIndex);
+                        }
+                    });
+                }
             }
-            children[itemIndex].focus(); // Focus on the selected search results list child
-            selectedListItem = children[itemIndex]; // Select the current HTML list item
-            break;
-        case "Enter":
-            if (selectedListItem) {
-                selectedListItem.addEventListener("keypress", (e) => {
-                    if (e.key === "Enter") {
-                        handleEnterKeyPress(itemIndex);
-                        console.log("selected item with enter:", selectedListItem)
-                    }
-                });
-            }
+            // You can access cursor and filteredList here to perform any additional actions
         }
-        // You can access cursor and filteredList here to perform any additional actions
-        /* console.log("Cursor:", cursor); */
-    }
     }); 
+    }
 }
 
 // Get current weather data
 async function fetchCurrentWeather(locationName, adminLevel1, countryCode, lat, lon) {
-    console.log("**********CURRENT WEATHER API CALL MADE********")
+    console.log("**********CURRENT WEATHER API CALL MADE********", locationName, adminLevel1, countryCode, lat, lon)
     // Weather heading name
     let selectedResultName;
 
@@ -274,8 +280,6 @@ async function fetchCurrentWeather(locationName, adminLevel1, countryCode, lat, 
     } else if (adminLevel1 !== undefined && adminLevel1 !== "undefined") {
         selectedResultName = adminLevel1;
     }
-
-    /* console.log(sessionStorage, "SESSION STORAGE IN FETCH CURRENT WEATHER") */
 
     // Name to be displayed on forecast page
     sessionStorage.setItem("fullLocationName", selectedResultName);
