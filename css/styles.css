@@ -52,15 +52,14 @@ h1 {
     }
 }
 
-/**************** Skeleton Loading *********************/
+/**************** Loading Elements Styling *********************/
 .skeleton {
-    opacity: .75;
-    animation: skeleton-loading 1.3s linear infinite alternate;
+    opacity: .6;
+    animation: skeleton-loading 1.8s linear infinite alternate;
 }
 
 .skeleton-text {
-    width: 100%;
-    height: .5rem;
+    height: 1em;
     margin-bottom: .25rem;
     border-radius: .125rem;
 }
@@ -72,11 +71,51 @@ h1 {
 
 @keyframes skeleton-loading {
     0% {
-        background-color: hsl(200, 20%, 70%)
+        background-color: hsl(200, 20%, 35%)
     }
 
     100% {
-        background-color: hsl(200, 20%, 95%)
+        background-color: hsl(200, 20%, 55%)
+    }
+}
+
+/* Apply the animation to your text element */
+/* .loading-text {
+    opacity: 0;
+    animation: fadeIn 500ms ease-in-out;
+} */
+
+/* Apply the animation to your text element */
+.loading-text::before {
+    content: "Loading"; /* Initial text */
+    animation: loadingAnimation 2s linear infinite; /* Use the loadingAnimation over 2 seconds with infinite loop */
+}
+
+
+/* @keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+ */
+@keyframes loadingAnimation {
+    0% {
+        content: "Loading";
+    }
+    25% {
+        content: "Loading.";
+    }
+    50% {
+        content: "Loading..";
+    }
+    75% {
+        content: "Loading...";
+    }
+    100% {
+        content: "Loading";
     }
 }
 
@@ -143,6 +182,10 @@ h1 {
     background-color: #f4f4f4;
 }
 
+.search-results-list li:focus {
+    background-color: #f4f4f4;
+}
+
 .quick-search-wrapper {
     padding-block: 1.5rem;
 }
@@ -171,6 +214,7 @@ h1 {
     background: transparent;
     border: 2px solid white;
     color: white;
+    min-height: 70px; /* for skeleton loading */
 }
 
 @media screen and (min-width: 1000px) {
@@ -237,6 +281,8 @@ h1 {
 /******************** Current Weather  *************************/
 .current-weather-wrapper {
     padding-block: 2vh;
+
+    min-height: 545px;
 }
 
 .current-weather-row {
@@ -248,11 +294,13 @@ h1 {
 }
 
 .current-wrapper {
-    border: 1px solid white;
+    border: 2px solid white;
     padding-inline: 2rem;
     padding-block: 1.5rem;
     border-radius: .5rem;
     max-width: calc(100vw - 2rem);
+
+    /* min-height: 545px; */
 }
 
 .current-wrapper .code {

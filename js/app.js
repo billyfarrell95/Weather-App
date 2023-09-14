@@ -8,6 +8,7 @@ import convertWindDirection from "./utils/convertWindDirection.js";
 import processWeatherUnits from "./utils/processWeatherUnits.js";
 import convertUnixTimestampTo12HourFormat from "./utils/convertUnixTimestamp.js";
 import processWeatherCodeIcon from "./utils/processWeatherCodeIcon.js";
+import createLoadingElement from "./utils/createLoadingElement.js";
 
 // Select UI Elements
 const searchInputField = document.querySelector("#search-input");
@@ -33,10 +34,12 @@ document.addEventListener("DOMContentLoaded", () => {
         if (value === "null" || key === "IsThisFirstTime_Log_From_LiveServer") {
             sessionStorage.removeItem(key)
         }
-    })
+    });
 
     // After check/removing "null" sessionStorage values, fetchCurrentWeather if there is weather data in sessionStorage
     if (sessionStorage.length > 0) {
+        const loading = createLoadingElement();
+        currentWeatherWrapper.append(loading);
         /* console.log("DOMContentLoaded sessionStorage", sessionStorage) */
         const fullLocationName = sessionStorage.getItem("fullLocationName");
         const locationName = sessionStorage.getItem("locationName");
@@ -84,6 +87,8 @@ searchInputField.addEventListener("keyup", () => {
 // useCurrentLocationButton event listener
 useCurrentLocationButton.addEventListener("click", () => {
     removeAllElementChildren(currentWeatherWrapper);
+    const loading = createLoadingElement();
+    currentWeatherWrapper.append(loading);
     requestUserLocation();
 })
 
@@ -219,6 +224,10 @@ function handleSearchResultsKeyNav() {
 
     function handleEnterKeyPress(index) {
         // Fetch current weather using data saved in the global search results variable. Global data and UI results items match indexes.
+        searchResultsWrapper.style.visibility = "hidden";
+        removeAllElementChildren(currentWeatherWrapper);
+        const loading = createLoadingElement();
+        currentWeatherWrapper.append(loading);
         fetchCurrentWeather(searchResultItemsArray[index].name, searchResultItemsArray[index].admin1, searchResultItemsArray[index].country_code, searchResultItemsArray[index].latitude, searchResultItemsArray[index].longitude);
     }
 
@@ -250,6 +259,7 @@ function handleSearchResultsKeyNav() {
                 children[itemIndex].focus(); // Focus on the selected search results list child
                 selectedListItem = children[itemIndex]; // Select the current HTML list item
                 break;
+            // Case for enter press    
             case "Enter":
                 /* console.log("enter case ran", itemIndex) */
                 if (selectedListItem) {
@@ -260,7 +270,6 @@ function handleSearchResultsKeyNav() {
                     });
                 }
             }
-            // You can access cursor and filteredList here to perform any additional actions
         }
     }); 
     }
@@ -309,7 +318,7 @@ async function fetchCurrentWeather(locationName, adminLevel1, countryCode, lat, 
             removeAllElementChildren(searchResultsList);
             removeAllElementChildren(currentWeatherWrapper);
             searchInputField.value = "";
-            console.log(data)
+            console.log(data);
             renderCurrentWeather(data, selectedResultName, data.latitude, data.longitude);
         })
 
@@ -320,6 +329,9 @@ async function fetchCurrentWeather(locationName, adminLevel1, countryCode, lat, 
 
 // Get current weather data (current and today's weather)
 async function fetchQuickSearchWeather(locationName, adminLevel1, countryCode, lat, lon) {
+    removeAllElementChildren(currentWeatherWrapper);
+    const loading = createLoadingElement();
+    currentWeatherWrapper.append(loading);
     // Weather heading name
     let selectedResultName;
 
@@ -359,8 +371,6 @@ async function fetchQuickSearchWeather(locationName, adminLevel1, countryCode, l
 
         .then (data => {
             /* console.log("CURRENT Weather response data:", data); */
-            removeAllElementChildren(currentWeatherWrapper);
-            /* removeAllElementChildren(forecastWeatherWrapper); */
             searchInputField.value = "";
             renderCurrentWeather(data, selectedResultName, data.latitude, data.longitude);
         })
@@ -371,12 +381,16 @@ async function fetchQuickSearchWeather(locationName, adminLevel1, countryCode, l
 }
 
 function renderCurrentWeather(data, selectedName) {
+    removeAllElementChildren(currentWeatherWrapper);
     // Update document title based on current location
     document.title = `${selectedName} | Current Weather`;
 
     // Create UI layout elements
     const dataRow = createDOMElement("div", "current-weather-row");
     const currentWrapper = createDOMElement("div", "current-wrapper");
+
+    currentWrapper.classList.add("skeleton");
+
     const currentDataWrapper = createDOMElement("div", "current-data");
     const leftCol = createDOMElement("div", "col");
     const rightCol = createDOMElement("div", "col");
@@ -486,7 +500,12 @@ function renderCurrentWeather(data, selectedName) {
     const viewForecastLink = createDOMElement("a", null, "View 7-Day Forecast");
     viewForecastLink.setAttribute("href", "forecast.html");
     viewForecastLinkWrapper.append(viewForecastLink)
+
     currentWeatherWrapper.append(viewForecastLinkWrapper);
+
+    currentIcon.onload =  () => {
+        currentWrapper.classList.remove("skeleton");
+    }
 }
 
 // Fetch the data for the quick search buttons
@@ -542,8 +561,8 @@ async function fetchQuickSearchButtonData() {
         const currentIcon = currentQuickSearchButton.querySelector(".qs-icon");
         const currentQuickTemp = currentQuickSearchButton.querySelector(".qs-temp");
 
-        currentName.textContent = quickSearchItems[i].city;
-        currentState.textContent = quickSearchItems[i].state;
+        /* currentName.textContent = quickSearchItems[i].city;
+        currentState.textContent = quickSearchItems[i].state; */
 
         // Add event listener to each quick search button / pass data to fetchQuickSearchWeather 
         currentQuickSearchButton.addEventListener("click", () => {
@@ -564,8 +583,14 @@ async function fetchQuickSearchButtonData() {
 
             .then (data => {
                 /* console.log("Quick search Weather response data:", data); */
+                currentName.textContent = quickSearchItems[i].city;
+                currentState.textContent = quickSearchItems[i].state;
                 currentQuickTemp.textContent = `${processWeatherUnits("temp", data.current_weather.temperature)}`;
                 currentIcon.setAttribute("src", processWeatherCodeIcon(data.current_weather.weathercode));
+
+                currentIcon.onload = function() {
+                    currentQuickSearchButton.classList.remove("skeleton");
+                }
             })
 
             .catch (error => {

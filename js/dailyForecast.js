@@ -4,9 +4,22 @@ import createDOMElement from "./utils/createDOMElement.js";
 import processWeatherUnits from "./utils/processWeatherUnits.js";
 import processWeatherCodes from "./utils/processWeatherCodes.js";
 import convertWindDirection from "./utils/convertWindDirection.js";
-import processWeatherCodeIcon from "./utils/processWeatherCodeIcon.js"
+import processWeatherCodeIcon from "./utils/processWeatherCodeIcon.js";
+import createLoadingElement from "./utils/createLoadingElement.js";
 
 const forecastWeatherWrapper = document.querySelector("#forecast-weather-wrapper");
+
+const fullLocationName = sessionStorage.getItem("fullLocationName");
+const lat = sessionStorage.getItem("currentLat");
+const lon = sessionStorage.getItem("currentLon");
+
+document.addEventListener("DOMContentLoaded", () => {
+    const loading = createLoadingElement();
+    forecastWeatherWrapper.append(loading);
+    if (lat !== null && lon !== null) {
+        fetchForecastData(lat, lon);
+    }
+})
 
 // Scroll to top button/functionality
 const backToTopButton = document.getElementById("back-to-top");
@@ -35,16 +48,16 @@ function topTopScrollHandler() {
 };
 
 // Get local storage data
-const fullLocationName = sessionStorage.getItem("fullLocationName");
+/* const fullLocationName = sessionStorage.getItem("fullLocationName");
 const lat = sessionStorage.getItem("currentLat");
-const lon = sessionStorage.getItem("currentLon");
+const lon = sessionStorage.getItem("currentLon"); */
 
 console.log("CURRENT LAT", lat);
 console.log("CURRENT LON", lon);
 
 // Fetch the forecast data for the current location
 async function fetchForecastData(lat, lon) {
-    removeAllElementChildren(forecastWeatherWrapper)
+    /* removeAllElementChildren(forecastWeatherWrapper) */
     // How many days of forecast weather to fetch (if changed, sortForecastWeatherData will have to be updated)
     /* const daysNum = 3; */
 
@@ -74,9 +87,9 @@ async function fetchForecastData(lat, lon) {
         })
 }
 
-if (lat !== null && lon !== null) {
+/* if (lat !== null && lon !== null) {
     fetchForecastData(lat, lon);
-}
+} */
 
 // Sort the forecast data for the current location
 function sortDailyForecastData(data) {
