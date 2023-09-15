@@ -63,12 +63,10 @@ document.addEventListener("click", () => {
     } else {
         searchResultsWrapper.style.visibility = "hidden";
     }
-});
 
-// Clear search results list when field is focused if it has an empty value
-searchInputField.addEventListener("focus", () => {
-    if (searchInputField.value.trim() === 0) {
+    if (searchInputField.value.trim().length === 0) {
         removeAllElementChildren(searchResultsList)
+        searchResultItemsArray = [];
     }
 });
 
@@ -77,11 +75,15 @@ searchInputField.addEventListener("keyup", () => {
     // API Docs note: Empty string or 1 character returns empty result. 2 characters will match exact location. 3 or more characters will perform fuzzy matching
 
     // Only make API Search call when input is greater than two characters
-    if (searchInputField.value.length >= 2) {
+    if (searchInputField.value.trim().length >= 2) {
         // Remove whitespace from search value
         const userInput = searchInputField.value.trim();
         
         fetchSearchResults(userInput);
+    } else if (searchInputField.value.trim().length < 2) {
+        searchResultItemsArray = [];
+        console.log(searchResultItemsArray);
+        removeAllElementChildren(searchResultsList)
     }
 })
 
