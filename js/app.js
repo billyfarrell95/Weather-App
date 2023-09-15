@@ -9,6 +9,7 @@ import processWeatherUnits from "./utils/processWeatherUnits.js";
 import convertUnixTimestampTo12HourFormat from "./utils/convertUnixTimestamp.js";
 import processWeatherCodeIcon from "./utils/processWeatherCodeIcon.js";
 import createLoadingElement from "./utils/createLoadingElement.js";
+import createErrorMessage from "./utils/createErrorMessage.js"
 
 // Select UI Elements
 const searchInputField = document.querySelector("#search-input");
@@ -94,29 +95,63 @@ useCurrentLocationButton.addEventListener("click", () => {
 
 // Request user location
 function requestUserLocation() {
-    const userLocation = navigator.geolocation.getCurrentPosition(userLocationSuccess, userLocationDenied);
+    const userLocation = navigator.geolocation.getCurrentPosition(userLocationAllowed, userLocationDenied);
 }
 
 // User location request success
-function userLocationSuccess(position) {
+function userLocationAllowed(position) {
     console.log("POSITION:", position);
-    reverseGeocode(position.coords.latitude, position.coords.longitude);
-    // NEWFUNC: check if this data has been return before calling reverseGeocode
+    if (position && typeof position.coords.latitude === "number" && typeof position.coords.longitude === "number") {
+        reverseGeocode(position.coords.latitude, position.coords.longitude);
+    } else {
+        removeAllElementChildren(currentWeatherWrapper);
+        const errorMessage = createErrorMessage("There has been an error retreiving your location.");
+        currentWeatherWrapper.append(errorMessage);
+    }
 }
 
 // User location request failed
 function userLocationDenied(error) {
     console.log(error);
     console.log(error.message);
-    // NEWFUNC: ip-api.com get lat and lon, then reverseGeocode(lat, lon)
-    // check if data was return before calling reverseGeocode
-    // If not, show error message "Unable to get your location"
+    // If user denied location access, get approximate location from IP Address
+    IPGeolocation();
+}
+
+// If user denied location, fetch lat/lon from IP address, then call reverseGeocode
+async function IPGeolocation() {
+    const url = "http://ip-api.com/json/?fields=status,lat,lon,query,zip";
+    fetch (url)
+        .then(response => {
+            // check response status
+            if (!response.ok) {
+                throw new Error ("Error fetching IPGeolocation")
+            }
+
+            return response.json();
+        })
+
+        .then (data => {
+            console.log("IPGeolocation Data", data);
+            if (data && typeof data.lat === "number" && typeof data.lon === "number") {
+                reverseGeocode(data.lat, data.lon);
+            } else {
+                const errorMessage = createErrorMessage("There was an error getting your approximate location");
+                removeAllElementChildren(currentWeatherWrapper);
+                currentWeatherWrapper.append(errorMessage)
+            }
+        })
+
+        .catch (error => {
+            console.error(error);
+        })
 }
 
 // Fetch location name based on coordinates retrieved from navigator API (useCurrentLocationButton)
 async function reverseGeocode(lat, lon) {
     const OPEN_CAGE_API_KEY = "9ce86e2baa8049d69415d979fd71cb69";
     const url = `https://api.opencagedata.com/geocode/v1/json?q=${lat}+${lon}&key=${OPEN_CAGE_API_KEY}`;
+    /* const url = `https://api.opencagedata.com/geocode/v1/json?q=64.9631+19.0208&key=9ce86e2baa8049d69415d979fd71cb69`; */
     fetch (url)
         .then(response => {
             // check response status
@@ -130,13 +165,24 @@ async function reverseGeocode(lat, lon) {
 
         .then (data => {
             // Check if results were returned
-            /* console.log(data.results[0].components, "GEOCODE DATA FROM reverseGeocode") */
-            const locationName = processGeocodingLocationName(data.results[0].components); // the pair of the first key that matches the requirements is returned   
-            const adminLevel1 = processGeocodingAdminLevel1(data.results[0].components); // the pair of the first key that matches the requirements is returned   
-            const countryCode = data.results[0].components.country_code.toUpperCase(); // country code
-
-            /* console.log("DATA IN REVERSE GEOCODE", data) */
-            fetchCurrentWeather(locationName, adminLevel1, countryCode, lat, lon)
+            console.log(data.results[0].components, "GEOCODE DATA FROM reverseGeocode");
+            let locationName;
+            let adminLevel1;
+            let countryCode;
+            // Check if results were return, if so process this data
+            if (data.total_results !== 0) {
+                locationName = processGeocodingLocationName(data.results[0].components); // the pair of the first key that matches the requirements is returned   
+                adminLevel1 = processGeocodingAdminLevel1(data.results[0].components); // the pair of the first key that matches the requirements is returned   
+                countryCode = data.results[0].components.country_code.toUpperCase(); // country code
+                // after processing the data, check that each has a value, value can be null, this is checked in fetchCurrentWeather
+                if (locationName && adminLevel1 && countryCode) {
+                    fetchCurrentWeather(locationName, adminLevel1, countryCode, lat, lon);
+                }
+            } else {
+                const errorMessage = createErrorMessage("There was an error getting your approximate location");
+                removeAllElementChildren(currentWeatherWrapper);
+                currentWeatherWrapper.append(errorMessage);
+            }
         })
 
         .catch (error => {
@@ -162,7 +208,7 @@ async function fetchSearchResults(userInput) {
         })
         
         .then (data => {    
-            // Check if results were returned before trying to display them
+            // Check if results were returned before trying to display them (checks if data exists, if results exists within data, and if there is a length)
             if (data?.results?.length) {
                 displaySearchResults(data)
             } else {
@@ -174,6 +220,10 @@ async function fetchSearchResults(userInput) {
         .catch (error => {
             console.error("Error fetching search results", error);
             // NEWFUNC: show error message: error fetching search results...
+            const errorMessage = createErrorMessage("There was an error fetching search results");
+            errorMessage.style.color = "red"
+            removeAllElementChildren(searchResultsWrapper);
+            searchResultsList.append(errorMessage);
         })
 } 
 
@@ -263,12 +313,20 @@ async function fetchCurrentWeather(locationName, adminLevel1, countryCode, lat, 
             removeAllElementChildren(currentWeatherWrapper);
             searchInputField.value = "";
             console.log(data);
-            renderCurrentWeather(data, selectedResultName, data.latitude, data.longitude);
+            if (data && selectedResultName && typeof data.latitude === "number" && typeof data.longitude === "number") {
+                renderCurrentWeather(data, selectedResultName, data.latitude, data.longitude);
+            } else {
+                const errorMessage = createErrorMessage("There was an error fetching the current weather");
+                removeAllElementChildren(currentWeatherWrapper);
+                currentWeatherWrapper.append(errorMessage);
+            }
         })
 
         .catch (error => {
             console.error("Error fetching CURRENT weather data:", error);
-            // NEWFUNC: show error message "Error fetching weather"
+            const errorMessage = createErrorMessage("Fetch current weather network/fetch error");
+            removeAllElementChildren(currentWeatherWrapper);
+            currentWeatherWrapper.append(errorMessage);
         })
 }
 
@@ -317,12 +375,22 @@ async function fetchQuickSearchWeather(locationName, adminLevel1, countryCode, l
         .then (data => {
             /* console.log("CURRENT Weather response data:", data); */
             searchInputField.value = "";
-            renderCurrentWeather(data, selectedResultName, data.latitude, data.longitude);
+            /* renderCurrentWeather(data, selectedResultName, data.latitude, data.longitude); */
+            if (data && selectedResultName && typeof data.latitude === "number" && typeof data.longitude === "number") {
+                renderCurrentWeather(data, selectedResultName, data.latitude, data.longitude);
+            } else {
+                const errorMessage = createErrorMessage("There was an error fetching the current weather");
+                removeAllElementChildren(currentWeatherWrapper);
+                currentWeatherWrapper.append(errorMessage);
+            }
         })
 
         .catch (error => {
-            console.error("Error fetching CURRENT weather data:", error)
+            console.error("Error fetching QUICKSEARCH weather data:", error)
             // NEWFUNC: show error message "error fetching weather "
+            const errorMessage = createErrorMessage("Fetch current quick search weather network/fetch error");
+            removeAllElementChildren(currentWeatherWrapper);
+            currentWeatherWrapper.append(errorMessage);
         })
 }
 
@@ -529,19 +597,28 @@ async function fetchQuickSearchButtonData() {
             })
 
             .then (data => {
-                /* console.log("Quick search Weather response data:", data); */
-                currentName.textContent = quickSearchItems[i].city;
-                currentState.textContent = quickSearchItems[i].state;
-                currentQuickTemp.textContent = `${processWeatherUnits("temp", data.current_weather.temperature)}`;
-                currentIcon.setAttribute("src", processWeatherCodeIcon(data.current_weather.weathercode));
-
+                console.log("Quick search Weather response data:", data);
                 currentIcon.onload = function() {
                     currentQuickSearchButton.classList.remove("skeleton");
+                }
+
+                if (data && typeof data.current_weather.temperature === "number" && typeof data.current_weather.weathercode === "number") {
+                    currentName.textContent = quickSearchItems[i].city;
+                    currentState.textContent = quickSearchItems[i].state;
+                    currentQuickTemp.textContent = `${processWeatherUnits("temp", data.current_weather.temperature)}`;
+                    currentIcon.setAttribute("src", processWeatherCodeIcon(data.current_weather.weathercode));
+                } else {
+                    const errorMessage = createErrorMessage("There was an error fetching quick search button data");
+                    removeAllElementChildren(currentWeatherWrapper);
+                    currentWeatherWrapper.append(errorMessage);
                 }
             })
 
             .catch (error => {
                 console.error("Error fetching quick search weather data:", error)
+                const errorMessage = createErrorMessage("Fetch current quick search button data network/fetch error");
+                removeAllElementChildren(currentWeatherWrapper);
+                currentWeatherWrapper.append(errorMessage);
             })
     }
 }
