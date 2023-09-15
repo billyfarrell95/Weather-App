@@ -18,7 +18,6 @@ const searchResultsList = document.querySelector("#search-results-list");
 const currentWeatherWrapper = document.querySelector("#current-weather-wrapper");
 const useCurrentLocationButton = document.querySelector("#current-location-button");
 const quickSearchButtonsWrapper = document.querySelector("#quick-search-buttons"); // The element that holds the quick search buttons
-/* const forecastWeatherWrapper = document.querySelector("#forecast-weather-wrapper"); */
 
 // This array will store the current search results -- Includes data required to fetch current weather. Cleared and updated when the fetched search results
 let searchResultItemsArray = [];
@@ -107,7 +106,7 @@ function userLocationAllowed(position) {
         reverseGeocode(position.coords.latitude, position.coords.longitude);
     } else {
         removeAllElementChildren(currentWeatherWrapper);
-        const errorMessage = createErrorMessage("There has been an error retreiving your location.");
+        const errorMessage = createErrorMessage("location", "accessFailed");
         currentWeatherWrapper.append(errorMessage);
     }
 }
@@ -122,11 +121,14 @@ function userLocationDenied(error) {
 
 // If user denied location, fetch lat/lon from IP address, then call reverseGeocode
 async function IPGeolocation() {
-    const url = "http://ip-api.com/json/?fields=status,lat,lon,query,zip";
+    const url = "http://ip-api.com/json/?fields=status,lat,lon,query";
     fetch (url)
         .then(response => {
             // check response status
             if (!response.ok) {
+                const errorMessage = createErrorMessage("generic", "default"); // Update with more specific message
+                removeAllElementChildren(currentWeatherWrapper);
+                currentWeatherWrapper.append(errorMessage);
                 throw new Error ("Error fetching IPGeolocation")
             }
 
@@ -138,14 +140,17 @@ async function IPGeolocation() {
             if (data && typeof data.lat === "number" && typeof data.lon === "number") {
                 reverseGeocode(data.lat, data.lon);
             } else {
-                const errorMessage = createErrorMessage("There was an error getting your approximate location");
+                const errorMessage = createErrorMessage("location", "accessDenied");
                 removeAllElementChildren(currentWeatherWrapper);
-                currentWeatherWrapper.append(errorMessage)
+                currentWeatherWrapper.append(errorMessage);
             }
         })
 
         .catch (error => {
             console.error(error);
+            const errorMessage = createErrorMessage("generic", "refresh");
+            removeAllElementChildren(currentWeatherWrapper);
+            currentWeatherWrapper.append(errorMessage);
         })
 }
 
@@ -158,6 +163,9 @@ async function reverseGeocode(lat, lon) {
         .then(response => {
             // check response status
             if (!response.ok) { 
+                const errorMessage = createErrorMessage("generic", "default"); // Update with more specific message
+                removeAllElementChildren(currentWeatherWrapper);
+                currentWeatherWrapper.append(errorMessage);
                 throw new Error ("Error fetching Open Cage Data")
             }
 
@@ -181,7 +189,8 @@ async function reverseGeocode(lat, lon) {
                     fetchCurrentWeather(locationName, adminLevel1, countryCode, lat, lon);
                 }
             } else {
-                const errorMessage = createErrorMessage("There was an error getting your approximate location");
+                // Update this to show accessFailed if location permission was provided, or accessDenied if not
+                const errorMessage = createErrorMessage("location", "accessFailed");
                 removeAllElementChildren(currentWeatherWrapper);
                 currentWeatherWrapper.append(errorMessage);
             }
@@ -189,7 +198,9 @@ async function reverseGeocode(lat, lon) {
 
         .catch (error => {
             console.error(error);
-            // NEWFUNC: show error message "Unable to get current location..."
+            const errorMessage = createErrorMessage("generic", "refresh");
+            removeAllElementChildren(currentWeatherWrapper);
+            currentWeatherWrapper.append(errorMessage);
         })
 }
 
@@ -202,6 +213,9 @@ async function fetchSearchResults(userInput) {
         .then (response => {
             // check response status
             if (!response.ok) {
+                const errorMessage = createErrorMessage("generic", "default"); // Update with more specific message
+                removeAllElementChildren(currentWeatherWrapper);
+                currentWeatherWrapper.append(errorMessage);
                 throw new Error ("Error fetching search results")
             }
 
@@ -222,10 +236,6 @@ async function fetchSearchResults(userInput) {
         .catch (error => {
             console.error("Error fetching search results", error);
             // NEWFUNC: show error message: error fetching search results...
-            const errorMessage = createErrorMessage("There was an error fetching search results");
-            errorMessage.style.color = "red"
-            removeAllElementChildren(searchResultsWrapper);
-            searchResultsList.append(errorMessage);
         })
 } 
 
@@ -302,6 +312,9 @@ async function fetchCurrentWeather(locationName, adminLevel1, countryCode, lat, 
         .then (response => {
             // check response status
             if (!response.ok) {
+                const errorMessage = createErrorMessage("generic", "default"); // Update with more specific message
+                removeAllElementChildren(currentWeatherWrapper);
+                currentWeatherWrapper.append(errorMessage);
                 throw new Error ("Error fetching CURRENT weather data")
             }
 
@@ -318,7 +331,7 @@ async function fetchCurrentWeather(locationName, adminLevel1, countryCode, lat, 
             if (data && selectedResultName && typeof data.latitude === "number" && typeof data.longitude === "number") {
                 renderCurrentWeather(data, selectedResultName, data.latitude, data.longitude);
             } else {
-                const errorMessage = createErrorMessage("There was an error fetching the current weather");
+                const errorMessage = createErrorMessage("weather", "dataInvalid");
                 removeAllElementChildren(currentWeatherWrapper);
                 currentWeatherWrapper.append(errorMessage);
             }
@@ -326,7 +339,7 @@ async function fetchCurrentWeather(locationName, adminLevel1, countryCode, lat, 
 
         .catch (error => {
             console.error("Error fetching CURRENT weather data:", error);
-            const errorMessage = createErrorMessage("Fetch current weather network/fetch error");
+            const errorMessage = createErrorMessage("generic", "refresh");
             removeAllElementChildren(currentWeatherWrapper);
             currentWeatherWrapper.append(errorMessage);
         })
@@ -367,6 +380,9 @@ async function fetchQuickSearchWeather(locationName, adminLevel1, countryCode, l
         .then (response => {
             // check response status
             if (!response.ok) {
+                const errorMessage = createErrorMessage("generic", "default"); // Update with more specific message
+                removeAllElementChildren(currentWeatherWrapper);
+                currentWeatherWrapper.append(errorMessage);
                 throw new Error ("Error fetching CURRENT weather data")
             }
 
@@ -381,7 +397,7 @@ async function fetchQuickSearchWeather(locationName, adminLevel1, countryCode, l
             if (data && selectedResultName && typeof data.latitude === "number" && typeof data.longitude === "number") {
                 renderCurrentWeather(data, selectedResultName, data.latitude, data.longitude);
             } else {
-                const errorMessage = createErrorMessage("There was an error fetching the current weather");
+                const errorMessage = createErrorMessage("weather", "dataInvalid");
                 removeAllElementChildren(currentWeatherWrapper);
                 currentWeatherWrapper.append(errorMessage);
             }
@@ -390,7 +406,7 @@ async function fetchQuickSearchWeather(locationName, adminLevel1, countryCode, l
         .catch (error => {
             console.error("Error fetching QUICKSEARCH weather data:", error)
             // NEWFUNC: show error message "error fetching weather "
-            const errorMessage = createErrorMessage("Fetch current quick search weather network/fetch error");
+            const errorMessage = createErrorMessage("generic", "refresh");
             removeAllElementChildren(currentWeatherWrapper);
             currentWeatherWrapper.append(errorMessage);
         })
