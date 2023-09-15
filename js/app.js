@@ -19,7 +19,7 @@ const useCurrentLocationButton = document.querySelector("#current-location-butto
 const quickSearchButtonsWrapper = document.querySelector("#quick-search-buttons"); // The element that holds the quick search buttons
 /* const forecastWeatherWrapper = document.querySelector("#forecast-weather-wrapper"); */
 
-// This array will store the current search results -- Includes data required to fetch current weather
+// This array will store the current search results -- Includes data required to fetch current weather. Cleared and updated when the fetched search results
 let searchResultItemsArray = [];
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -99,15 +99,18 @@ function requestUserLocation() {
 
 // User location request success
 function userLocationSuccess(position) {
-    /* console.log(position)
-    console.log(position.coords.latitude, position.coords.longitude); */
+    console.log("POSITION:", position);
     reverseGeocode(position.coords.latitude, position.coords.longitude);
+    // NEWFUNC: check if this data has been return before calling reverseGeocode
 }
 
 // User location request failed
 function userLocationDenied(error) {
     console.log(error);
-    console.log(error.message)
+    console.log(error.message);
+    // NEWFUNC: ip-api.com get lat and lon, then reverseGeocode(lat, lon)
+    // check if data was return before calling reverseGeocode
+    // If not, show error message "Unable to get your location"
 }
 
 // Fetch location name based on coordinates retrieved from navigator API (useCurrentLocationButton)
@@ -138,6 +141,7 @@ async function reverseGeocode(lat, lon) {
 
         .catch (error => {
             console.error(error);
+            // NEWFUNC: show error message "Unable to get current location..."
         })
 }
 
@@ -168,7 +172,8 @@ async function fetchSearchResults(userInput) {
         })
 
         .catch (error => {
-            console.error("Error fetching search results", error)
+            console.error("Error fetching search results", error);
+            // NEWFUNC: show error message: error fetching search results...
         })
 } 
 
@@ -211,67 +216,6 @@ function displaySearchResults(data) {
 
         // Add search results to the list
         searchResultsList.append(newResultLi)
-    }
-}
-
-function handleSearchResultsKeyNav() {
-    // Navigate through search results with up/down arrow keys
-    let itemIndex = -1;
-    // Select search results list children (<li>)
-    const children = searchResultsList.children;
-    // Holds the UI element the user has selected
-    let selectedListItem;
-
-    function handleEnterKeyPress(index) {
-        // Fetch current weather using data saved in the global search results variable. Global data and UI results items match indexes.
-        searchResultsWrapper.style.visibility = "hidden";
-        removeAllElementChildren(currentWeatherWrapper);
-        const loading = createLoadingElement();
-        currentWeatherWrapper.append(loading);
-        fetchCurrentWeather(searchResultItemsArray[index].name, searchResultItemsArray[index].admin1, searchResultItemsArray[index].country_code, searchResultItemsArray[index].latitude, searchResultItemsArray[index].longitude);
-    }
-
-    // Add an event listener to capture keydown events
-    if (document.activeElement == searchInputField) {
-        document.addEventListener("keydown", (e) => {
-        if (searchResultItemsArray.length > 0) {
-            switch (e.key) {
-            // Case for down arrow press    
-            case "ArrowDown":
-                /* console.log("arrowdown case ran", itemIndex) */
-                if (itemIndex === searchResultItemsArray.length - 1) {
-                    itemIndex = 0;
-                } else {
-                    itemIndex++;
-                }
-                children[itemIndex].focus(); // Focus on the selected search results list child
-                selectedListItem = children[itemIndex]; // Select the current HTML List item
-                break;
-
-            // Case to up arrow press
-            case "ArrowUp":
-                /* console.log("arrowup case ran", itemIndex) */
-                if (itemIndex === 0) {
-                    itemIndex = searchResultItemsArray.length - 1;
-                } else if (itemIndex > 0) {
-                    itemIndex--;
-                }
-                children[itemIndex].focus(); // Focus on the selected search results list child
-                selectedListItem = children[itemIndex]; // Select the current HTML list item
-                break;
-            // Case for enter press    
-            case "Enter":
-                /* console.log("enter case ran", itemIndex) */
-                if (selectedListItem) {
-                    selectedListItem.addEventListener("keypress", (e) => {
-                        if (e.key === "Enter") {
-                            handleEnterKeyPress(itemIndex);
-                        }
-                    });
-                }
-            }
-        }
-    }); 
     }
 }
 
@@ -323,7 +267,8 @@ async function fetchCurrentWeather(locationName, adminLevel1, countryCode, lat, 
         })
 
         .catch (error => {
-            console.error("Error fetching CURRENT weather data:", error)
+            console.error("Error fetching CURRENT weather data:", error);
+            // NEWFUNC: show error message "Error fetching weather"
         })
 }
 
@@ -377,9 +322,11 @@ async function fetchQuickSearchWeather(locationName, adminLevel1, countryCode, l
 
         .catch (error => {
             console.error("Error fetching CURRENT weather data:", error)
+            // NEWFUNC: show error message "error fetching weather "
         })
 }
 
+// Render the current weather
 function renderCurrentWeather(data, selectedName) {
     removeAllElementChildren(currentWeatherWrapper);
     // Update document title based on current location
@@ -596,5 +543,67 @@ async function fetchQuickSearchButtonData() {
             .catch (error => {
                 console.error("Error fetching quick search weather data:", error)
             })
+    }
+}
+
+// Handle keyboard navigation through the search results
+function handleSearchResultsKeyNav() {
+    // Navigate through search results with up/down arrow keys
+    let itemIndex = -1;
+    // Select search results list children (<li>)
+    const children = searchResultsList.children;
+    // Holds the UI element the user has selected
+    let selectedListItem;
+
+    function handleEnterKeyPress(index) {
+        // Fetch current weather using data saved in the global search results variable. Global data and UI results items match indexes.
+        searchResultsWrapper.style.visibility = "hidden";
+        removeAllElementChildren(currentWeatherWrapper);
+        const loading = createLoadingElement();
+        currentWeatherWrapper.append(loading);
+        fetchCurrentWeather(searchResultItemsArray[index].name, searchResultItemsArray[index].admin1, searchResultItemsArray[index].country_code, searchResultItemsArray[index].latitude, searchResultItemsArray[index].longitude);
+    }
+
+    // Add an event listener to capture keydown events
+    if (document.activeElement == searchInputField) {
+        document.addEventListener("keydown", (e) => {
+        if (searchResultItemsArray.length > 0) {
+            switch (e.key) {
+            // Case for down arrow press    
+            case "ArrowDown":
+                /* console.log("arrowdown case ran", itemIndex) */
+                if (itemIndex === searchResultItemsArray.length - 1) {
+                    itemIndex = 0;
+                } else {
+                    itemIndex++;
+                }
+                children[itemIndex].focus(); // Focus on the selected search results list child
+                selectedListItem = children[itemIndex]; // Select the current HTML List item
+                break;
+
+            // Case to up arrow press
+            case "ArrowUp":
+                /* console.log("arrowup case ran", itemIndex) */
+                if (itemIndex === 0) {
+                    itemIndex = searchResultItemsArray.length - 1;
+                } else if (itemIndex > 0) {
+                    itemIndex--;
+                }
+                children[itemIndex].focus(); // Focus on the selected search results list child
+                selectedListItem = children[itemIndex]; // Select the current HTML list item
+                break;
+            // Case for enter press    
+            case "Enter":
+                /* console.log("enter case ran", itemIndex) */
+                if (selectedListItem) {
+                    selectedListItem.addEventListener("keypress", (e) => {
+                        if (e.key === "Enter") {
+                            handleEnterKeyPress(itemIndex);
+                        }
+                    });
+                }
+            }
+        }
+    }); 
     }
 }
