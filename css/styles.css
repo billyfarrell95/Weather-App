@@ -616,3 +616,16 @@ h1 {
         right: 2rem;
     }
 }
+
+/************************ Error Messages *************************/
+
+.error-message {
+    color: #F79D5C;
+    padding: .3rem;
+    font-style: italic;
+}
+
+.search-error {
+    color: red;
+    pointer-events: none;
+}

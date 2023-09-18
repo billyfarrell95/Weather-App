@@ -102,12 +102,15 @@ function requestUserLocation() {
 // User location request success
 function userLocationAllowed(position) {
     console.log("POSITION:", position);
+    // Check if the returned data is in the expected format, if not show error message
     if (position && typeof position.coords.latitude === "number" && typeof position.coords.longitude === "number") {
         reverseGeocode(position.coords.latitude, position.coords.longitude);
     } else {
         removeAllElementChildren(currentWeatherWrapper);
-        const errorMessage = createErrorMessage("location", "accessFailed");
-        currentWeatherWrapper.append(errorMessage);
+        // If returned location data is invalid, create error message
+        const errorMessage = createErrorMessage("location", "invalidLocationData");
+        currentWeatherWrapper.append(errorMessage.element);
+        console.error(errorMessage.errorMessage)
     }
 }
 
@@ -121,36 +124,34 @@ function userLocationDenied(error) {
 
 // If user denied location, fetch lat/lon from IP address, then call reverseGeocode
 async function IPGeolocation() {
-    const url = "http://ip-api.com/json/?fields=status,lat,lon,query";
+    const url = "http://ip-api.com/json/?fields=status,message,lat,lon,query,country";
     fetch (url)
         .then(response => {
             // check response status
             if (!response.ok) {
-                const errorMessage = createErrorMessage("generic", "default"); // Update with more specific message
+                const errorMessage = createErrorMessage("network", "general");
                 removeAllElementChildren(currentWeatherWrapper);
-                currentWeatherWrapper.append(errorMessage);
-                throw new Error ("Error fetching IPGeolocation")
+                currentWeatherWrapper.append(errorMessage.element);
+                throw new Error(errorMessage.errorMessage);
             }
 
             return response.json();
         })
 
         .then (data => {
-            console.log("IPGeolocation Data", data);
+            // Check if data/data type matches expected value for lat and lon. If not, show access denied error message.
             if (data && typeof data.lat === "number" && typeof data.lon === "number") {
                 reverseGeocode(data.lat, data.lon);
             } else {
                 const errorMessage = createErrorMessage("location", "accessDenied");
                 removeAllElementChildren(currentWeatherWrapper);
-                currentWeatherWrapper.append(errorMessage);
+                currentWeatherWrapper.append(errorMessage.element);
+                throw new Error(errorMessage.errorMessage);
             }
         })
 
         .catch (error => {
-            console.error(error);
-            const errorMessage = createErrorMessage("generic", "refresh");
-            removeAllElementChildren(currentWeatherWrapper);
-            currentWeatherWrapper.append(errorMessage);
+            console.error(error)
         })
 }
 
@@ -162,11 +163,11 @@ async function reverseGeocode(lat, lon) {
     fetch (url)
         .then(response => {
             // check response status
-            if (!response.ok) { 
-                const errorMessage = createErrorMessage("generic", "default"); // Update with more specific message
+            if (!response.ok) {
+                const errorMessage = createErrorMessage("network", "general");
                 removeAllElementChildren(currentWeatherWrapper);
-                currentWeatherWrapper.append(errorMessage);
-                throw new Error ("Error fetching Open Cage Data")
+                currentWeatherWrapper.append(errorMessage.element);
+                throw new Error(errorMessage.errorMessage);
             }
 
             // Return promise
@@ -181,6 +182,7 @@ async function reverseGeocode(lat, lon) {
             let countryCode;
             // Check if results were return, if so process this data
             if (data.total_results !== 0) {
+                console.log("DATA IN REVERSE GEOCODE THEN", data)
                 locationName = processGeocodingLocationName(data.results[0].components); // the pair of the first key that matches the requirements is returned   
                 adminLevel1 = processGeocodingAdminLevel1(data.results[0].components); // the pair of the first key that matches the requirements is returned   
                 countryCode = data.results[0].components.country_code.toUpperCase(); // country code
@@ -189,18 +191,16 @@ async function reverseGeocode(lat, lon) {
                     fetchCurrentWeather(locationName, adminLevel1, countryCode, lat, lon);
                 }
             } else {
-                // Update this to show accessFailed if location permission was provided, or accessDenied if not
+                // If the user granted permission access, but the reverseGeocode didn't return results based on lat/lon
                 const errorMessage = createErrorMessage("location", "accessFailed");
                 removeAllElementChildren(currentWeatherWrapper);
-                currentWeatherWrapper.append(errorMessage);
+                currentWeatherWrapper.append(errorMessage.element);
+                throw new Error(errorMessage.errorMessage)
             }
         })
 
         .catch (error => {
             console.error(error);
-            const errorMessage = createErrorMessage("generic", "refresh");
-            removeAllElementChildren(currentWeatherWrapper);
-            currentWeatherWrapper.append(errorMessage);
         })
 }
 
@@ -213,10 +213,11 @@ async function fetchSearchResults(userInput) {
         .then (response => {
             // check response status
             if (!response.ok) {
-                const errorMessage = createErrorMessage("generic", "default"); // Update with more specific message
-                removeAllElementChildren(currentWeatherWrapper);
-                currentWeatherWrapper.append(errorMessage);
-                throw new Error ("Error fetching search results")
+                const errorMessage = createErrorMessage("generic", "refresh");
+                removeAllElementChildren(searchResultsList);
+                const newLi = createDOMElement("li", "search-error", errorMessage.errorMessage);
+                searchResultsList.append(newLi);
+                throw new Error (errorMessage.errorMessage);
             }
 
             // Return promise
@@ -234,8 +235,7 @@ async function fetchSearchResults(userInput) {
         })
 
         .catch (error => {
-            console.error("Error fetching search results", error);
-            // NEWFUNC: show error message: error fetching search results...
+            console.error(error);
         })
 } 
 
@@ -312,10 +312,10 @@ async function fetchCurrentWeather(locationName, adminLevel1, countryCode, lat, 
         .then (response => {
             // check response status
             if (!response.ok) {
-                const errorMessage = createErrorMessage("generic", "default"); // Update with more specific message
+                const errorMessage = createErrorMessage("weather", "fetchFailed");
                 removeAllElementChildren(currentWeatherWrapper);
-                currentWeatherWrapper.append(errorMessage);
-                throw new Error ("Error fetching CURRENT weather data")
+                currentWeatherWrapper.append(errorMessage.element);
+                throw new Error(errorMessage.errorMessage);
             }
 
             // Return promise
@@ -333,15 +333,13 @@ async function fetchCurrentWeather(locationName, adminLevel1, countryCode, lat, 
             } else {
                 const errorMessage = createErrorMessage("weather", "dataInvalid");
                 removeAllElementChildren(currentWeatherWrapper);
-                currentWeatherWrapper.append(errorMessage);
+                currentWeatherWrapper.append(errorMessage.element);
+                throw new Error(errorMessage.errorMessage);
             }
         })
 
         .catch (error => {
-            console.error("Error fetching CURRENT weather data:", error);
-            const errorMessage = createErrorMessage("generic", "refresh");
-            removeAllElementChildren(currentWeatherWrapper);
-            currentWeatherWrapper.append(errorMessage);
+            console.error(error);
         })
 }
 
@@ -380,10 +378,10 @@ async function fetchQuickSearchWeather(locationName, adminLevel1, countryCode, l
         .then (response => {
             // check response status
             if (!response.ok) {
-                const errorMessage = createErrorMessage("generic", "default"); // Update with more specific message
+                const errorMessage = createErrorMessage("weather", "fetchFailed");
                 removeAllElementChildren(currentWeatherWrapper);
-                currentWeatherWrapper.append(errorMessage);
-                throw new Error ("Error fetching CURRENT weather data")
+                currentWeatherWrapper.append(errorMessage.element);
+                throw new Error(errorMessage.errorMessage);
             }
 
             // Return promise
@@ -399,16 +397,13 @@ async function fetchQuickSearchWeather(locationName, adminLevel1, countryCode, l
             } else {
                 const errorMessage = createErrorMessage("weather", "dataInvalid");
                 removeAllElementChildren(currentWeatherWrapper);
-                currentWeatherWrapper.append(errorMessage);
+                currentWeatherWrapper.append(errorMessage.element);
+                throw new Error(errorMessage.errorMessage);
             }
         })
 
         .catch (error => {
-            console.error("Error fetching QUICKSEARCH weather data:", error)
-            // NEWFUNC: show error message "error fetching weather "
-            const errorMessage = createErrorMessage("generic", "refresh");
-            removeAllElementChildren(currentWeatherWrapper);
-            currentWeatherWrapper.append(errorMessage);
+            console.error(error)
         })
 }
 
@@ -607,7 +602,7 @@ async function fetchQuickSearchButtonData() {
             .then (response => {
                 // check response status
                 if (!response.ok) {
-                    throw new Error ("Error fetching quick search weather data for", quickSearchItems[i].city)
+                    throw new Error ("Error fetching quick search weather data for", quickSearchItems[i].city);
                 }
 
                 // Return promise
@@ -616,27 +611,30 @@ async function fetchQuickSearchButtonData() {
 
             .then (data => {
                 console.log("Quick search Weather response data:", data);
-                currentIcon.onload = function() {
+                /* currentIcon.onload = function() {
                     currentQuickSearchButton.classList.remove("skeleton");
-                }
+                } */
 
                 if (data && typeof data.current_weather.temperature === "number" && typeof data.current_weather.weathercode === "number") {
                     currentName.textContent = quickSearchItems[i].city;
                     currentState.textContent = quickSearchItems[i].state;
                     currentQuickTemp.textContent = `${processWeatherUnits("temp", data.current_weather.temperature)}`;
                     currentIcon.setAttribute("src", processWeatherCodeIcon(data.current_weather.weathercode));
+                    currentIcon.onload = function() {
+                        currentQuickSearchButton.classList.remove("skeleton");
+                    }
                 } else {
-                    const errorMessage = createErrorMessage("There was an error fetching quick search button data");
-                    removeAllElementChildren(currentWeatherWrapper);
-                    currentWeatherWrapper.append(errorMessage);
+                    // Populate buttons with city/state but remove icon and temp if the data contains unexpected values for each
+                    currentName.textContent = quickSearchItems[i].city;
+                    currentState.textContent = quickSearchItems[i].state;
+                    currentIcon.setAttribute("src", "");
+                    currentQuickTemp.textContent = "";
+                    currentQuickSearchButton.classList.remove("skeleton");
                 }
             })
 
             .catch (error => {
-                console.error("Error fetching quick search weather data:", error)
-                const errorMessage = createErrorMessage("Fetch current quick search button data network/fetch error");
-                removeAllElementChildren(currentWeatherWrapper);
-                currentWeatherWrapper.append(errorMessage);
+                console.error(error)
             })
     }
 }

@@ -8,16 +8,21 @@ function createErrorMessage(errorMessageType, errorCode) {
           default: "An unexpected error occurred. Please try again later.",
           refresh: "Oops! Something went wrong. Please refresh the page and try again.",
         },
+
+        network: {
+          general: "Network error: Unable to fetch data. Please check your internet connection or try again later.",
+        },
         
         location: {
           accessFailed: "Failed to retrieve location. Please check your device settings and try again.",
           accessDenied: "Location Access Denied: You have denied access to your precise location. We attempted to provide a generalized location, but it couldn't be determined. Your exact location is not being used.",
+          invalidLocationData: "We encountered an issue with the location data that was received. Please check your device settings or try again later.",
         },
       
         weather: {
-          fetchFailed: "Failed to fetch weather data. Please check your internet connection and try again.",
+          fetchFailed: "Oops! We failed to fetch the weather for the requested location. Please try again later.",
           dataInvalid: "The weather data received is invalid. Please try again later.",
-          locationNotFound: "Location not found. Please check the location and try again.",
+          fetchFailedUnexpected: "Oops! We failed to fetch the weather for the requested location. Please try again later.",
         },
       };
 
@@ -36,6 +41,16 @@ function createErrorMessage(errorMessageType, errorCode) {
                 errorMessage = "Unknown error code.";
           }
           break;
+
+        case "network":
+          switch (errorCode) {
+            case "general":
+                errorMessage = errorMessages.network.general;
+                break;
+            default:
+                errorMessage = errorMessages.generic.default;
+          }
+        break;
     
         case "location":
           switch (errorCode) {
@@ -44,6 +59,9 @@ function createErrorMessage(errorMessageType, errorCode) {
                 break;
             case "accessDenied":
                 errorMessage = errorMessages.location.accessDenied;
+                break;
+            case "invalidLocationData":
+                errorMessage = errorMessages.location.invalidLocationData;
                 break;
             default:
                 errorMessage = "Unknown error code.";
@@ -58,8 +76,8 @@ function createErrorMessage(errorMessageType, errorCode) {
             case "dataInvalid":
                 errorMessage = errorMessages.weather.dataInvalid;
                 break;
-            case "locationNotFound":
-                errorMessage = errorMessages.weather.locationNotFound;
+            case "fetchFailedUnexpected":
+                errorMessage = errorMessages.weather.fetchFailedUnexpected;
                 break;
             default:
                 errorMessage = "Unknown error code.";
@@ -71,8 +89,8 @@ function createErrorMessage(errorMessageType, errorCode) {
       }
 
       if (errorMessage) {
-        const errorMessageElement = createDOMElement("span", "error-message", errorMessage);
-        return errorMessageElement;
+        const element = createDOMElement("span", "error-message", errorMessage);
+        return {element, errorMessage};
       }
 }
 
