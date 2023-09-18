@@ -6,6 +6,7 @@ import processWeatherCodes from "./utils/processWeatherCodes.js";
 import convertWindDirection from "./utils/convertWindDirection.js";
 import processWeatherCodeIcon from "./utils/processWeatherCodeIcon.js";
 import createLoadingElement from "./utils/createLoadingElement.js";
+import createErrorMessage from "./utils/createErrorMessage.js";
 
 const forecastWeatherWrapper = document.querySelector("#forecast-weather-wrapper");
 
@@ -57,12 +58,6 @@ console.log("CURRENT LON", lon);
 
 // Fetch the forecast data for the current location
 async function fetchForecastData(lat, lon) {
-    /* removeAllElementChildren(forecastWeatherWrapper) */
-    // How many days of forecast weather to fetch (if changed, sortForecastWeatherData will have to be updated)
-    /* const daysNum = 3; */
-
-    console.log(forecastWeatherWrapper, lat, lon, "all this is in forecast.html fetchForecastData function")
-
     // Hourly forecast endpoint for current location based on lat/lon of the "Current Weather"
     const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=weathercode,precipitation_probability_max,temperature_2m_max,temperature_2m_min,apparent_temperature_max,apparent_temperature_min,sunrise,sunset,uv_index_max,precipitation_sum,windspeed_10m_max,windgusts_10m_max,winddirection_10m_dominant&temperature_unit=fahrenheit&windspeed_unit=mph&precipitation_unit=inch&timeformat=unixtime&timezone=auto`;
 
@@ -70,7 +65,10 @@ async function fetchForecastData(lat, lon) {
         .then (response => {
             // check response status
             if (!response.ok) {
-                throw new Error ("Error fetching CURRENT weather data")
+                const errorMessage = createErrorMessage("weather", "fetchFailed");
+                removeAllElementChildren(forecastWeatherWrapper);
+                forecastWeatherWrapper.append(errorMessage.element);
+                throw new Error(errorMessage.errorMessage);
             }
 
             // Return promise
@@ -78,18 +76,22 @@ async function fetchForecastData(lat, lon) {
         })
 
         .then (data => {
-            sortDailyForecastData(data)
-            console.log(data)
+            // Validate that data exists and data types before sorting/rendering
+            if (data && typeof data.daily.apparent_temperature_max[0] === "number" && data.daily.apparent_temperature_max.length == 7) {
+                console.log(data)
+                sortDailyForecastData(data)
+            } else {
+                const errorMessage = createErrorMessage("weather", "dataInvalid");
+                removeAllElementChildren(forecastWeatherWrapper);
+                forecastWeatherWrapper.append(errorMessage.element);
+                throw new Error(errorMessage.errorMessage);
+            }
         })
 
         .catch (error => {
-            console.error("Error fetching FORECAST weather data:", error)
+            console.error(error)
         })
 }
-
-/* if (lat !== null && lon !== null) {
-    fetchForecastData(lat, lon);
-} */
 
 // Sort the forecast data for the current location
 function sortDailyForecastData(data) {

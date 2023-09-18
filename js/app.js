@@ -323,12 +323,11 @@ async function fetchCurrentWeather(locationName, adminLevel1, countryCode, lat, 
         })
 
         .then (data => {
-            /* console.log("CURRENT Weather response data:", data); */
             removeAllElementChildren(searchResultsList);
             removeAllElementChildren(currentWeatherWrapper);
             searchInputField.value = "";
-            console.log(data);
             if (data && selectedResultName && typeof data.latitude === "number" && typeof data.longitude === "number") {
+                console.log("data in render forecast", data)
                 renderCurrentWeather(data, selectedResultName, data.latitude, data.longitude);
             } else {
                 const errorMessage = createErrorMessage("weather", "dataInvalid");

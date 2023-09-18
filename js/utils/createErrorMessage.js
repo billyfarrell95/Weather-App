@@ -22,7 +22,6 @@ function createErrorMessage(errorMessageType, errorCode) {
         weather: {
           fetchFailed: "Oops! We failed to fetch the weather for the requested location. Please try again later.",
           dataInvalid: "The weather data received is invalid. Please try again later.",
-          fetchFailedUnexpected: "Oops! We failed to fetch the weather for the requested location. Please try again later.",
         },
       };
 
@@ -75,9 +74,6 @@ function createErrorMessage(errorMessageType, errorCode) {
                 break;
             case "dataInvalid":
                 errorMessage = errorMessages.weather.dataInvalid;
-                break;
-            case "fetchFailedUnexpected":
-                errorMessage = errorMessages.weather.fetchFailedUnexpected;
                 break;
             default:
                 errorMessage = "Unknown error code.";
