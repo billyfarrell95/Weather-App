@@ -124,7 +124,7 @@ function userLocationDenied(error) {
 
 // If user denied location, fetch lat/lon from IP address, then call reverseGeocode
 async function IPGeolocation() {
-    const url = "http://ip-api.com/json/?fields=status,message,lat,lon,query,country";
+    const url = "https://ip-api.com/json/?fields=status,message,lat,lon,query,country";
     fetch (url)
         .then(response => {
             // check response status
