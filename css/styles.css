@@ -325,14 +325,23 @@ h1 {
     }
 }
 
-.current-wrapper h3 {
+h3.current-title {
     font-size: 1.2rem;
+    display: flex;
+    gap: .5rem;
+}
+
+h3.current-title span {
+    font-weight: 400;
+    align-self: flex-end;
+    font-size: 1.1rem;
 }
 
 .current-wrapper .temp-wrapper {
     display: flex;
     gap: 1.6rem;
     align-items: center;
+    padding-block: 1rem;
 }
 
 .current-wrapper .temp-wrapper .temp {
@@ -393,7 +402,7 @@ h1 {
 .current-data .data-row {
     display: flex;
     justify-content: space-between;
-    border-bottom: 1px solid lightgray;
+    border-bottom: 1px solid #ffffff77;
     padding-block: .5rem;
     margin-bottom: .4rem;
 }
@@ -433,8 +442,8 @@ h1 {
 }
 
 .current-weather-wrapper .icon-lg {
-    height: 50px;
-    width: auto;
+    height: auto;
+    width: 35%;
 }
 
 .current-weather-wrapper .icon-sm {

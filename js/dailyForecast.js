@@ -59,7 +59,7 @@ console.log("CURRENT LON", lon);
 // Fetch the forecast data for the current location
 async function fetchForecastData(lat, lon) {
     // Hourly forecast endpoint for current location based on lat/lon of the "Current Weather"
-    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=weathercode,precipitation_probability_max,temperature_2m_max,temperature_2m_min,apparent_temperature_max,apparent_temperature_min,sunrise,sunset,uv_index_max,precipitation_sum,windspeed_10m_max,windgusts_10m_max,winddirection_10m_dominant&temperature_unit=fahrenheit&windspeed_unit=mph&precipitation_unit=inch&timeformat=unixtime&timezone=auto`;
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=weathercode,precipitation_probability_max,temperature_2m_max,temperature_2m_min,uv_index_max,precipitation_sum,windspeed_10m_max,windgusts_10m_max,winddirection_10m_dominant&temperature_unit=fahrenheit&windspeed_unit=mph&precipitation_unit=inch&timeformat=unixtime&timezone=auto`;
 
     fetch (url)
         .then (response => {
@@ -76,8 +76,9 @@ async function fetchForecastData(lat, lon) {
         })
 
         .then (data => {
+            console.log(data)
             // Validate that data exists and data types before sorting/rendering
-            if (data && typeof data.daily.apparent_temperature_max[0] === "number" && data.daily.apparent_temperature_max.length == 7) {
+            if (data && data.daily.precipitation_probability_max.length == 7 && data.daily.precipitation_sum.length == 7 && data.daily.temperature_2m_max.length == 7 && data.daily.temperature_2m_min.length == 7 && data.daily.uv_index_max.length == 7 && data.daily.weathercode.length == 7 && data.daily.winddirection_10m_dominant.length == 7 && data.daily.windgusts_10m_max.length == 7 && data.daily.windspeed_10m_max.length == 7) {
                 console.log(data)
                 sortDailyForecastData(data)
             } else {
@@ -110,12 +111,8 @@ function sortDailyForecastData(data) {
      for (let i = 0; i < 7; i++) {
         if (i == 0) {
             dayOne.push({
-                "apparent_temp_max": data.daily.apparent_temperature_max[i],
-                "apparent_temp_min": data.daily.apparent_temperature_min[i],
                 "precip_sum": data.daily.precipitation_sum[i],
                 "precip_prob_max": data.daily.precipitation_probability_max[i],
-                "sunrise": data.daily.sunrise[i],
-                "sunset": data.daily.sunset[i],
                 "temp_max": data.daily.temperature_2m_max[i],
                 "temp_min": data.daily.temperature_2m_min[i],
                 "uv_index_max": data.daily.uv_index_max[i],
@@ -123,18 +120,13 @@ function sortDailyForecastData(data) {
                 "winddirection_dominant": data.daily.winddirection_10m_dominant[i],
                 "windspeed_max": data.daily.windspeed_10m_max[i],
                 "windgusts_max": data.daily.windgusts_10m_max[i],
-                "time": data.daily.time[i],
                 "date": createForecastDisplayDates()[i]
             });
         }
         if (i == 1) {
             dayTwo.push({
-                "apparent_temp_max": data.daily.apparent_temperature_max[i],
-                "apparent_temp_min": data.daily.apparent_temperature_min[i],
                 "precip_sum": data.daily.precipitation_sum[i],
                 "precip_prob_max": data.daily.precipitation_probability_max[i],
-                "sunrise": data.daily.sunrise[i],
-                "sunset": data.daily.sunset[i],
                 "temp_max": data.daily.temperature_2m_max[i],
                 "temp_min": data.daily.temperature_2m_min[i],
                 "uv_index_max": data.daily.uv_index_max[i],
@@ -142,18 +134,13 @@ function sortDailyForecastData(data) {
                 "winddirection_dominant": data.daily.winddirection_10m_dominant[i],
                 "windspeed_max": data.daily.windspeed_10m_max[i],
                 "windgusts_max": data.daily.windgusts_10m_max[i],
-                "time": data.daily.time[i],
                 "date": createForecastDisplayDates()[i]
             });
         }
         if (i == 2) {
             dayThree.push({
-                "apparent_temp_max": data.daily.apparent_temperature_max[i],
-                "apparent_temp_min": data.daily.apparent_temperature_min[i],
                 "precip_sum": data.daily.precipitation_sum[i],
                 "precip_prob_max": data.daily.precipitation_probability_max[i],
-                "sunrise": data.daily.sunrise[i],
-                "sunset": data.daily.sunset[i],
                 "temp_max": data.daily.temperature_2m_max[i],
                 "temp_min": data.daily.temperature_2m_min[i],
                 "uv_index_max": data.daily.uv_index_max[i],
@@ -161,18 +148,13 @@ function sortDailyForecastData(data) {
                 "winddirection_dominant": data.daily.winddirection_10m_dominant[i],
                 "windspeed_max": data.daily.windspeed_10m_max[i],
                 "windgusts_max": data.daily.windgusts_10m_max[i],
-                "time": data.daily.time[i],
                 "date": createForecastDisplayDates()[i]
             });
         }
         if (i == 3) {
             dayFour.push({
-                "apparent_temp_max": data.daily.apparent_temperature_max[i],
-                "apparent_temp_min": data.daily.apparent_temperature_min[i],
                 "precip_sum": data.daily.precipitation_sum[i],
                 "precip_prob_max": data.daily.precipitation_probability_max[i],
-                "sunrise": data.daily.sunrise[i],
-                "sunset": data.daily.sunset[i],
                 "temp_max": data.daily.temperature_2m_max[i],
                 "temp_min": data.daily.temperature_2m_min[i],
                 "uv_index_max": data.daily.uv_index_max[i],
@@ -180,18 +162,13 @@ function sortDailyForecastData(data) {
                 "winddirection_dominant": data.daily.winddirection_10m_dominant[i],
                 "windspeed_max": data.daily.windspeed_10m_max[i],
                 "windgusts_max": data.daily.windgusts_10m_max[i],
-                "time": data.daily.time[i],
                 "date": createForecastDisplayDates()[i]
             });
         }
         if (i == 4) {
             dayFive.push({
-                "apparent_temp_max": data.daily.apparent_temperature_max[i],
-                "apparent_temp_min": data.daily.apparent_temperature_min[i],
                 "precip_sum": data.daily.precipitation_sum[i],
                 "precip_prob_max": data.daily.precipitation_probability_max[i],
-                "sunrise": data.daily.sunrise[i],
-                "sunset": data.daily.sunset[i],
                 "temp_max": data.daily.temperature_2m_max[i],
                 "temp_min": data.daily.temperature_2m_min[i],
                 "uv_index_max": data.daily.uv_index_max[i],
@@ -199,18 +176,13 @@ function sortDailyForecastData(data) {
                 "winddirection_dominant": data.daily.winddirection_10m_dominant[i],
                 "windspeed_max": data.daily.windspeed_10m_max[i],
                 "windgusts_max": data.daily.windgusts_10m_max[i],
-                "time": data.daily.time[i],
                 "date": createForecastDisplayDates()[i]
             });
         }
         if (i == 5) {
             daySix.push({
-                "apparent_temp_max": data.daily.apparent_temperature_max[i],
-                "apparent_temp_min": data.daily.apparent_temperature_min[i],
                 "precip_sum": data.daily.precipitation_sum[i],
                 "precip_prob_max": data.daily.precipitation_probability_max[i],
-                "sunrise": data.daily.sunrise[i],
-                "sunset": data.daily.sunset[i],
                 "temp_max": data.daily.temperature_2m_max[i],
                 "temp_min": data.daily.temperature_2m_min[i],
                 "uv_index_max": data.daily.uv_index_max[i],
@@ -218,18 +190,13 @@ function sortDailyForecastData(data) {
                 "winddirection_dominant": data.daily.winddirection_10m_dominant[i],
                 "windspeed_max": data.daily.windspeed_10m_max[i],
                 "windgusts_max": data.daily.windgusts_10m_max[i],
-                "time": data.daily.time[i],
                 "date": createForecastDisplayDates()[i]
             });
         }
         if (i == 6) {
             daySeven.push({
-                "apparent_temp_max": data.daily.apparent_temperature_max[i],
-                "apparent_temp_min": data.daily.apparent_temperature_min[i],
                 "precip_sum": data.daily.precipitation_sum[i],
                 "precip_prob_max": data.daily.precipitation_probability_max[i],
-                "sunrise": data.daily.sunrise[i],
-                "sunset": data.daily.sunset[i],
                 "temp_max": data.daily.temperature_2m_max[i],
                 "temp_min": data.daily.temperature_2m_min[i],
                 "uv_index_max": data.daily.uv_index_max[i],
@@ -237,7 +204,6 @@ function sortDailyForecastData(data) {
                 "winddirection_dominant": data.daily.winddirection_10m_dominant[i],
                 "windspeed_max": data.daily.windspeed_10m_max[i],
                 "windgusts_max": data.daily.windgusts_10m_max[i],
-                "time": data.daily.time[i],
                 "date": createForecastDisplayDates()[i]
             });
         }
@@ -288,8 +254,6 @@ function renderDailyForecast(data) {
     const dayLowData = createDOMElement("p", "forecast-temp low", `${processWeatherUnits("temp", data[0].temp_min)} `);
     const dayLowTitle = createDOMElement("span", "title", "Low");
     const weathercode = createDOMElement("p", "weathercode", processWeatherCodes(data[0].weathercode));
-    const apparentTempWrapper = createDOMElement("p", undefined, "Feels Like:");
-    const apparentTempData = createDOMElement("span", "apparent-temp", ` ${processWeatherUnits("temp", data[0].apparent_temp_max)} High / ${processWeatherUnits("temp", data[0].apparent_temp_min)} Low`)
     const UVWrapper = createDOMElement("div", "data-row", "UV Index Max");
     const UVData = createDOMElement("p", undefined, processWeatherUnits("uv", data[0].uv_index_max));
     const precipSumWrapper = createDOMElement("div", "data-row", "Precipitation");
@@ -315,8 +279,6 @@ function renderDailyForecast(data) {
     highLowWrapper.append(dayLowData);
     dayLowData.append(dayLowTitle);
     leftCol.append(weathercode);
-    leftCol.append(apparentTempWrapper);
-    apparentTempWrapper.append(apparentTempData)
 
     rightCol.append(UVWrapper);
     UVWrapper.append(UVData);
