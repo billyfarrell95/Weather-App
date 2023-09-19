@@ -256,9 +256,9 @@ function sortDailyForecastData(data) {
 
     const forecastHeading = createDOMElement("h1", "forecast-heading", fullLocationName);
     const forecastSubHeading = createDOMElement("span", "forecast-sub-heading", "7-Day Forecast");
-    forecastWeatherWrapper.append(forecastHeading);
     forecastHeading.append(forecastSubHeading);
-
+    forecastWeatherWrapper.append(forecastHeading);
+    
     console.log("all forecast data", allForecastData)
     // Render the forecast data
     allForecastData.forEach((dayData) => {
