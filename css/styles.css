@@ -492,22 +492,15 @@ h1 {
 
 .forecast-heading {
     display: flex;
-    flex-direction: column;
-    gap: 2rem;
+    flex-direction: column-reverse;
+    gap: .5rem;
     margin-bottom: 2rem;
-}
-
-@media screen and (min-width: 768px) {
-    .forecast-heading {
-        flex-direction: row;
-        align-items: center;
-    }
 }
 
 .forecast-sub-heading {
     padding-inline: 1rem;
-    padding-block: .3rem;
-    font-size: 1rem;
+    padding-block: 0;
+    font-size: .9rem;
     color: black;
     background-color: white;
     border-radius: .3rem;
