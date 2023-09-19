@@ -72,12 +72,10 @@ document.addEventListener("click", () => {
 // Search input event listener
 searchInputField.addEventListener("keyup", () => {
     // API Docs note: Empty string or 1 character returns empty result. 2 characters will match exact location. 3 or more characters will perform fuzzy matching
-
     // Only make API Search call when input is greater than two characters
     if (searchInputField.value.trim().length >= 2) {
         // Remove whitespace from search value
         const userInput = searchInputField.value.trim();
-        
         fetchSearchResults(userInput);
     } else if (searchInputField.value.trim().length < 2) {
         searchResultItemsArray = [];
@@ -101,7 +99,6 @@ function requestUserLocation() {
 
 // User location request success
 function userLocationAllowed(position) {
-    console.log("POSITION:", position);
     // Check if the returned data is in the expected format, if not show error message
     if (position && typeof position.coords.latitude === "number" && typeof position.coords.longitude === "number") {
         reverseGeocode(position.coords.latitude, position.coords.longitude);
@@ -117,17 +114,18 @@ function userLocationAllowed(position) {
 // User location request failed
 function userLocationDenied(error) {
     console.log(error);
-    console.log(error.message);
     // If user denied location access, get approximate location from IP Address
     IPGeolocation();
 }
 
-// If user denied location, fetch lat/lon from IP address, then call reverseGeocode
+// If user denied location, fetch lat/lon from IP address
 async function IPGeolocation() {
-    const url = "http://ip-api.com/json/?fields=status,message,lat,lon,query,country";
+    const IP_GEOLOCATION_KEY = "4c1d5e9161ff447d9f495e1bfb468574";
+    const url = `https://ipgeolocation.abstractapi.com/v1/?api_key=${IP_GEOLOCATION_KEY}`;
+
     fetch (url)
         .then(response => {
-            // check response status
+            // Check response status. If response isn't ok, show error message
             if (!response.ok) {
                 const errorMessage = createErrorMessage("network", "general");
                 removeAllElementChildren(currentWeatherWrapper);
@@ -140,9 +138,11 @@ async function IPGeolocation() {
 
         .then (data => {
             // Check if data/data type matches expected value for lat and lon. If not, show access denied error message.
-            if (data && typeof data.lat === "number" && typeof data.lon === "number") {
-                reverseGeocode(data.lat, data.lon);
+            if (data && typeof data.latitude === "number" && typeof data.longitude === "number") {
+                // reverseGeocode based on IP lat/lon
+                reverseGeocode(data.latitude, data.longitude);
             } else {
+                // If returned data doesn't match expect type, show error message
                 const errorMessage = createErrorMessage("location", "accessDenied");
                 removeAllElementChildren(currentWeatherWrapper);
                 currentWeatherWrapper.append(errorMessage.element);
@@ -159,10 +159,10 @@ async function IPGeolocation() {
 async function reverseGeocode(lat, lon) {
     const OPEN_CAGE_API_KEY = "9ce86e2baa8049d69415d979fd71cb69";
     const url = `https://api.opencagedata.com/geocode/v1/json?q=${lat}+${lon}&key=${OPEN_CAGE_API_KEY}`;
-    /* const url = `https://api.opencagedata.com/geocode/v1/json?q=64.9631+19.0208&key=9ce86e2baa8049d69415d979fd71cb69`; */
+
     fetch (url)
         .then(response => {
-            // check response status
+            // Check response status. If response isn't ok, show error message
             if (!response.ok) {
                 const errorMessage = createErrorMessage("network", "general");
                 removeAllElementChildren(currentWeatherWrapper);
@@ -211,7 +211,7 @@ async function fetchSearchResults(userInput) {
 
     fetch(url)
         .then (response => {
-            // check response status
+            // Check response status. If response isn't ok, show error message
             if (!response.ok) {
                 const errorMessage = createErrorMessage("generic", "refresh");
                 removeAllElementChildren(searchResultsList);
@@ -283,7 +283,6 @@ function displaySearchResults(data) {
 
 // Get current weather data
 async function fetchCurrentWeather(locationName, adminLevel1, countryCode, lat, lon) {
-    console.log("**********CURRENT WEATHER API CALL MADE********", locationName, adminLevel1, countryCode, lat, lon)
     // Weather heading name
     let selectedResultName;
 
@@ -310,7 +309,7 @@ async function fetchCurrentWeather(locationName, adminLevel1, countryCode, lat, 
     
     fetch (url)
         .then (response => {
-            // check response status
+            // Check response status. If response isn't ok, show error message
             if (!response.ok) {
                 const errorMessage = createErrorMessage("weather", "fetchFailed");
                 removeAllElementChildren(currentWeatherWrapper);
@@ -359,8 +358,6 @@ async function fetchQuickSearchWeather(locationName, adminLevel1, countryCode, l
         selectedResultName = adminLevel1;
     }
 
-    /* console.log(sessionStorage, "SESSION STORAGE IN FETCH QUICK SEARCH WEATHER") */
-
     // Name to be displayed on forecast page
     sessionStorage.setItem("fullLocationName", selectedResultName);
     // Data to be re-used when navigating back/re-fetching weather 
@@ -375,7 +372,7 @@ async function fetchQuickSearchWeather(locationName, adminLevel1, countryCode, l
 
     fetch (url)
         .then (response => {
-            // check response status
+            // Check response status. If response isn't ok, show error message
             if (!response.ok) {
                 const errorMessage = createErrorMessage("weather", "fetchFailed");
                 removeAllElementChildren(currentWeatherWrapper);
@@ -599,7 +596,7 @@ async function fetchQuickSearchButtonData() {
 
         fetch (url)
             .then (response => {
-                // check response status
+                // Check response status
                 if (!response.ok) {
                     throw new Error ("Error fetching quick search weather data for", quickSearchItems[i].city);
                 }
@@ -609,11 +606,6 @@ async function fetchQuickSearchButtonData() {
             })
 
             .then (data => {
-                console.log("Quick search Weather response data:", data);
-                /* currentIcon.onload = function() {
-                    currentQuickSearchButton.classList.remove("skeleton");
-                } */
-
                 if (data && typeof data.current_weather.temperature === "number" && typeof data.current_weather.weathercode === "number") {
                     currentName.textContent = quickSearchItems[i].city;
                     currentState.textContent = quickSearchItems[i].state;
