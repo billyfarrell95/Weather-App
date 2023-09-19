@@ -48,14 +48,6 @@ function topTopScrollHandler() {
     }
 };
 
-// Get local storage data
-/* const fullLocationName = sessionStorage.getItem("fullLocationName");
-const lat = sessionStorage.getItem("currentLat");
-const lon = sessionStorage.getItem("currentLon"); */
-
-console.log("CURRENT LAT", lat);
-console.log("CURRENT LON", lon);
-
 // Fetch the forecast data for the current location
 async function fetchForecastData(lat, lon) {
     // Hourly forecast endpoint for current location based on lat/lon of the "Current Weather"
@@ -106,7 +98,6 @@ function sortDailyForecastData(data) {
     let daySix = [];
     let daySeven = [];
 
-    // Loop through and save one day's weather to the variables above
      // Loop through and save one day's weather to the variables above
      for (let i = 0; i < 7; i++) {
         if (i == 0) {
