@@ -61,6 +61,7 @@ document.addEventListener("click", () => {
         console.log(searchResultItemsArray, "before render")
     } else {
         searchResultsWrapper.style.visibility = "hidden";
+        searchInputField.value = "";
     }
 
     if (searchInputField.value.trim().length === 0) {
@@ -655,6 +656,7 @@ function handleSearchResultsKeyNav() {
             switch (e.key) {
             // Case for down arrow press    
             case "ArrowDown":
+                e.preventDefault(); // Prevent page scrolling
                 /* console.log("arrowdown case ran", itemIndex) */
                 if (itemIndex === searchResultItemsArray.length - 1) {
                     itemIndex = 0;
@@ -663,10 +665,12 @@ function handleSearchResultsKeyNav() {
                 }
                 children[itemIndex].focus(); // Focus on the selected search results list child
                 selectedListItem = children[itemIndex]; // Select the current HTML List item
+                searchInputField.value = children[itemIndex].textContent;
                 break;
 
             // Case to up arrow press
             case "ArrowUp":
+                e.preventDefault(); // Prevent page scrolling
                 /* console.log("arrowup case ran", itemIndex) */
                 if (itemIndex === 0) {
                     itemIndex = searchResultItemsArray.length - 1;
@@ -675,6 +679,7 @@ function handleSearchResultsKeyNav() {
                 }
                 children[itemIndex].focus(); // Focus on the selected search results list child
                 selectedListItem = children[itemIndex]; // Select the current HTML list item
+                searchInputField.value = children[itemIndex].textContent;
                 break;
             // Case for enter press    
             case "Enter":
@@ -683,6 +688,7 @@ function handleSearchResultsKeyNav() {
                     selectedListItem.addEventListener("keypress", (e) => {
                         if (e.key === "Enter") {
                             handleEnterKeyPress(itemIndex);
+                            searchResultItemsArray = []; // Clear saved search results after searching
                         }
                     });
                 }

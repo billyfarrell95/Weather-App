@@ -281,8 +281,6 @@ h1 {
 /******************** Current Weather  *************************/
 .current-weather-wrapper {
     padding-block: 2vh;
-
-    min-height: 545px;
 }
 
 .current-weather-row {
