@@ -6,8 +6,9 @@ function processWeatherCodes(code) {
         const iconSource = weathercode.src;
         return iconSource;
       } else {
-        console.log(weathercode, iconSource, "Weathercode not found/can't set iconSource")
-        return "" // add a default or fallback here
+        // Return fallback icon
+        const iconSource = "/assets/icons/today.svg"
+        return iconSource;
       }
 }
 
