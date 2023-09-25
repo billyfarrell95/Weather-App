@@ -6,8 +6,9 @@ function processWeatherCodes(code) {
       if (weathercode) {
         return weathercode.value;
       } else {
-        console.log(weathercode, "Weathercode not found")
-        return "" // add a default or fallback here
+        console.log(weathercode, "Weathercode not found");
+        // Return fallback weather code display
+        return "Current Weather";
       }
 }
 
