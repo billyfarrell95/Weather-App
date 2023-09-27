@@ -5,18 +5,12 @@ function convertUnixTimestampTo12HourFormat(unixTimestamp, timezone) {
     // Format time
     const formattedTime = date.toLocaleString("en-US", {
         hour: "numeric",
-        minute: "numeric",
         hour12: true,
         timeZone: timezone, // the timezone of the location the user is viewing (pulled from the API response)
 
     });
 
-    const corrections = {
-        "0": "",
-        ":": "",
-    }
-
-    const finalFormattedTime = formattedTime.replace(/[0:]/g, (match) => corrections[match]);
+    const finalFormattedTime = formattedTime;
     return finalFormattedTime.replace(" ", "");
 }
 
