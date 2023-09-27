@@ -517,9 +517,9 @@ function renderCurrentWeather(data, selectedName) {
 
     // Add the link to view the forecast for current location
     const viewForecastLinkWrapper = createDOMElement("div", "view-forecast-wrapper");
-    const viewForecastLink = createDOMElement("a", null, "View 7-Day Forecast");
+    const viewForecastLink = createDOMElement("a", undefined, "View 7-Day Forecast");
     viewForecastLink.setAttribute("href", "forecast.html");
-    viewForecastLinkWrapper.append(viewForecastLink)
+    viewForecastLinkWrapper.append(viewForecastLink);
 
     currentWeatherWrapper.append(viewForecastLinkWrapper);
 
