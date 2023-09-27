@@ -11,6 +11,11 @@ body {
     font-family: "Open Sans", sans-serif;
 }
 
+/* Show to loading cursor when button data is loading (quick search buttons) */
+button.skeleton {
+    cursor: wait;
+}
+
 /************************* Main Layout *************************/
 section {
     padding-inline: 1rem;
@@ -31,7 +36,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 h1 {
-    font-size: clamp(1.5rem, 3.4vh, 2rem);
+    font-size: clamp(1.5rem, 3.4vh, 1.6rem);
     color: white;
 }
 
@@ -43,6 +48,7 @@ h1 {
     background-position: bottom center;
     color: white;
     background-repeat: no-repeat;
+    background-attachment: fixed;
 }
 
 @media screen and (min-width: 1200px) {
@@ -56,6 +62,7 @@ h1 {
 .skeleton {
     opacity: .6;
     animation: skeleton-loading 1.8s linear infinite alternate;
+    border: 2px solid white;
 }
 
 .skeleton-text {
@@ -505,12 +512,10 @@ h3.current-title span {
 }
 
 .forecast-sub-heading {
-    padding-inline: 1rem;
-    padding-block: 0;
-    font-size: .9rem;
-    color: black;
-    background-color: white;
-    border-radius: .3rem;
+    padding-bottom: 0;
+    font-size: 1rem;
+    line-height: 1.8em;
+    color: white;
     max-width: fit-content;
 }
 
@@ -521,7 +526,9 @@ h3.current-title span {
 }
 
 .forecast-day-wrapper {
-    padding-bottom: 3rem;
+    padding: 1rem;
+    margin-bottom: 3rem;
+    border-radius: .5rem;
 }
 
 .forecast-day-wrapper .icon-lg {

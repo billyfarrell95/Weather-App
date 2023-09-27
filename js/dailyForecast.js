@@ -227,7 +227,7 @@ function sortDailyForecastData(data) {
 function renderDailyForecast(data) {
     document.title = `${fullLocationName} | Daily Forecast`;
 
-    const dayWrapper = createDOMElement("div", "forecast-day-wrapper");
+    const dayWrapper = createDOMElement("div", "forecast-day-wrapper skeleton");
 
     // UI Layout Elements
     const colsWrapper = createDOMElement("div", "day-data")
@@ -284,4 +284,8 @@ function renderDailyForecast(data) {
 
     forecastWeatherWrapper.append(date);
     forecastWeatherWrapper.append(dayWrapper);
+
+    icon.onload =  () => {
+        dayWrapper.classList.remove("skeleton");
+    }
 }
