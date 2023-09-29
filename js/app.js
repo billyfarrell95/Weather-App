@@ -56,7 +56,6 @@ document.addEventListener("DOMContentLoaded", () => {
 document.addEventListener("click", () => {
     if (document.activeElement == searchInputField) {
         searchResultsWrapper.style.visibility = "visible";
-        /* searchResultItemsArray = []; */
         handleSearchResultsKeyNav();
         console.log(searchResultItemsArray, "before render")
     } else {
@@ -242,7 +241,6 @@ async function fetchSearchResults(userInput) {
 
 // Handle displaying/updating search results
 function displaySearchResults(data) {
-    console.log(data, "DATA IN DISPLAY")
     // Clear search results UI Elements -- re-render everytime function is called (keyup)
     removeAllElementChildren(searchResultsList);
     // Loop through results
@@ -658,8 +656,11 @@ function handleSearchResultsKeyNav() {
                 } else {
                     itemIndex++;
                 }
-                children[itemIndex].focus(); // Focus on the selected search results list child
-                selectedListItem = children[itemIndex]; // Select the current HTML List item
+                // Check if the list has children before navigating
+                if (children.length) {
+                    children[itemIndex].focus(); // Focus on the selected search results list child
+                    selectedListItem = children[itemIndex]; // Select the current HTML List item
+                }
                 break;
 
             // Case to up arrow press
@@ -671,8 +672,11 @@ function handleSearchResultsKeyNav() {
                 } else if (itemIndex > 0) {
                     itemIndex--;
                 }
-                children[itemIndex].focus(); // Focus on the selected search results list child
-                selectedListItem = children[itemIndex]; // Select the current HTML list item
+                // Check if the list has children before navigating
+                if (children.length) {
+                    children[itemIndex].focus(); // Focus on the selected search results list child
+                    selectedListItem = children[itemIndex]; // Select the current HTML list item
+                }
                 break;
             // Case for enter press    
             case "Enter":
