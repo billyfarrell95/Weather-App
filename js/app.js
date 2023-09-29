@@ -86,9 +86,6 @@ searchInputField.addEventListener("keyup", () => {
 
 // useCurrentLocationButton event listener
 useCurrentLocationButton.addEventListener("click", () => {
-    /* removeAllElementChildren(currentWeatherWrapper);
-    const loading = createLoadingElement();
-    currentWeatherWrapper.append(loading); */
     requestUserLocation();
 })
 
