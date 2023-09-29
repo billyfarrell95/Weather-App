@@ -86,9 +86,9 @@ searchInputField.addEventListener("keyup", () => {
 
 // useCurrentLocationButton event listener
 useCurrentLocationButton.addEventListener("click", () => {
-    removeAllElementChildren(currentWeatherWrapper);
+    /* removeAllElementChildren(currentWeatherWrapper);
     const loading = createLoadingElement();
-    currentWeatherWrapper.append(loading);
+    currentWeatherWrapper.append(loading); */
     requestUserLocation();
 })
 
@@ -101,6 +101,9 @@ function requestUserLocation() {
 function userLocationAllowed(position) {
     // Check if the returned data is in the expected format, if not show error message
     if (position && typeof position.coords.latitude === "number" && typeof position.coords.longitude === "number") {
+        removeAllElementChildren(currentWeatherWrapper);
+        const loading = createLoadingElement();
+        currentWeatherWrapper.append(loading);
         reverseGeocode(position.coords.latitude, position.coords.longitude);
     } else {
         removeAllElementChildren(currentWeatherWrapper);
@@ -139,6 +142,9 @@ async function IPGeolocation() {
         .then (data => {
             // Check if data/data type matches expected value for lat and lon. If not, show access denied error message.
             if (data && typeof data.latitude === "number" && typeof data.longitude === "number") {
+                removeAllElementChildren(currentWeatherWrapper);
+                const loading = createLoadingElement();
+                currentWeatherWrapper.append(loading);
                 // reverseGeocode based on IP lat/lon
                 reverseGeocode(data.latitude, data.longitude);
             } else {
