@@ -660,7 +660,6 @@ function handleSearchResultsKeyNav() {
                 }
                 children[itemIndex].focus(); // Focus on the selected search results list child
                 selectedListItem = children[itemIndex]; // Select the current HTML List item
-                searchInputField.value = children[itemIndex].textContent;
                 break;
 
             // Case to up arrow press
@@ -674,7 +673,6 @@ function handleSearchResultsKeyNav() {
                 }
                 children[itemIndex].focus(); // Focus on the selected search results list child
                 selectedListItem = children[itemIndex]; // Select the current HTML list item
-                searchInputField.value = children[itemIndex].textContent;
                 break;
             // Case for enter press    
             case "Enter":
