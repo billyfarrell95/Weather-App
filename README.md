@@ -10,13 +10,11 @@ A weather app with search and geolocation functionality
  * Built using multiple APIs for: fetching weather data, geolocation, and IPGeolocation
  
  ## Screenshots
- 
-![Weather App - screen1](https://github.com/billyfarrell95/Weather-App/assets/25358057/78544b47-fc40-4abe-9c96-c7b68195912c)
 
-![Weather App - screen2](https://github.com/billyfarrell95/Weather-App/assets/25358057/15482467-4313-4944-b93f-5645bef37666)
+ ![Weather App - Screen1](https://github.com/billyfarrell95/Weather-App/assets/25358057/ceb92d37-ca54-4b7c-99f0-88613557ac61)
 
-![Weather App - screen3](https://github.com/billyfarrell95/Weather-App/assets/25358057/c4fb5ed4-5d42-4b21-861e-1fb99b37713c)
+![Weather App - Screen2](https://github.com/billyfarrell95/Weather-App/assets/25358057/90e4c52a-4771-4578-9b9f-ac1ca78a9b0c)
 
-![Weather App - screen4](https://github.com/billyfarrell95/Weather-App/assets/25358057/db6b7dab-ce1a-436a-86d9-a8d1cb03506b)
+![Weather App - Screen3](https://github.com/billyfarrell95/Weather-App/assets/25358057/6cd3a6bb-a9e0-4558-894b-818633b51810)
 
-![Weather App - screen5](https://github.com/billyfarrell95/Weather-App/assets/25358057/fef07ee1-1bc1-4a9b-ba54-c663cdab0c53)
+![Weather App - Screen4](https://github.com/billyfarrell95/Weather-App/assets/25358057/d9e644c8-3e93-415a-b6e6-3da973bca473)
