@@ -1,4 +1,5 @@
 # Weather App
+A weather app with search and geolocation functionality
  
  [View Live Site](https://weatherapp-heyitsbilly.netlify.app/)
  
