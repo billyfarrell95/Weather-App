@@ -3,6 +3,10 @@
  [View Live Site](https://weatherapp-heyitsbilly.netlify.app/)
  
  ## Description
+
+ * Search for locations by city or zipcode
+ * View current weather and daily forecasts
+ * Built using multiple APIs for: fetching weather data, geolocation, and IPGeolocation
  
  ## Screenshots
  
