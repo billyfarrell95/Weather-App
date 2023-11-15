@@ -1,4 +1,4 @@
-# Weather
+# Weather Site
 A weather website with search and geolocation functionality
  
  [View Live Site](https://weathersite-heyitsbilly.netlify.app/)
