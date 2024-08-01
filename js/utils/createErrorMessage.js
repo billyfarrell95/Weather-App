@@ -1,7 +1,6 @@
 import createDOMElement from "./createDOMElement.js";
 
 function createErrorMessage(errorMessageType, errorCode) {
-    console.log(errorMessageType, errorCode)
     // Error Messages
     const errorMessages = {
         generic: {

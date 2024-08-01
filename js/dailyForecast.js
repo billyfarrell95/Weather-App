@@ -68,10 +68,8 @@ async function fetchForecastData(lat, lon) {
         })
 
         .then (data => {
-            console.log(data)
             // Validate that data exists and data types before sorting/rendering
             if (data && data.daily.precipitation_probability_max.length == 7 && data.daily.precipitation_sum.length == 7 && data.daily.temperature_2m_max.length == 7 && data.daily.temperature_2m_min.length == 7 && data.daily.uv_index_max.length == 7 && data.daily.weathercode.length == 7 && data.daily.winddirection_10m_dominant.length == 7 && data.daily.windgusts_10m_max.length == 7 && data.daily.windspeed_10m_max.length == 7) {
-                console.log(data)
                 sortDailyForecastData(data)
             } else {
                 const errorMessage = createErrorMessage("weather", "dataInvalid");
@@ -88,7 +86,6 @@ async function fetchForecastData(lat, lon) {
 
 // Sort the forecast data for the current location
 function sortDailyForecastData(data) {
-    console.log(data)
     // Variables to hold each forecast day's weather
     let dayOne = [];
     let dayTwo = [];
@@ -205,7 +202,6 @@ function sortDailyForecastData(data) {
 
     // Calculate the current day based on user's timezone offset
     const now = new Date();
-    console.log("NOW", now)
     now.setSeconds(now.getSeconds() + data.utc_offset_seconds);
 
     // Clear the forecast wrapper before rendering (prevents the re-rendered data to be appended after the already present data)
@@ -215,8 +211,7 @@ function sortDailyForecastData(data) {
     const forecastSubHeading = createDOMElement("span", "forecast-sub-heading", "7-Day Forecast");
     forecastHeading.append(forecastSubHeading);
     forecastWeatherWrapper.append(forecastHeading);
-    
-    console.log("all forecast data", allForecastData)
+
     // Render the forecast data
     allForecastData.forEach((dayData) => {
         renderDailyForecast(dayData) 

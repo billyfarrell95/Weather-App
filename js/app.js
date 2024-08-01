@@ -40,7 +40,6 @@ document.addEventListener("DOMContentLoaded", () => {
     if (sessionStorage.length > 0) {
         const loading = createLoadingElement();
         currentWeatherWrapper.append(loading);
-        /* console.log("DOMContentLoaded sessionStorage", sessionStorage) */
         const fullLocationName = sessionStorage.getItem("fullLocationName");
         const locationName = sessionStorage.getItem("locationName");
         const adminLevel1 = sessionStorage.getItem("adminLevel1");
@@ -57,7 +56,6 @@ document.addEventListener("click", () => {
     if (document.activeElement == searchInputField) {
         searchResultsWrapper.style.visibility = "visible";
         handleSearchResultsKeyNav();
-        console.log(searchResultItemsArray, "before render")
     } else {
         searchResultsWrapper.style.visibility = "hidden";
         searchInputField.value = "";
@@ -79,7 +77,6 @@ searchInputField.addEventListener("keyup", () => {
         fetchSearchResults(userInput);
     } else if (searchInputField.value.trim().length < 2) {
         searchResultItemsArray = [];
-        console.log(searchResultItemsArray);
         removeAllElementChildren(searchResultsList)
     }
 })
@@ -113,7 +110,6 @@ function userLocationAllowed(position) {
 
 // User location request failed
 function userLocationDenied(error) {
-    console.log(error);
     // If user denied location access, get approximate location from IP Address
     IPGeolocation();
 }
@@ -179,13 +175,11 @@ async function reverseGeocode(lat, lon) {
 
         .then (data => {
             // Check if results were returned
-            console.log(data.results[0].components, "GEOCODE DATA FROM reverseGeocode");
             let locationName;
             let adminLevel1;
             let countryCode;
             // Check if results were return, if so process this data
             if (data.total_results !== 0) {
-                console.log("DATA IN REVERSE GEOCODE THEN", data)
                 locationName = processGeocodingLocationName(data.results[0].components); // the pair of the first key that matches the requirements is returned   
                 adminLevel1 = processGeocodingAdminLevel1(data.results[0].components); // the pair of the first key that matches the requirements is returned   
                 countryCode = data.results[0].components.country_code.toUpperCase(); // country code
@@ -328,7 +322,6 @@ async function fetchCurrentWeather(locationName, adminLevel1, countryCode, lat, 
             removeAllElementChildren(currentWeatherWrapper);
             searchInputField.value = "";
             if (data && selectedResultName && typeof data.latitude === "number" && typeof data.longitude === "number") {
-                console.log("data in render forecast", data)
                 renderCurrentWeather(data, selectedResultName, data.latitude, data.longitude);
             } else {
                 const errorMessage = createErrorMessage("weather", "dataInvalid");
@@ -387,7 +380,6 @@ async function fetchQuickSearchWeather(locationName, adminLevel1, countryCode, l
         })
 
         .then (data => {
-            /* console.log("CURRENT Weather response data:", data); */
             searchInputField.value = "";
             /* renderCurrentWeather(data, selectedResultName, data.latitude, data.longitude); */
             if (data && selectedResultName && typeof data.latitude === "number" && typeof data.longitude === "number") {
@@ -653,7 +645,6 @@ function handleSearchResultsKeyNav() {
             // Case for down arrow press    
             case "ArrowDown":
                 e.preventDefault(); // Prevent page scrolling
-                /* console.log("arrowdown case ran", itemIndex) */
                 if (itemIndex === searchResultItemsArray.length - 1) {
                     itemIndex = 0;
                 } else {
@@ -669,7 +660,6 @@ function handleSearchResultsKeyNav() {
             // Case to up arrow press
             case "ArrowUp":
                 e.preventDefault(); // Prevent page scrolling
-                /* console.log("arrowup case ran", itemIndex) */
                 if (itemIndex === 0) {
                     itemIndex = searchResultItemsArray.length - 1;
                 } else if (itemIndex > 0) {
@@ -683,7 +673,6 @@ function handleSearchResultsKeyNav() {
                 break;
             // Case for enter press    
             case "Enter":
-                /* console.log("enter case ran", itemIndex) */
                 if (selectedListItem) {
                     selectedListItem.addEventListener("keypress", (e) => {
                         if (e.key === "Enter") {
