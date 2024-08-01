@@ -1,7 +1,7 @@
 # Weather Site
 A weather website with search and geolocation functionality
  
- [View Live Site](https://weathersite-bfarrell.netlify.app/)
+ [View live site](https://weathersite-bfarrell.netlify.app/)
  
  ## Description
 
